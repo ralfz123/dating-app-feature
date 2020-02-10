@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/RodneydeBoer/dating-app-feature#readme",
   "dependencies": {
-    "camelcase": "^5.3.1"
+    "camelcase": "^5.3.1",
+    "lodash": "^4.17.15"
   }
 }
