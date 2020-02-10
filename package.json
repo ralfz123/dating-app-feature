@@ -1,23 +1,25 @@
 {
-  "name": "dating-app-feature",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/RodneydeBoer/dating-app-feature.git"
-  },
-  "author": "Rodney de Boer",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/RodneydeBoer/dating-app-feature/issues"
-  },
-  "homepage": "https://github.com/RodneydeBoer/dating-app-feature#readme",
-  "dependencies": {
-    "camelcase": "^5.3.1",
-    "lodash": "^4.17.15"
-  }
+    "name": "dating-app-feature",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "say-hello": "echo 'Hello World!'"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/RodneydeBoer/dating-app-feature.git"
+    },
+    "author": "Rodney de Boer",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/RodneydeBoer/dating-app-feature/issues"
+    },
+    "homepage": "https://github.com/RodneydeBoer/dating-app-feature#readme",
+    "dependencies": {
+        "camelcase": "^5.3.1",
+        "express": "^4.17.1",
+        "lodash": "^4.17.15"
+    }
 }
