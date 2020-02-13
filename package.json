@@ -1,11 +1,10 @@
 {
     "name": "dating-app-feature",
     "version": "1.0.0",
-    "description": "",
+    "description": "Een kleine feature van een dating-app",
     "main": "index.js",
     "scripts": {
-        "start": "node index.js",
-        "say-hello": "echo 'Hello World!'"
+        "start": "node index.js"
     },
     "repository": {
         "type": "git",
@@ -16,7 +15,7 @@
     "bugs": {
         "url": "https://github.com/RodneydeBoer/dating-app-feature/issues"
     },
-    "homepage": "https://github.com/RodneydeBoer/dating-app-feature#readme",
+    "homepage": "https://github.com/RodneydeBoer/dating-app-feature",
     "dependencies": {
         "camelcase": "^5.3.1",
         "express": "^4.17.1",
