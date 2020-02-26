@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <title>joejoe</title>
+</head>
+
+<body>
+    <script src="ejs.js"></script>
+    <script>
+        let people = ['geddy', 'neil', 'alex'],
+            html = ejs.render('<%= people.join(", "); %>', {
+                people: people
+            });
+    </script>
+    <h1>Hoi</h1>
+</body>
+
+</html>
