@@ -1,4 +1,9 @@
-    @import url('https://fonts.googleapis.com/css?family=Maven+Pro:400,500,600,700,800,900&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Maven+Pro:400,500,600,700,800,900&display=swap');
+    @font-face {
+        font-family: 'impact';
+        src: url('fonts/impact.ttf');
+    }
+    
     * {
         margin: 0;
         padding: 0;
@@ -16,11 +21,23 @@
     }
     /* tekst */
     
+    h1 {
+        font-family: 'impact';
+        font-weight: bold;
+    }
+    
     h1,
     h2,
     h3 {
+        font-weight: 400;
         color: white;
         text-align: center;
+    }
+    
+    p {
+        color: #FEEBEB;
+        text-align: center;
+        margin: 15px 5px;
     }
     /* header */
     
@@ -35,53 +52,81 @@
         margin: auto;
         padding: 30px 5px;
     }
+    
+    img {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    #registratiestart {
+        margin: 20px 0px;
+        text-align: center;
+    }
+    
+    #registratiebutton {
+        padding: 15px 40px;
+        background-color: #FEEBEB;
+        border-radius: 20px;
+        margin: 20px 10px;
+        display: inline-block;
+        color: #F8626E;
+        border: 3px solid #FF626E;
+        text-decoration: none;
+        text-transform: uppercase;
+    }
     /* forms */
     
     input[type=text],
     input[type=email],
-    input[type=password] {
+    input[type=password],
+    input[type=date] {
         border: 3px solid #F8626E;
         padding: 4px 15px;
         font-size: 16px;
-        color: #7B002A;
+        color: #7B002A!important;
         font-weight: bold;
+        opacity: 0.8;
     }
     
     input:valid {
-        border: 3px solid green;
+        border: 3px solid #88FF9F;
+        opacity: 1;
+        background-color: white;
     }
-    
-    input[type=submit] {
-        background-color: #FF626E;
-        font-size: 20px;
-        color: white;
-        border: 0;
-        text-transform: uppercase;
-    }
-    
-     ::placeholder {
-        color: #7B002A;
-        font-size: 16px;
-        opacity: 0.55;
-        font-weight: lighter;
-    }
-    
-    form input {
-        height: 3.2rem;
-        display: block;
-        margin: 20px 0px;
-        width: 100%;
-        border-radius: 20px;
-        box-sizing: border-box;
-        font-family: 'maven pro';
-    }
-    /* footer */
-    
-    footer {
-        text-align: center;
-        position: absolute;
-        bottom: 0;
-        height: 50px;
-        width: 100%;
-        margin: auto;
-    }
+}
+input:focus {
+    padding: 30px 15px;
+    opacity: 1;
+}
+input[type=submit] {
+    background-color: #FF626E;
+    font-size: 20px;
+    color: white;
+    border: 0;
+    text-transform: uppercase;
+}
+ ::placeholder {
+    color: #7B002A;
+    font-size: 16px;
+    opacity: 0.55;
+    font-weight: lighter;
+}
+form input {
+    height: 3.2rem;
+    display: block;
+    margin: 20px 0px;
+    width: 100%;
+    border-radius: 20px;
+    box-sizing: border-box;
+    font-family: 'maven pro';
+}
+
+/* footer */
+footer {
+    text-align: center;
+    bottom: 0;
+    height: 50px;
+    width: 100%;
+    display: inline-block;
+    margin: auto;
+}
