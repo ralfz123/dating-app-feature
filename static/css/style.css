@@ -1,3 +1,87 @@
-body {
-    background-color:
-}
+    @import url('https://fonts.googleapis.com/css?family=Maven+Pro:400,500,600,700,800,900&display=swap');
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    /* body */
+    
+    body {
+        background-color: #7B002A;
+        font-family: 'maven pro';
+    }
+    
+    main,
+    footer {
+        display: block;
+    }
+    /* tekst */
+    
+    h1,
+    h2,
+    h3 {
+        color: white;
+        text-align: center;
+    }
+    /* header */
+    
+    body>header {
+        padding: 20px 0px;
+        margin-bottom: 25px;
+    }
+    /* main */
+    
+    main {
+        width: 80%;
+        margin: auto;
+        padding: 30px 5px;
+    }
+    /* forms */
+    
+    input[type=text],
+    input[type=email],
+    input[type=password] {
+        border: 3px solid #F8626E;
+        padding: 4px 15px;
+        font-size: 16px;
+        color: #7B002A;
+        font-weight: bold;
+    }
+    
+    input:valid {
+        border: 3px solid green;
+    }
+    
+    input[type=submit] {
+        background-color: #FF626E;
+        font-size: 20px;
+        color: white;
+        border: 0;
+        text-transform: uppercase;
+    }
+    
+     ::placeholder {
+        color: #7B002A;
+        font-size: 16px;
+        opacity: 0.55;
+        font-weight: lighter;
+    }
+    
+    form input {
+        height: 3.2rem;
+        display: block;
+        margin: 20px 0px;
+        width: 100%;
+        border-radius: 20px;
+        box-sizing: border-box;
+        font-family: 'maven pro';
+    }
+    /* footer */
+    
+    footer {
+        text-align: center;
+        position: absolute;
+        bottom: 0;
+        height: 50px;
+        width: 100%;
+        margin: auto;
+    }

@@ -2,15 +2,16 @@ const express = require('express')
 const app = express()
 const port = 3000
 
+app.use(express.static('static'));
 app.set('view engine', 'ejs');
 
 // Routes
 app.get('/', function(req, res) {
-    res.render('head');
+    res.render('index');
 });
 
 app.get('/*', function(req, res) {
-    res.sendFile(__dirname + '/static/404.html')
+    res.render('404');
 });
 
 

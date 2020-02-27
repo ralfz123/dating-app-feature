@@ -1,29 +1,20 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 
 <head>
-    <title>joejoe</title>
+    <%- include('partials/head'); -%>
 </head>
 
 <body>
-    <script src="ejs.js"></script>
-
-    <h1>You searched for:
-        <%= data.userQuery %>
-    </h1>
-    <% if(data.loggedIn){ %>
-        <h2>You are logged in as:
-            <%= data.username %>
-
-                <% } %>
-        </h2>
-        <ul>
-            <% data.searchResults.forEach(result => { %>
-                <li>
-                    <%= result %>
-                </li>
-                <% }) %>
-        </ul>
+    <header>
+        <%- include('partials/header-login'); -%>
+    </header>
+    <main>
+        <%- include('partials/login-form'); -%>
+    </main>
+    <footer>
+        <%- include('partials/footer'); -%>
+    </footer>
 </body>
 
 </html>
