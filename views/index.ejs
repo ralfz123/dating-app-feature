@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <title>joejoe</title>
+</head>
+
+<body>
+    <script src="ejs.js"></script>
+
+    <h1>You searched for:
+        <%= data.userQuery %>
+    </h1>
+    <% if(data.loggedIn){ %>
+        <h2>You are logged in as:
+            <%= data.username %>
+
+                <% } %>
+        </h2>
+        <ul>
+            <% data.searchResults.forEach(result => { %>
+                <li>
+                    <%= result %>
+                </li>
+                <% }) %>
+        </ul>
+</body>
+
+</html>
