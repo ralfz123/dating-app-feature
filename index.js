@@ -20,6 +20,9 @@ app.get('/registration', function(req, res) {
 app.post('/log-in', function(req, res) {
     res.render('loading-login');
 });
+app.post('/registrating', function(req, res) {
+    res.render('loading-registration');
+});
 // Loading succes
 app.get('/succes', function(req, res) {
     res.render('readytostart');

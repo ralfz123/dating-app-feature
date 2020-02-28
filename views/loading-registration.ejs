@@ -8,11 +8,16 @@
 <body>
     <main>
         <%- include('partials/loading-icon'); -%>
-            <h2>Inloggen & klaarmaken voor gebruik</h2>
+            <h2>Account aanmaken & klaarmaken voor gebruik</h2>
     </main>
     <footer>
         <%- include('partials/footer'); -%>
     </footer>
+    <script>
+        setTimeout(function() {
+            window.location.href = '/succes';
+        }, 5000);
+    </script>
 </body>
 
 </html>
