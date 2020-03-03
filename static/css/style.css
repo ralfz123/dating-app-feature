@@ -98,6 +98,15 @@ input[type=date] {
     opacity: 0.8;
 }
 
+fieldset {
+    border: 0;
+    color: white;
+}
+
+legend {
+    text-align: center;
+}
+
 input:valid {
     border: 3px solid #88FF9F;
     opacity: 1;
