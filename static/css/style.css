@@ -52,6 +52,10 @@ body>header {
     margin-bottom: 25px;
 }
 
+body#registration header {
+    margin-bottom: 5px;
+}
+
 
 /* main */
 
@@ -61,9 +65,22 @@ main {
     padding: 30px 5px;
 }
 
+body#registration main {
+    padding: 10px 5px 30px 5px;
+}
+
+main.succes {
+    text-align: center;
+}
+
 img {
     width: 100%;
     max-width: 300px;
+}
+
+img.succesicon {
+    width: 100%;
+    max-width: 150px;
 }
 
 #registratiestart {
@@ -105,6 +122,8 @@ fieldset {
 
 legend {
     text-align: center;
+    padding: 10px;
+    font-size: 2rem;
 }
 
 input:valid {
