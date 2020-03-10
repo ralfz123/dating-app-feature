@@ -1,11 +1,7 @@
 const express = require('express');
 const app = express();
 const port = 3000;
-const mongo = require('mongodb').MongoClient
-
-mongo.connect(url, function(err, db) {
-    // db gives access to the database
-})
+const mongo = require('mongodb').MongoClient;
 
 app.use(express.static('static'));
 app.use(express.urlencoded());
