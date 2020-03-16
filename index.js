@@ -1,23 +1,25 @@
 const express = require('express');
 const app = express();
 const port = 3000;
+const mongo = require('mongodb');
 
 app.use(express.static('static'));
 app.set('view engine', 'ejs');
 
 // Database
-const mongo = require('mongodb');
+
 require('dotenv').config();
 let db = null;
 
-//Dit is de database link van mongodb
-const url = process.env.DB_HOST + ':' + process.env.DB_PORT;
-mongo.MongoClient.connect(url, function(err, client) {
-    if (err) throw err;
-    //maak eerst via compass een database aan! Zet die naam in je .env onder DB_NAME
+let url = 'mongodb+srv://' + process.env.DB_USER + ':' + process.env.DB_PASS + '@' + process.env.DB_URL + process.env.DB_END;
+
+mongo.MongoClient.connect(url, { useUnifiedTopology: true }, function(err, client) {
+    if (err) {
+        console.log('Database is niet connected');
+    } else if (client) {
+        console.log('Connectie met database is live');
+    }
     db = client.db(process.env.DB_NAME);
-    //checken of je client/database correct is geconnect
-    console.log(client);
 });
 
 
