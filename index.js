@@ -59,10 +59,10 @@ app.post('/registrating', function(req, res) {
     db.collection('users').insertOne(data, function(err, collection) {
         if (err) throw err;
         console.log('Record inserted Successfully');
-
+        return res.render('loading-registration');
     });
 
-    return res.render('loading-registration');
+
 });
 
 // Loading succes
