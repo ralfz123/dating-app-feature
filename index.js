@@ -4,7 +4,9 @@ const port = 3000;
 const mongo = require('mongodb');
 const Joi = require('joi');
 const mongoose = require('mongoose');
-const bodyParser = require("body-parser");
+const bodyParser = require('body-parser');
+const flash = require('connect-flash');
+const session = require('express-session');
 
 app.use(express.static('static'));
 app.set('view engine', 'ejs');
@@ -57,9 +59,12 @@ app.post('/registrating', function(req, res) {
         'wachtwoord': wachtwoord,
     };
     db.collection('users').insertOne(data, function(err, collection) {
-        if (err) throw err;
-        console.log('Record inserted Successfully');
-        return res.render('loading-registration');
+        if (err) {
+            throw err;
+        } else {
+            console.log('Record inserted Successfully');
+            return res.render('loading-registration');
+        }
     });
 
 
