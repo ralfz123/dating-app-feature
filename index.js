@@ -15,6 +15,37 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
+// Mongoose schema voor gebruiker
+let UserSchema = new mongoose.Schema({
+    voornaam: {
+        type: String,
+        required: true
+    },
+    achternaam: {
+        type: String,
+        required: true
+    },
+    geboorteDatum: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        unique: true,
+        required: true,
+        trim: true
+    },
+    wachtwoord: {
+        type: String,
+        required: true,
+    }
+});
+
+let User = mongoose.model('User', UserSchema);
+module.exports = User;
+
+
+
 // Database
 
 require('dotenv').config();
