@@ -1,3 +1,4 @@
+// Variabelen
 const express = require('express');
 const app = express();
 const port = 3000;
@@ -9,6 +10,7 @@ const session = require('express-session');
 let db;
 let Gebruikers;
 
+// Middleware set-up
 app
     .use(express.static('static'))
     .set('view engine', 'ejs')
@@ -24,10 +26,8 @@ app
     }));
 
 // Database
-
 require('dotenv').config();
 let url = 'mongodb+srv://' + process.env.DB_USER + ':' + process.env.DB_PASS + '@' + process.env.DB_URL + process.env.DB_EN;
-
 mongo.MongoClient.connect(url, { useUnifiedTopology: true }, function(err, client) {
     if (err) {
         console.log('Database is niet connected');
@@ -40,7 +40,7 @@ mongo.MongoClient.connect(url, { useUnifiedTopology: true }, function(err, clien
 });
 
 // Root
-app.get('/', users);
+app.get('/', goHome);
 // Registration
 app.get('/registration', registreren);
 app.post('/registrating', gebruikerMaken);
@@ -49,8 +49,6 @@ app.post('/log-in', inloggen);
 // Wachtwoorrd wijzigen
 app.get('/pass-edit');
 app.post('/edit', wachtwoordVeranderen);
-// Account verwijderen
-
 // error404
 app.get('/*', error404);
 
@@ -58,26 +56,10 @@ app.get('/*', error404);
 function registreren(req, res) {
     res.render('registration');
 }
-
 // Gaat naar home
 function goHome(req, res) {
     res.render('index');
 }
-
-
-function users(req, res, next) {
-    db.collection('users').find().toArray(done);
-
-    function done(err, data) {
-        if (err) {
-            next(err);
-        } else {
-
-            res.render('index', { users: data });
-        }
-    }
-}
-
 // Maakt de gebruiker aan op post
 function gebruikerMaken(req, res) {
     let voornaam = req.body.voornaam;
@@ -102,12 +84,11 @@ function gebruikerMaken(req, res) {
         }
     });
 }
-
 // checkt of gebruiker bestaat en logt in
 function inloggen(req, res) {
     Gebruikers.find({}, { projection: { _id: 0, wachtwoord: 0 } }).toArray(function(err, collection) {
         if (err) throw err;
-        const gebruiker = collection.find(collection => collection.email === req.body.email && collection.wachtwoord === req.body.wachtwoord)
+        const gebruiker = collection.find(collection => collection.email === req.body.email && collection.wachtwoord === req.body.wachtwoord);
         if (gebruiker === undefined) {
             console.log('Account is niet gevonden');
         } else {
@@ -119,15 +100,16 @@ function inloggen(req, res) {
 }
 
 function wachtwoordVeranderen(req, res) {
-
+    // Volgt
 }
 
 function accountVerwijderen(req, res) {
-
+    // Volgt
 }
+
 // Bij een 404
 function error404(req, res) {
     res.render('404');
 }
 // Welke poort het live staat
-app.listen(3000, () => console.log('App is listening on port', port))
+app.listen(3000, () => console.log('App is listening on port', port));
