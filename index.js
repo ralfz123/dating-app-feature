@@ -5,8 +5,10 @@ const port = 3000;
 const mongo = require('mongodb');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const expressValidator = require('express-validator');
 let db;
 let Gebruikers;
+
 
 // Middleware set-up
 app
@@ -15,12 +17,6 @@ app
     .use(bodyParser.json())
     .use(bodyParser.urlencoded({
         extended: true
-    }))
-    .use(session({
-        secret: 'maximum',
-        saveUninitialized: false,
-        resave: false,
-        cookie: { secure: true }
     }));
 
 // Database
