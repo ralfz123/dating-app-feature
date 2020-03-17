@@ -8,7 +8,7 @@ Wanneer ik mij ga aanmelden bij een dating-app, wil ik snel en gemakkelijk kunne
 <p>When you already have a connection with <a href="https://docs.gitlab.com/ee/gitlab-basics/start-using-git.html" rel="nofollow">Git</a>, and installed <a href="https://www.webucator.com/how-to/how-install-nodejs-on-mac.cfm" rel="nofollow">NodeJs</a> on your computer you can easilly download my project. If you haven't already installed these programs, I recommend to do that first.</p>
 <h3><a id="user-content-1-clone-repository" class="anchor" aria-hidden="true" href="#1-clone-repository"></a>1. Clone repository</h3>
 <p>You can clone my repository by typing the following command in your command-line:</p>
-<p><code>git clone https://github.com/RodneydeBoer/dating-app-feature.git/code></p>
+<p><code>git clone https://github.com/RodneydeBoer/dating-app-feature.git</code></p>
 <h3><a id="user-content-2-install-node-modules" class="anchor" aria-hidden="true" href="#2-install-node-modules"></a>2. Install Node modules</h3>
 <p>Now you can navigate to your app, with <code>cd datingapp-feature</code>. The package.json file contains all the required modules. You can install all the necessary modules (dependencies) with the following command:</p>
 <p><code>npm install</code></p>
