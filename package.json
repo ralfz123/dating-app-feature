@@ -17,6 +17,7 @@
     },
     "homepage": "https://github.com/RodneydeBoer/dating-app-feature",
     "dependencies": {
+        "bcrypt": "^4.0.1",
         "body-parser": "^1.19.0",
         "camelcase": "^5.3.1",
         "connect-flash": "^0.1.1",
