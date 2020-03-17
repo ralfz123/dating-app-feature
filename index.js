@@ -5,7 +5,6 @@ const port = 3000;
 const mongo = require('mongodb');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const expressValidator = require('express-validator');
 let db;
 let Gebruikers;
 
@@ -56,6 +55,7 @@ function goHome(req, res) {
 }
 // Maakt de gebruiker aan op post
 function gebruikerMaken(req, res) {
+
     let voornaam = req.body.voornaam;
     let achternaam = req.body.achternaam;
     let geboorteDatum = req.body.geboortedatum;
