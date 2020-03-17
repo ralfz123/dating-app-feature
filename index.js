@@ -3,7 +3,8 @@ const app = express();
 const port = 3000;
 const mongo = require('mongodb');
 const bodyParser = require('body-parser');
-const flash = require('connect-flash');
+const flash = require('express-flash');
+const bcrypt = require('bcrypt');
 const passport = require('passport');
 const session = require('express-session');
 const methodOverride = require('method-override');
@@ -23,7 +24,10 @@ app
         saveUninitialized: false,
         resave: false,
         cookie: { secure: true }
-    }));
+    }))
+    .use(passport.initialize())
+    .use(passport.session())
+    .use(methodOverride('_method'));
 
 // Database
 
@@ -66,7 +70,7 @@ function gebruikerMaken(req, res) {
     let achternaam = req.body.achternaam;
     let geboorteDatum = req.body.geboortedatum;
     let email = req.body.email;
-    let wachtwoord = req.body.wachtwoord;
+    let wachtwoord = bcrypt.hash(req.body.wachtwoord, 10);
 
     let data = {
         'voornaam': voornaam,
@@ -80,7 +84,7 @@ function gebruikerMaken(req, res) {
             throw err;
         } else {
             console.log('Gebruiker toegevoegd');
-            res.render('readytostart');
+            res.render('/');
         }
     });
 }
