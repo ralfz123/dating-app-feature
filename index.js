@@ -5,12 +5,9 @@ const mongo = require('mongodb');
 const bodyParser = require('body-parser');
 const flash = require('express-flash');
 const bcrypt = require('bcrypt');
-const passport = require('passport');
 const session = require('express-session');
-const methodOverride = require('method-override');
-let db = null;
-let Gebruikers = null;
-
+let db;
+let Gebruikers;
 
 app
     .use(express.static('static'))
@@ -24,10 +21,7 @@ app
         saveUninitialized: false,
         resave: false,
         cookie: { secure: true }
-    }))
-    .use(passport.initialize())
-    .use(passport.session())
-    .use(methodOverride('_method'));
+    }));
 
 // Database
 
@@ -42,10 +36,11 @@ mongo.MongoClient.connect(url, { useUnifiedTopology: true }, function(err, clien
     }
     db = client.db(process.env.DB_NAME);
     Gebruikers = db.collection(process.env.DB_NAME);
+    Gebruikers.createIndex({ email: 1 }, { unique: true });
 });
 
 // Root
-app.get('/', goHome);
+app.get('/', users);
 // Registration
 app.get('/registration', registreren);
 app.post('/registrating', gebruikerMaken);
@@ -64,13 +59,27 @@ function goHome(req, res) {
     res.render('index');
 }
 
+
+function users(req, res, next) {
+    db.collection('users').find().toArray(done);
+
+    function done(err, data) {
+        if (err) {
+            next(err);
+        } else {
+
+            res.render('index', { users: data });
+        }
+    }
+}
+
 // Maakt de gebruiker aan op post
 function gebruikerMaken(req, res) {
     let voornaam = req.body.voornaam;
     let achternaam = req.body.achternaam;
     let geboorteDatum = req.body.geboortedatum;
     let email = req.body.email;
-    let wachtwoord = bcrypt.hash(req.body.wachtwoord, 10);
+    let wachtwoord = req.body.wachtwoord;
 
     let data = {
         'voornaam': voornaam,
@@ -84,33 +93,28 @@ function gebruikerMaken(req, res) {
             throw err;
         } else {
             console.log('Gebruiker toegevoegd');
-            res.render('/');
+            res.render('readytostart');
         }
     });
 }
 
 // checkt of gebruiker bestaat en logt in
 function inloggen(req, res) {
-    let email = req.body.email;
-    let wachtwoord = req.body.wachtwoord;
-    db.findOne({
-        'username': req.body.email,
-        'email': req.body.pwd
-    }, function(err, user) {
-        // hanlde err..
-        if (user) {
-            // user exists 
+    Gebruikers.find({}, { projection: { _id: 0 } }).toArray(function(err, collection) {
+        if (err) throw err;
+        const gebruiker = collection.find(collection => collection.email === req.body.email && collection.wachtwoord === req.body.wachtwoord)
+        if (gebruiker === undefined) {
+            console.log('Account is niet gevonden');
         } else {
-            // user does not exist
+            console.log(gebruiker);
+            console.log('Account is gevonden');
+            res.render('readytostart');
         }
     });
-
 }
-
 // Bij een 404
-function error404(res) {
+function error404(req, res) {
     res.render('404');
 }
-
 // Welke poort het live staat
-app.listen(3000, () => console.log('App is listening on port', port));
+app.listen(3000, () => console.log('App is listening on port', port))

@@ -12,6 +12,16 @@
     <main>
         <%- include('partials/login-form'); -%>
             <%- include('partials/registration-option'); -%>
+                <% users.forEach(function(user){ %>
+                    <ul>
+                        <li>
+                            <%= user.email %>
+                        </li>
+                        <li>
+                            <%= user.wachtwoord %>
+                        </li>
+                    </ul>
+                    <% }); %>
     </main>
     <footer>
         <%- include('partials/footer'); -%>
