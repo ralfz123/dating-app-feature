@@ -4,8 +4,6 @@ const app = express();
 const port = 3000;
 const mongo = require('mongodb');
 const bodyParser = require('body-parser');
-const flash = require('express-flash');
-const bcrypt = require('bcrypt');
 const session = require('express-session');
 let db;
 let Gebruikers;
