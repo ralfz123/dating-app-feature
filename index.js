@@ -17,7 +17,7 @@ app
         extended: true
     }));
 
-// Database
+// Database connectie via .env
 require('dotenv').config();
 let url = 'mongodb+srv://' + process.env.DB_USER + ':' + process.env.DB_PASS + '@' + process.env.DB_URL + process.env.DB_EN;
 mongo.MongoClient.connect(url, { useUnifiedTopology: true }, function(err, client) {
@@ -74,7 +74,6 @@ function gebruikerMaken(req, res) {
         'email': email,
         'wachtwoord': wachtwoord,
     };
-
     // Pusht de data + input naar database
     db.collection('users').insertOne(data, function(err, collection) {
         if (err) {
@@ -107,8 +106,9 @@ function wachtwoordform(req, res) {
     res.render('edit-pass');
 }
 
-function wachtwoordVeranderen(req, res) {
 
+// Omdat ik geen sessie gebruik nog, moet ik het account eerst valideren door de gebruiker wachtwoord en email te laten opgeven om daarna pas deze functie uit te laten voeren
+function wachtwoordVeranderen(req, res) {
     return db.collection('users').findOne({ email: req.body.email })
         .then(data => {
             if (data.email === req.body.email && data.wachtwoord !== req.body.wachtwoord) {
@@ -143,13 +143,10 @@ function wachtwoordVeranderen(req, res) {
             return data;
         })
         .catch(err => console.error(`Error: ${err}`));
-    // Van welke record wil je het aanpaasen
-
 }
 
+// Omdat ik geen sessie gebruik nog, moet ik het account eerst valideren door de gebruiker wachtwoord en email te laten opgeven om daarna pas deze functie uit te laten voeren
 function accountVerwijderen(req, res) {
-
-
     return db.collection('users').findOne({ email: req.body.email })
         .then(data => {
             if (data.email === req.body.email && data.wachtwoord !== req.body.wachtwoord) {
@@ -166,13 +163,14 @@ function accountVerwijderen(req, res) {
             return data;
         })
         .catch(err => console.error(`Error: ${err}`));
-
 }
 
+// Laat alleen het formulier zien om account te verwijderen
 function accountverwijderForm(req, res) {
     res.render('delete-acc');
 }
 
+// Uitloggen. Werkt nog niet, omdat ik nog geen sessie gebruik
 function uitloggen(req, res) {
     res.render('index');
 }
