@@ -14,5 +14,5 @@ Wanneer ik mij ga aanmelden bij een dating-app, wil ik snel en gemakkelijk kunne
 <p><code>npm install</code></p>
 <h3><a id="user-content-3-run" class="anchor" aria-hidden="true" href="#3-run"></a>3. Run!</h3>
 <p>You can start the node-server now with the command:</p>
-<p><code>npm run start</code></p>
+<p><code>nodemon</code></p>
 <p>You can visit <a href="http://localhost:3000/" rel="nofollow">localhost:3000</a> to view the application.</p>
