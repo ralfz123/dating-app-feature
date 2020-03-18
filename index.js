@@ -16,12 +16,6 @@ app
     .use(bodyParser.json())
     .use(bodyParser.urlencoded({
         extended: true
-    }))
-    .use(session({
-        cookieName: 'session',
-        secret: 'inlog_sessie',
-        duration: 30 * 60 * 1000,
-        activeDuration: 5 * 60 * 1000,
     }));
 
 // Database
@@ -88,29 +82,21 @@ function gebruikerMaken(req, res) {
 }
 // checkt of gebruiker bestaat en logt in
 function inloggen(req, res) {
-    // Gebruikers.find({}, { projection: { _id: 0 } }).toArray(function(err, collection) {
-    //     if (err) throw err;
-    //     const gebruiker = collection.find(collection => collection.email === req.body.email && collection.wachtwoord === req.body.wachtwoord);
-    //     if (gebruiker === undefined) {
-    //         console.log('Account is niet gevonden');
-    //         console.log(collection.email);
-    //     } else {
-    //         console.log(gebruiker);
-    //         console.log('Account is gevonden');
-    //         res.render('readytostart');
-    //     }
-    // });
-    Gebruikers.findOne({ email: req.body.email }, function(err, user) {
-        if (!user) {
-            res.render('login.jade', { error: 'Invalid email or password.' });
-        } else {
-            if (req.body.password === user.password) {
-                res.redirect('/dashboard');
+
+    return Gebruikers.findOne({ email: req.body.email })
+        .then(data => {
+            if (data.email === req.body.email && data.wachtwoord !== req.body.wachtwoord) {
+                console.log('email klopt, maar wachtwoord niet');
+            } else if (data.email === req.body.email && data.wachtwoord === req.body.wachtwoord) {
+                res.render('readytostart');
             } else {
-                res.render('login.jade', { error: 'Invalid email or password.' });
+                console.log('account is niet gevonden');
+
             }
-        }
-    });
+            return data;
+        })
+        .catch(err => console.error(`Error: ${err}`));
+
 }
 
 function wachtwoordform(req, res) {
