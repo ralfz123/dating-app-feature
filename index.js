@@ -109,7 +109,6 @@ function wachtwoordform(req, res) {
 
 function wachtwoordVeranderen(req, res) {
 
-
     return db.collection('users').findOne({ email: req.body.email })
         .then(data => {
             if (data.email === req.body.email && data.wachtwoord !== req.body.wachtwoord) {
@@ -131,16 +130,15 @@ function wachtwoordVeranderen(req, res) {
                     .then(updatedDocument => {
                         if (updatedDocument) {
                             console.log(`Dit document: ${updatedDocument}. is geupdated`);
+                            res.render('index');
                         } else {
                             console.log('Wachtwoord niet gevonden');
                         }
                         return updatedDocument;
                     })
                     .catch(err => console.error(`Gefaald om het te updaten door error: ${err}`));
-                res.render('readytostart');
             } else {
                 console.log('account is niet gevonden');
-
             }
             return data;
         })
