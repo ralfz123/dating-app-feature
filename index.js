@@ -4,7 +4,7 @@ const app = express();
 const port = 3000;
 const mongo = require('mongodb');
 const bodyParser = require('body-parser');
-const session = require('express-session');
+let session = require('client-sessions');
 let db;
 let Gebruikers;
 
@@ -16,6 +16,12 @@ app
     .use(bodyParser.json())
     .use(bodyParser.urlencoded({
         extended: true
+    }))
+    .use(session({
+        cookieName: 'session',
+        secret: 'inlog_sessie',
+        duration: 30 * 60 * 1000,
+        activeDuration: 5 * 60 * 1000,
     }));
 
 // Database
@@ -39,6 +45,8 @@ app.get('/registration', registreren);
 app.post('/registrating', gebruikerMaken);
 // Inloggen
 app.post('/log-in', inloggen);
+// Uitloggen
+app.get('/log-out', uitloggen);
 // Wachtwoord wijzigen
 app.get('/edit-pass', wachtwoordform);
 app.post('/edit', wachtwoordVeranderen);
@@ -80,16 +88,27 @@ function gebruikerMaken(req, res) {
 }
 // checkt of gebruiker bestaat en logt in
 function inloggen(req, res) {
-    Gebruikers.find({}, { projection: { _id: 0 } }).toArray(function(err, collection) {
-        if (err) throw err;
-        const gebruiker = collection.find(collection => collection.email === req.body.email && collection.wachtwoord === req.body.wachtwoord);
-        if (gebruiker === undefined) {
-            console.log('Account is niet gevonden');
-            console.log(collection.email);
+    // Gebruikers.find({}, { projection: { _id: 0 } }).toArray(function(err, collection) {
+    //     if (err) throw err;
+    //     const gebruiker = collection.find(collection => collection.email === req.body.email && collection.wachtwoord === req.body.wachtwoord);
+    //     if (gebruiker === undefined) {
+    //         console.log('Account is niet gevonden');
+    //         console.log(collection.email);
+    //     } else {
+    //         console.log(gebruiker);
+    //         console.log('Account is gevonden');
+    //         res.render('readytostart');
+    //     }
+    // });
+    Gebruikers.findOne({ email: req.body.email }, function(err, user) {
+        if (!user) {
+            res.render('login.jade', { error: 'Invalid email or password.' });
         } else {
-            console.log(gebruiker);
-            console.log('Account is gevonden');
-            res.render('readytostart');
+            if (req.body.password === user.password) {
+                res.redirect('/dashboard');
+            } else {
+                res.render('login.jade', { error: 'Invalid email or password.' });
+            }
         }
     });
 }
