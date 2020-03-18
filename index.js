@@ -39,8 +39,8 @@ app.get('/registration', registreren);
 app.post('/registrating', gebruikerMaken);
 // Inloggen
 app.post('/log-in', inloggen);
-// Wachtwoorrd wijzigen
-app.get('/pass-edit');
+// Wachtwoord wijzigen
+app.get('/edit-pass', wachtwoordform);
 app.post('/edit', wachtwoordVeranderen);
 // error404
 app.get('/*', error404);
@@ -80,17 +80,22 @@ function gebruikerMaken(req, res) {
 }
 // checkt of gebruiker bestaat en logt in
 function inloggen(req, res) {
-    Gebruikers.find({}, { projection: { _id: 0, wachtwoord: 0 } }).toArray(function(err, collection) {
+    Gebruikers.find({}, { projection: { _id: 0 } }).toArray(function(err, collection) {
         if (err) throw err;
         const gebruiker = collection.find(collection => collection.email === req.body.email && collection.wachtwoord === req.body.wachtwoord);
         if (gebruiker === undefined) {
             console.log('Account is niet gevonden');
+            console.log(collection.email);
         } else {
             console.log(gebruiker);
             console.log('Account is gevonden');
             res.render('readytostart');
         }
     });
+}
+
+function wachtwoordform(req, res) {
+    res.render('edit-pass');
 }
 
 function wachtwoordVeranderen(req, res) {
@@ -101,6 +106,10 @@ function accountVerwijderen(req, res) {
     // Volgt
 }
 
+function uitloggen(req, res) {
+    req.session = null;
+    res.render('index');
+}
 // Bij een 404
 function error404(req, res) {
     res.render('404');

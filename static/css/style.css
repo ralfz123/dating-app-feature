@@ -38,6 +38,12 @@ h3 {
     text-align: center;
 }
 
+h2 a {
+    font-weight: 400;
+    color: white;
+    text-align: center;
+}
+
 p {
     color: #FEEBEB;
     text-align: center;
@@ -71,6 +77,22 @@ body#registration main {
 
 main.succes {
     text-align: center;
+}
+
+.accountlinks {
+    text-align: center;
+    color: white;
+    font-size: 18px;
+    list-style: none;
+    margin: 30px 10px;
+}
+
+.accountlinks li {
+    margin: 15px 5px;
+}
+
+.accountlinks a {
+    color: white!important;
 }
 
 img {

@@ -8,8 +8,16 @@
 <body>
     <main class="succes">
         <%- include('partials/succes-icon'); -%>
-            <h2>Gelukt!</h2>
-            <p>U wordt automatisch binnen 5sec doorgestuurd</p>
+            <h2>Gelukt! je bent nu ingelogd</h2>
+
+            <ul class="accountlinks">
+                <li><a href="/edit-pass">Verander wachtwoord</a></li>
+                <li><a href="/delete-acc">Verwijder account</a></li>
+                <li><a href="/logout">Uitloggen</a></li>
+            </ul>
+
+
+
     </main>
     <footer>
         <%- include('partials/footer'); -%>
