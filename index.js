@@ -83,10 +83,11 @@ function gebruikerMaken(req, res) {
 // checkt of gebruiker bestaat en logt in
 function inloggen(req, res) {
 
-    return Gebruikers.findOne({ email: req.body.email })
+    return db.collection('users').findOne({ email: req.body.email })
         .then(data => {
             if (data.email === req.body.email && data.wachtwoord !== req.body.wachtwoord) {
                 console.log('email klopt, maar wachtwoord niet');
+                res.render('index');
             } else if (data.email === req.body.email && data.wachtwoord === req.body.wachtwoord) {
                 res.render('readytostart');
             } else {
