@@ -43,8 +43,12 @@ app.get('/log-out', uitloggen);
 // Wachtwoord wijzigen
 app.get('/edit-pass', wachtwoordform);
 app.post('/edit', wachtwoordVeranderen);
+// account verwijderen
+app.get('/delete', accountverwijderForm);
+app.post('/delete', accountVerwijderen);
 // error404
 app.get('/*', error404);
+
 
 // Laat de registratiepagina zien
 function registreren(req, res) {
@@ -125,6 +129,10 @@ function accountVerwijderen(req, res) {
         })
         .catch(err => console.error(`Error: ${err}`));
 
+}
+
+function accountverwijderForm(req, res) {
+    res.render('delete-acc');
 }
 
 function uitloggen(req, res) {
