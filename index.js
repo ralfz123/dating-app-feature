@@ -108,10 +108,49 @@ function wachtwoordform(req, res) {
 }
 
 function wachtwoordVeranderen(req, res) {
-    // Volgt
+
+
+    return db.collection('users').findOne({ email: req.body.email })
+        .then(data => {
+            if (data.email === req.body.email && data.wachtwoord !== req.body.wachtwoord) {
+                console.log('email klopt, maar wachtwoord niet');
+                res.render('index');
+            } else if (data.email === req.body.email && data.wachtwoord === req.body.wachtwoord) {
+                const query = { email: req.body.email };
+                // Wat wil je aanpassen
+                const update = {
+                    '$set': {
+                        'email': req.body.email,
+                        'wachtwoord': req.body.nieuwwachtwoord,
+                    }
+                };
+                // Return het geupdate document
+                const options = { returnNewDocument: true };
+
+                return db.collection('users').findOneAndUpdate(query, update, options)
+                    .then(updatedDocument => {
+                        if (updatedDocument) {
+                            console.log(`Dit document: ${updatedDocument}. is geupdated`);
+                        } else {
+                            console.log('Wachtwoord niet gevonden');
+                        }
+                        return updatedDocument;
+                    })
+                    .catch(err => console.error(`Gefaald om het te updaten door error: ${err}`));
+                res.render('readytostart');
+            } else {
+                console.log('account is niet gevonden');
+
+            }
+            return data;
+        })
+        .catch(err => console.error(`Error: ${err}`));
+    // Van welke record wil je het aanpaasen
+
 }
 
 function accountVerwijderen(req, res) {
+
 
     return db.collection('users').findOne({ email: req.body.email })
         .then(data => {
@@ -122,6 +161,7 @@ function accountVerwijderen(req, res) {
                 db.collection('users').deleteOne({ email: req.body.email })
                     .then(result => console.log(`Heeft ${result.deletedCount} account verwijderd.`))
                     .catch(err => console.error(`Delete failed with error: ${err}`));
+                res.render('index');
             } else {
                 console.log('account is niet bekend');
             }
@@ -136,7 +176,6 @@ function accountverwijderForm(req, res) {
 }
 
 function uitloggen(req, res) {
-    req.session = null;
     res.render('index');
 }
 // Bij een 404
