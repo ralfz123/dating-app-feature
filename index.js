@@ -4,7 +4,6 @@ const app = express();
 const port = 3000;
 const mongo = require('mongodb');
 const bodyParser = require('body-parser');
-let session = require('client-sessions');
 let db;
 let Gebruikers;
 
@@ -71,6 +70,8 @@ function gebruikerMaken(req, res) {
         'email': email,
         'wachtwoord': wachtwoord,
     };
+
+    // Pusht de data + input naar database
     db.collection('users').insertOne(data, function(err, collection) {
         if (err) {
             throw err;
@@ -82,7 +83,6 @@ function gebruikerMaken(req, res) {
 }
 // checkt of gebruiker bestaat en logt in
 function inloggen(req, res) {
-
     return db.collection('users').findOne({ email: req.body.email })
         .then(data => {
             if (data.email === req.body.email && data.wachtwoord !== req.body.wachtwoord) {
@@ -97,7 +97,6 @@ function inloggen(req, res) {
             return data;
         })
         .catch(err => console.error(`Error: ${err}`));
-
 }
 
 function wachtwoordform(req, res) {
@@ -109,7 +108,23 @@ function wachtwoordVeranderen(req, res) {
 }
 
 function accountVerwijderen(req, res) {
-    // Volgt
+
+    return db.collection('users').findOne({ email: req.body.email })
+        .then(data => {
+            if (data.email === req.body.email && data.wachtwoord !== req.body.wachtwoord) {
+                console.log('email klopt, maar wachtwoord niet');
+                res.render('index');
+            } else if (data.email === req.body.email && data.wachtwoord === req.body.wachtwoord) {
+                db.collection('users').deleteOne({ email: req.body.email })
+                    .then(result => console.log(`Heeft ${result.deletedCount} account verwijderd.`))
+                    .catch(err => console.error(`Delete failed with error: ${err}`));
+            } else {
+                console.log('account is niet bekend');
+            }
+            return data;
+        })
+        .catch(err => console.error(`Error: ${err}`));
+
 }
 
 function uitloggen(req, res) {
