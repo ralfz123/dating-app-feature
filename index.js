@@ -31,6 +31,7 @@ mongo.MongoClient.connect(url, { useUnifiedTopology: true }, function(err, clien
     Gebruikers.createIndex({ email: 1 }, { unique: true });
 });
 
+
 // Root
 app.get('/', goHome);
 // Registration
@@ -92,6 +93,7 @@ function inloggen(req, res) {
                 console.log('email klopt, maar wachtwoord niet');
                 res.render('index');
             } else if (data.email === req.body.email && data.wachtwoord === req.body.wachtwoord) {
+                console.log('account is ingelogd');
                 res.render('readytostart');
             } else {
                 console.log('account is niet gevonden');
