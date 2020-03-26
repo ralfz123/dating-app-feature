@@ -6,7 +6,7 @@ const mongo = require('mongodb');
 const bodyParser = require('body-parser');
 let db;
 let Gebruikers;
-
+//coment
 
 // Middleware set-up
 app
