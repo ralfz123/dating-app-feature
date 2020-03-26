@@ -1,7 +1,7 @@
 // Variabelen
 const express = require('express');
 const app = express();
-const port = 3000;
+const port = 5000;
 const mongo = require('mongodb');
 const bodyParser = require('body-parser');
 let db;
@@ -181,4 +181,4 @@ function error404(req, res) {
     res.render('404');
 }
 // Welke poort het live staat
-app.listen(3000, () => console.log('App is listening on port', port));
+app.listen(5000, () => console.log('App is listening on port', port));
