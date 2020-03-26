@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 let db;
 let Gebruikers;
 
-
+//  Test commit van Rodney
 // Middleware set-up
 app
     .use(express.static('static'))
