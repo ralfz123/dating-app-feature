@@ -1,0 +1,9 @@
+[{"_id":{"$oid":"507f191e810c19729de860ea"},"id":"gebruiker1","firstName":"Eliza","lastName": "Meijer","age": "24","functie": "Blogger","photo":"static/images/profile1.png","bio": "Hi, ik ben Eliza en ik ben als blogger altijd op zoek naar avontuur. Ga jij met mij mee op avontuur?", "hasLiked":[],"hasNotLiked":[]},
+
+{"_id":{"$oid":"506f191e810c19729de860ea"},"id":"gebruiker2","firstName":"Merel","lastName": "Mendel","age": "25","functie": "Journalist", "photo": "static/images/profile2.png","bio":"Haaaaay, Dit is Merel op zoek naar een kerel!", "hasLiked":[],"hasNotLiked":[]},
+
+{"_id":{"$oid":"505f191e810c19729de860ea"},"id":"gebruiker3","firstName": "Sophie","lastName": "vanBasten","age": "21","functie": "Fotograaf","photo": "static/images/profile3.png","bio":"Yo whatsuppp! I love to make pictures!", "hasLiked":[],"hasNotLiked":[]},
+
+{"_id":{"$oid":"504f191e810c19729de860ea"},"id":"gebruiker4","firstName": "Lara","lastName": "Vermeulen","age": "23","functie": "Influencer","photo": "static/images/profile4.png","bio":"Hi ik ben Lara and i'm living my best life as a influencer!!!", "hasLiked":[],"hasNotLiked":[]},
+
+{"_id":{"$oid":"503f191e810c19729de860ea"},"id":"gebruiker5","firstName": "Cheyenne","lastName": "vanOmmen","age": "24","functie": "Horeca","photo": "static/images/profile5.png","bio":"Ik hou van gezelligheid en een drankje, proost!", "hasLiked":[],"hasNotLiked":[]}]
