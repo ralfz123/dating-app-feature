@@ -9,7 +9,6 @@ const bodyParser = require('body-parser');
 let db;
 let Gebruikers;
 
-
 // Middleware set-up
 app
     .use(express.static('static'))
