@@ -8,6 +8,7 @@ const mongo = require('mongodb');
 const bodyParser = require('body-parser');
 let db;
 let Gebruikers;
+const session = require ('express-session');
 
 // Middleware set-up
 app
@@ -50,6 +51,15 @@ app.get('/delete', accountverwijderForm);
 app.post('/delete', accountVerwijderen);
 // error404
 app.get('/*', error404);
+// session
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: true,
+        secure: true
+})
+);
 
 
 // Laat de registratiepagina zien
@@ -88,7 +98,7 @@ function gebruikerMaken(req, res) {
 }
 // checkt of gebruiker bestaat en logt in
 function inloggen(req, res) {
-    return db.collection('users').findOne({ email: req.body.email })
+    return db.collection('users').findOne({ email: req.body.email } )    
         .then(data => {
             if (data.email === req.body.email && data.wachtwoord !== req.body.wachtwoord) {
                 console.log('email klopt, maar wachtwoord niet');
@@ -96,6 +106,7 @@ function inloggen(req, res) {
             } else if (data.email === req.body.email && data.wachtwoord === req.body.wachtwoord) {
                 console.log('account is ingelogd');
                 res.render('readytostart');
+                req.session.userId = data._id;
             } else {
                 console.log('account is niet gevonden');
 
