@@ -180,5 +180,37 @@ function uitloggen(req, res) {
 function error404(req, res) {
     res.render('404');
 }
+
+// code nina matches
+// route naar ejs. Renderen
+app.get('/findlove',gebruiker1)
+
+// function pagina gebruiker 1
+function gebruiker1 (req, res){
+  db.collection('Users').find({}).toArray(done)
+  function done(err, data){
+    if (err){
+      next (err)
+    } else {
+      console.log(data);
+    res.render('detail.ejs',{data: data})
+    }
+    }
+  }
+  // route naar ejs. Renderen
+  app.get('/matches',overzichtMatches)
+  // function pagina gebruiker 1
+  function overzichtMatches (req, res){
+    db.collection('Users').find({}).toArray(done)
+    function done(err, data){
+      if (err){
+        next (err)
+      } else {
+        console.log(data);
+      res.render('match.ejs',{data: data})
+      }
+      }
+    }
+
 // Welke poort het live staat
 app.listen(5000, () => console.log('App is listening on port', port));
