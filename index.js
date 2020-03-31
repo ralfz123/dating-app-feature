@@ -5,8 +5,12 @@ const port = 5000;
 const mongo = require('mongodb');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+let Strategy = require('./strategy');
 let db;
 let Gebruikers;
+
+exports = module.exports = Strategy;
+exports.Strategy = Strategy;
 
 // Middleware set-up
 app
