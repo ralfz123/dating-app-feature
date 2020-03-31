@@ -195,8 +195,10 @@ function accountverwijderForm(req, res) {
 
 // Uitloggen. Werkt nog niet, omdat ik nog geen sessie gebruik
 function uitloggen(req, res) {
+    req.session.destroy();
     res.render('index');
 }
+
 // Bij een 404
 function error404(req, res) {
     res.render('404');
