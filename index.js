@@ -239,4 +239,3 @@ function overzichtMatches(req, res) {
 
 // Welke poort het live staat
 app.listen(5000, () => console.log('App is listening on port', port));
-e
