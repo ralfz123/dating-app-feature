@@ -185,12 +185,6 @@ function accountVerwijderen(req, res) {
         .catch(err => console.error(`Error: ${err}`));
 }
 
-
-// Laat alleen het formulier zien om account te verwijderen
-function accountverwijderForm(req, res) {
-    res.render('delete-acc');
-}
-
 // Uitloggen door sessie te verwijderen
 function uitloggen(req, res) {
     req.session.destroy();
@@ -215,7 +209,6 @@ function gebruiker1(req, res) {
         console.log(data);
         res.render('detail.ejs', { data: data });
     }
-}
 }
 // route naar ejs. Renderen
 app.get('/matches', overzichtMatches);
