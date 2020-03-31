@@ -1,12 +1,12 @@
 // Variabelen
 const express = require('express');
 const app = express();
-const port = 3000;
+const port = 5000;
 const mongo = require('mongodb');
 const bodyParser = require('body-parser');
+const session = require('express-session');
 let db;
 let Gebruikers;
-
 
 // Middleware set-up
 app
@@ -15,7 +15,15 @@ app
     .use(bodyParser.json())
     .use(bodyParser.urlencoded({
         extended: true
-    }));
+    }))
+    .use(
+        session({
+            secret: '343ji43j4n3jn4jk3n',
+            resave: false,
+            saveUninitialized: true,
+            secure: true
+        })
+    );
 
 // Database connectie via .env
 require('dotenv').config();
@@ -31,8 +39,7 @@ mongo.MongoClient.connect(url, { useUnifiedTopology: true }, function(err, clien
     Gebruikers.createIndex({ email: 1 }, { unique: true });
 });
 
-
-// Root
+/// Root
 app.get('/', goHome);
 // Registration
 app.get('/registration', registreren);
@@ -40,24 +47,31 @@ app.post('/registrating', gebruikerMaken);
 // Inloggen
 app.post('/log-in', inloggen);
 // Uitloggen
-app.get('/log-out', uitloggen);
+app.get('/logout', uitloggen);
 // Wachtwoord wijzigen
 app.get('/edit-pass', wachtwoordform);
 app.post('/edit', wachtwoordVeranderen);
 // account verwijderen
-app.get('/delete', accountverwijderForm);
-app.post('/delete', accountVerwijderen);
+app.get('/delete', accountVerwijderen);
 // error404
 app.get('/*', error404);
 
-
-// Laat de registratiepagina zien
+// Checkt of er een ingelogde gebruiker is en stuurt aan de hand hiervan de juiste pagina door
 function registreren(req, res) {
-    res.render('registration');
+    if (req.session.userId) {
+        res.render('readytostart');
+        console.log('U bent al ingelogd');
+    } else {
+        res.render('registration');
+    }
 }
-// Gaat naar home
+// Checkt of er een ingelogde gebruiker is en stuurt aan de hand hiervan de juiste pagina door
 function goHome(req, res) {
-    res.render('index');
+    if (req.session.userId) {
+        res.render('readytostart');
+    } else {
+        res.render('index');
+    }
 }
 // Maakt de gebruiker aan op post
 function gebruikerMaken(req, res) {
@@ -75,70 +89,93 @@ function gebruikerMaken(req, res) {
         'email': email,
         'wachtwoord': wachtwoord,
     };
-    // Pusht de data + input naar database
-    db.collection('users').insertOne(data, function(err, collection) {
-        if (err) {
-            throw err;
-        } else {
-            console.log('Gebruiker toegevoegd');
-            res.render('readytostart');
-        }
-    });
-}
-// checkt of gebruiker bestaat en logt in
-function inloggen(req, res) {
-    return db.collection('users').findOne({ email: req.body.email })
-        .then(data => {
-            if (data.email === req.body.email && data.wachtwoord !== req.body.wachtwoord) {
-                console.log('email klopt, maar wachtwoord niet');
-                res.render('index');
-            } else if (data.email === req.body.email && data.wachtwoord === req.body.wachtwoord) {
-                console.log('account is ingelogd');
-                res.render('readytostart');
+    // Pusht de data naar database
+    Gebruikers
+        .insertOne(data, function(err) {
+            if (err) {
+                throw err;
             } else {
-                console.log('account is niet gevonden');
-
+                console.log('Gebruiker toegevoegd');
+                req.session.userId = data.email;
+                res.render('readytostart');
             }
-            return data;
-        })
-        .catch(err => console.error(`Error: ${err}`));
+        });
 }
+// checkt of gebruiker bestaat en logt in door een sessie aan te maken met het email als userID
+function inloggen(req, res) {
+    Gebruikers
+        .findOne({
+            email: req.body.email,
+            wachtwoord: req.body.wachtwoord
+        })
+        .then(data => {
+            console.log('Uw account is ingelogd!');
+            req.session.userId = data.email;
+            if (data) {
+                res.render('readytostart');
+                console.log(req.session.userId);
+            }
+        })
+        .catch(err => {
+            console.log(err);
+        });
+}
+
 
 function wachtwoordform(req, res) {
     res.render('edit-pass');
 }
 
-
-// Omdat ik geen sessie gebruik nog, moet ik het account eerst valideren door de gebruiker wachtwoord en email te laten opgeven om daarna pas deze functie uit te laten voeren
+// functie om wachtwoord te veranderen als de gebruiker ingelogd(als sessie bestaat) is
 function wachtwoordVeranderen(req, res) {
-    return db.collection('users').findOne({ email: req.body.email })
-        .then(data => {
-            if (data.email === req.body.email && data.wachtwoord !== req.body.wachtwoord) {
-                console.log('email klopt, maar wachtwoord niet');
-                res.render('index');
-            } else if (data.email === req.body.email && data.wachtwoord === req.body.wachtwoord) {
-                const query = { email: req.body.email };
-                // Wat wil je aanpassen
-                const update = {
-                    '$set': {
-                        'email': req.body.email,
-                        'wachtwoord': req.body.nieuwwachtwoord,
-                    }
-                };
-                // Return het geupdate document
-                const options = { returnNewDocument: true };
-
-                return db.collection('users').findOneAndUpdate(query, update, options)
-                    .then(updatedDocument => {
-                        if (updatedDocument) {
-                            console.log(`Dit document: ${updatedDocument}. is geupdated`);
-                            res.render('index');
-                        } else {
-                            console.log('Wachtwoord niet gevonden');
+    if (req.session.userId) {
+        Gebruikers
+            .findOne({
+                email: req.session.userId,
+            })
+            .then(data => {
+                if (data) {
+                    const query = { email: req.session.userId };
+                    // Wat wil je aanpassen
+                    const update = {
+                        '$set': {
+                            'email': req.session.userId,
+                            'wachtwoord': req.body.nieuwwachtwoord,
                         }
-                        return updatedDocument;
-                    })
-                    .catch(err => console.error(`Gefaald om het te updaten door error: ${err}`));
+                    };
+                    const options = { returnNewDocument: true };
+                    Gebruikers
+                        .findOneAndUpdate(query, update, options)
+                        .then(updatedDocument => {
+                            if (updatedDocument) {
+                                console.log(`Dit document: ${updatedDocument}. is geupdated`);
+                                res.render('index');
+                            }
+                            return updatedDocument;
+                        })
+                        .catch(err => console.error(`Gefaald om het te updaten door error: ${err}`));
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    } else {
+        res.render('index');
+        console.log('u bent niet ingelogd');
+    }
+}
+// functie om account te verwijderen als de gebruiker ingelogd(als sessie bestaat) is en daarna de sessie vernietigen
+function accountVerwijderen(req, res) {
+    Gebruikers
+        .findOne({ email: req.session.userId })
+        .then(data => {
+            if (data) {
+                Gebruikers
+                    .deleteOne({ email: req.session.userId })
+                    .then(result => console.log(`Heeft ${result.deletedCount} account verwijderd.`))
+                    .catch(err => console.error(`Deleten is niet gelukt door error: ${err}`));
+                req.session.destroy();
+                res.render('index');
             } else {
                 console.log('account is niet gevonden');
             }
@@ -147,38 +184,47 @@ function wachtwoordVeranderen(req, res) {
         .catch(err => console.error(`Error: ${err}`));
 }
 
-// Omdat ik geen sessie gebruik nog, moet ik het account eerst valideren door de gebruiker wachtwoord en email te laten opgeven om daarna pas deze functie uit te laten voeren
-function accountVerwijderen(req, res) {
-    return db.collection('users').findOne({ email: req.body.email })
-        .then(data => {
-            if (data.email === req.body.email && data.wachtwoord !== req.body.wachtwoord) {
-                console.log('email klopt, maar wachtwoord niet');
-                res.render('index');
-            } else if (data.email === req.body.email && data.wachtwoord === req.body.wachtwoord) {
-                db.collection('users').deleteOne({ email: req.body.email })
-                    .then(result => console.log(`Heeft ${result.deletedCount} account verwijderd.`))
-                    .catch(err => console.error(`Delete failed with error: ${err}`));
-                res.render('index');
-            } else {
-                console.log('account is niet bekend');
-            }
-            return data;
-        })
-        .catch(err => console.error(`Error: ${err}`));
-}
-
-// Laat alleen het formulier zien om account te verwijderen
-function accountverwijderForm(req, res) {
-    res.render('delete-acc');
-}
-
-// Uitloggen. Werkt nog niet, omdat ik nog geen sessie gebruik
+// Uitloggen door sessie te verwijderen
 function uitloggen(req, res) {
+    req.session.destroy();
     res.render('index');
 }
+
 // Bij een 404
 function error404(req, res) {
     res.render('404');
 }
+
+// code nina matches
+// route naar ejs. Renderen
+app.get('/findlove', gebruiker1);
+
+// function pagina gebruiker 1
+function gebruiker1(req, res) {
+    Gebruikers
+        .find({}).toArray(done);
+
+    function done(err, data) {
+        console.log(data);
+        res.render('detail.ejs', { data: data });
+    }
+}
+// route naar ejs. Renderen
+app.get('/matches', overzichtMatches);
+// function pagina gebruiker 1
+function overzichtMatches(req, res) {
+    Gebruikers
+        .find({}).toArray(done);
+
+    function done(err, data) {
+        if (err) {
+            next(err);
+        } else {
+            console.log(data);
+            res.render('match.ejs', { data: data });
+        }
+    }
+}
+
 // Welke poort het live staat
-app.listen(3000, () => console.log('App is listening on port', port));
+app.listen(5000, () => console.log('App is listening on port', port));
