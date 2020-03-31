@@ -1,16 +1,13 @@
 // Variabelen
-const express = require('express');
-const app = express();
-const port = 5000;
-const mongo = require('mongodb');
-const bodyParser = require('body-parser');
-const session = require('express-session');
-let Strategy = require('./strategy');
+const express = require('express'),
+    app = express(),
+    port = 5000,
+    mongo = require('mongodb'),
+    bodyParser = require('body-parser'),
+    session = require('express-session'),
+    passport = require('passport');
 let db;
 let Gebruikers;
-
-exports = module.exports = Strategy;
-exports.Strategy = Strategy;
 
 // Middleware set-up
 app
