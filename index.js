@@ -129,8 +129,7 @@ function wachtwoordform(req, res) {
     res.render('edit-pass');
 }
 
-
-// Omdat ik geen sessie gebruik nog, moet ik het account eerst valideren door de gebruiker wachtwoord en email te laten opgeven om daarna pas deze functie uit te laten voeren
+// functie om wachtwoord te veranderen als de gebruiker ingelogd(als sessie bestaat) is
 function wachtwoordVeranderen(req, res) {
     if (req.session.userId) {
         Gebruikers
@@ -168,26 +167,26 @@ function wachtwoordVeranderen(req, res) {
         console.log('u bent niet ingelogd');
     }
 }
-
-// Omdat ik geen sessie gebruik nog, moet ik het account eerst valideren door de gebruiker wachtwoord en email te laten opgeven om daarna pas deze functie uit te laten voeren
+// functie om account te verwijderen als de gebruiker ingelogd(als sessie bestaat) is en daarna de sessie vernietigen
 function accountVerwijderen(req, res) {
-    return db.collection('users').findOne({ email: req.body.email })
+    Gebruikers
+        .findOne({ email: req.session.userId })
         .then(data => {
-            if (data.email === req.body.email && data.wachtwoord !== req.body.wachtwoord) {
-                console.log('email klopt, maar wachtwoord niet');
-                res.render('index');
-            } else if (data.email === req.body.email && data.wachtwoord === req.body.wachtwoord) {
-                db.collection('users').deleteOne({ email: req.body.email })
+            if (data) {
+                Gebruikers
+                    .deleteOne({ email: req.session.userId })
                     .then(result => console.log(`Heeft ${result.deletedCount} account verwijderd.`))
                     .catch(err => console.error(`Delete failed with error: ${err}`));
+                req.session.destroy();
                 res.render('index');
             } else {
-                console.log('account is niet bekend');
+                console.log('account is niet bestaand');
             }
             return data;
         })
         .catch(err => console.error(`Error: ${err}`));
 }
+
 
 // Laat alleen het formulier zien om account te verwijderen
 function accountverwijderForm(req, res) {
