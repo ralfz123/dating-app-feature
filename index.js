@@ -174,11 +174,11 @@ function accountVerwijderen(req, res) {
                 Gebruikers
                     .deleteOne({ email: req.session.userId })
                     .then(result => console.log(`Heeft ${result.deletedCount} account verwijderd.`))
-                    .catch(err => console.error(`Delete failed with error: ${err}`));
+                    .catch(err => console.error(`Deleten is niet gelukt door error: ${err}`));
                 req.session.destroy();
                 res.render('index');
             } else {
-                console.log('account is niet bestaand');
+                console.log('account is niet gevonden');
             }
             return data;
         })
