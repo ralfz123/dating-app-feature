@@ -100,6 +100,7 @@ function gebruikerMaken(req, res) {
                 throw err;
             } else {
                 console.log('Gebruiker toegevoegd');
+                req.session.userId = data.email;
                 res.render('readytostart');
             }
         });
