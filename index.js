@@ -71,7 +71,11 @@ function registreren(req, res) {
 }
 // Gaat naar home
 function goHome(req, res) {
-    res.render('index');
+    if (req.session.userId) {
+        res.render('readytostart');
+    } else {
+        res.render('index');
+    }
 }
 // Maakt de gebruiker aan op post
 function gebruikerMaken(req, res) {
@@ -231,3 +235,4 @@ function overzichtMatches(req, res) {
 
 // Welke poort het live staat
 app.listen(5000, () => console.log('App is listening on port', port));
+e
