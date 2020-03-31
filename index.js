@@ -15,7 +15,15 @@ app
     .use(bodyParser.json())
     .use(bodyParser.urlencoded({
         extended: true
-    }));
+    }))
+    .use(
+        session({
+            secret: '343ji43j4n3jn4jk3n',
+            resave: false,
+            saveUninitialized: true,
+            secure: true
+        })
+    );
 
 // Database connectie via .env
 require('dotenv').config();
@@ -183,34 +191,36 @@ function error404(req, res) {
 
 // code nina matches
 // route naar ejs. Renderen
-app.get('/findlove',gebruiker1)
+app.get('/findlove', gebruiker1);
 
 // function pagina gebruiker 1
-function gebruiker1 (req, res){
-  db.collection('Users').find({}).toArray(done)
-  function done(err, data){
-    if (err){
-      next (err)
-    } else {
-      console.log(data);
-    res.render('detail.ejs',{data: data})
+function gebruiker1(req, res) {
+    db.collection('Users').find({}).toArray(done);
+
+    function done(err, data) {
+        if (err) {
+            next(err);
+        } else {
+            console.log(data);
+            res.render('detail.ejs', { data: data });
+        }
     }
+}
+// route naar ejs. Renderen
+app.get('/matches', overzichtMatches);
+// function pagina gebruiker 1
+function overzichtMatches(req, res) {
+    db.collection('Users').find({}).toArray(done);
+
+    function done(err, data) {
+        if (err) {
+            next(err);
+        } else {
+            console.log(data);
+            res.render('match.ejs', { data: data });
+        }
     }
-  }
-  // route naar ejs. Renderen
-  app.get('/matches',overzichtMatches)
-  // function pagina gebruiker 1
-  function overzichtMatches (req, res){
-    db.collection('Users').find({}).toArray(done)
-    function done(err, data){
-      if (err){
-        next (err)
-      } else {
-        console.log(data);
-      res.render('match.ejs',{data: data})
-      }
-      }
-    }
+}
 
 // Welke poort het live staat
 app.listen(5000, () => console.log('App is listening on port', port));
