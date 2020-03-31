@@ -41,7 +41,7 @@ mongo.MongoClient.connect(url, { useUnifiedTopology: true }, function(err, clien
 });
 
 
-// Root
+/// Root
 app.get('/', goHome);
 // Registration
 app.get('/registration', registreren);
@@ -49,18 +49,16 @@ app.post('/registrating', gebruikerMaken);
 // Inloggen
 app.post('/log-in', inloggen);
 // Uitloggen
-app.get('/log-out', uitloggen);
+app.get('/logout', uitloggen);
 // Wachtwoord wijzigen
 app.get('/edit-pass', wachtwoordform);
 app.post('/edit', wachtwoordVeranderen);
 // account verwijderen
-app.get('/delete', accountverwijderForm);
-app.post('/delete', accountVerwijderen);
+app.get('/delete', accountVerwijderen);
 // error404
 app.get('/*', error404);
 
-
-// Laat de registratiepagina zien
+// Checkt of er een ingelogde gebruiker is en stuurt aan de hand hiervan de juiste pagina door
 function registreren(req, res) {
     if (req.session.userId) {
         res.render('readytostart');
@@ -69,7 +67,7 @@ function registreren(req, res) {
         res.render('registration');
     }
 }
-// Gaat naar home
+// Checkt of er een ingelogde gebruiker is en stuurt aan de hand hiervan de juiste pagina door
 function goHome(req, res) {
     if (req.session.userId) {
         res.render('readytostart');
@@ -93,7 +91,7 @@ function gebruikerMaken(req, res) {
         'email': email,
         'wachtwoord': wachtwoord,
     };
-    // Pusht de data + input naar database
+    // Pusht de data naar database
     Gebruikers
         .insertOne(data, function(err) {
             if (err) {
@@ -105,7 +103,7 @@ function gebruikerMaken(req, res) {
             }
         });
 }
-// checkt of gebruiker bestaat en logt in
+// checkt of gebruiker bestaat en logt in door een sessie aan te maken met het email als userID
 function inloggen(req, res) {
     Gebruikers
         .findOne({
@@ -193,7 +191,7 @@ function accountverwijderForm(req, res) {
     res.render('delete-acc');
 }
 
-// Uitloggen. Werkt nog niet, omdat ik nog geen sessie gebruik
+// Uitloggen door sessie te verwijderen
 function uitloggen(req, res) {
     req.session.destroy();
     res.render('index');
@@ -210,22 +208,21 @@ app.get('/findlove', gebruiker1);
 
 // function pagina gebruiker 1
 function gebruiker1(req, res) {
-    db.collection('Users').find({}).toArray(done);
+    Gebruikers
+        .find({}).toArray(done);
 
     function done(err, data) {
-        if (err) {
-            next(err);
-        } else {
-            console.log(data);
-            res.render('detail.ejs', { data: data });
-        }
+        console.log(data);
+        res.render('detail.ejs', { data: data });
     }
+}
 }
 // route naar ejs. Renderen
 app.get('/matches', overzichtMatches);
 // function pagina gebruiker 1
 function overzichtMatches(req, res) {
-    db.collection('Users').find({}).toArray(done);
+    Gebruikers
+        .find({}).toArray(done);
 
     function done(err, data) {
         if (err) {
