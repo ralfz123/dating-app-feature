@@ -7,7 +7,6 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 let db;
 let Gebruikers;
-//coment
 
 // Middleware set-up
 app
@@ -39,7 +38,6 @@ mongo.MongoClient.connect(url, { useUnifiedTopology: true }, function(err, clien
     Gebruikers = db.collection(process.env.DB_NAME);
     Gebruikers.createIndex({ email: 1 }, { unique: true });
 });
-
 
 /// Root
 app.get('/', goHome);
@@ -122,6 +120,7 @@ function inloggen(req, res) {
             console.log(err);
         });
 }
+
 
 function wachtwoordform(req, res) {
     res.render('edit-pass');
