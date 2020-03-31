@@ -4,6 +4,7 @@ const app = express();
 const port = 5000;
 const mongo = require('mongodb');
 const bodyParser = require('body-parser');
+const session = require('express-session');
 let db;
 let Gebruikers;
 //coment
@@ -61,7 +62,12 @@ app.get('/*', error404);
 
 // Laat de registratiepagina zien
 function registreren(req, res) {
-    res.render('registration');
+    if (req.session.userId) {
+        res.render('readytostart');
+        console.log('U bent al ingelogd');
+    } else {
+        res.render('registration');
+    }
 }
 // Gaat naar home
 function goHome(req, res) {
@@ -84,14 +90,15 @@ function gebruikerMaken(req, res) {
         'wachtwoord': wachtwoord,
     };
     // Pusht de data + input naar database
-    db.collection('users').insertOne(data, function(err, collection) {
-        if (err) {
-            throw err;
-        } else {
-            console.log('Gebruiker toegevoegd');
-            res.render('readytostart');
-        }
-    });
+    Gebruikers
+        .insertOne(data, function(err) {
+            if (err) {
+                throw err;
+            } else {
+                console.log('Gebruiker toegevoegd');
+                res.render('readytostart');
+            }
+        });
 }
 // checkt of gebruiker bestaat en logt in
 function inloggen(req, res) {
