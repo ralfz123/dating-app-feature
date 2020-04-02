@@ -146,8 +146,7 @@ function wachtwoordform(req, res) {
     res.render('edit-pass');
 }
 
-
-// Omdat ik geen sessie gebruik nog, moet ik het account eerst valideren door de gebruiker wachtwoord en email te laten opgeven om daarna pas deze functie uit te laten voeren
+// Deze functie veranderd het wachtwoord door eerst te controleren of gebruiker ingelogd is en daarna account te vinden met die email en verander het wachtwoord vanuit de form naar database + flasht status naar user
 function wachtwoordVeranderen(req, res) {
     if (req.session.loggedIN) {
         Gebruikers
@@ -188,7 +187,7 @@ function wachtwoordVeranderen(req, res) {
     }
 }
 
-// Omdat ik geen sessie gebruik nog, moet ik het account eerst valideren door de gebruiker wachtwoord en email te laten opgeven om daarna pas deze functie uit te laten voeren
+// Deze functie verwijderd het account door eerst te controleren of gebruiker ingelogd is en daarna account te vinden met die email en verwijderd het account en zet de session.loggedIn naar false  + flasht status naar user
 function accountVerwijderen(req, res) {
     Gebruikers
         .findOne({ email: req.session.userId })
@@ -204,8 +203,7 @@ function accountVerwijderen(req, res) {
         })
         .catch(err => console.error(`Error: ${err}`));
 }
-
-// Uitloggen. Werkt nog niet, omdat ik nog geen sessie gebruik
+// Zet de session.loggedIN naar false = niemand ingelogd. Session destroyen is niet mogelijk, omdat flash sessions nodig heeft
 function uitloggen(req, res) {
     req.session.loggedIN = false;
     req.flash('succes', 'U bent uitgelogd');
