@@ -1,11 +1,13 @@
 // Variabelen
-const express = require('express'),
+const
+    express = require('express'),
     app = express(),
-    port = 5000,
+    port = 3000,
     mongo = require('mongodb'),
     bodyParser = require('body-parser'),
     session = require('express-session'),
-    passport = require('passport');
+    flash = require('connect-flash'),
+    cookieParser = require('cookie-parser');
 let db;
 let Gebruikers;
 
@@ -14,31 +16,37 @@ app
     .use(express.static('static'))
     .set('view engine', 'ejs')
     .use(bodyParser.json())
-    .use(bodyParser.urlencoded({
-        extended: true
+    .use(bodyParser.urlencoded({ extended: true }))
+    .use(passport.initialize())
+    .use(passport.session())
+    .use(session({
+        secret: 'ahbn ahbn ahbn ',
+        cookie: { maxAge: 60000 },
+        resave: false,
+        saveUninitialized: true,
+        secure: true,
     }))
-    .use(
-        session({
-            secret: '343ji43j4n3jn4jk3n',
-            resave: false,
-            saveUninitialized: true,
-            secure: true
-        })
-    );
+    .use(function(req, res, next) {
+        res.locals.messages = require('express-messages')(req, res);
+        next();
+    })
+    .use(flash());
 
 // Database connectie via .env
 require('dotenv').config();
 let url = 'mongodb+srv://' + process.env.DB_USER + ':' + process.env.DB_PASS + '@' + process.env.DB_URL + process.env.DB_EN;
-mongo.MongoClient.connect(url, { useUnifiedTopology: true }, function(err, client) {
-    if (err) {
-        console.log('Database is niet connected');
-    } else if (client) {
-        console.log('Connectie met database is live');
-    }
-    db = client.db(process.env.DB_NAME);
-    Gebruikers = db.collection(process.env.DB_NAME);
-    Gebruikers.createIndex({ email: 1 }, { unique: true });
-});
+
+mongo.MongoClient
+    .connect(url, { useUnifiedTopology: true }, function(err, client) {
+        if (err) {
+            console.log('Database is niet connected');
+        } else if (client) {
+            console.log('Connectie met database is live');
+        }
+        db = client.db(process.env.DB_NAME);
+        Gebruikers = db.collection(process.env.DB_NAME);
+        Gebruikers.createIndex({ email: 1 }, { unique: true });
+    });
 
 /// Root
 app.get('/', goHome);
