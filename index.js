@@ -196,10 +196,24 @@ function error404(req, res) {
     res.render('404');
 }
 
-// code nina matches
-// route naar ejs. Renderen
+// code nina liken/ matches
+// na dat je gebruiker hebt gekozen
+app.post("/login", inloggen);
+// pagina om gebruiker te kiezen
+app.get('/start',gebruikers)
+// route naar matches
+app.get('/matches', overzichtMatches);
+// route naar profiel liken page
 app.get('/findlove', gebruiker1);
 
+// wanneer je bent ingelogd kom je op de findlove pagina
+function inloggen(req, res, next) {
+    req.session.currentUser = req.body.user;
+    userid = req.session.currentUser;
+    userCollection = db.collection("user" + userid);
+    res.redirect("findlove");
+    console.log("Je bent ingelogd! Find true LOVE!! " + userid);
+  }
 // function pagina gebruiker 1
 function gebruiker1(req, res) {
     Gebruikers
@@ -210,9 +224,8 @@ function gebruiker1(req, res) {
         res.render('detail.ejs', { data: data });
     }
 }
-// route naar ejs. Renderen
-app.get('/matches', overzichtMatches);
-// function pagina gebruiker 1
+
+// function pagina gebruiker1 matches
 function overzichtMatches(req, res) {
     Gebruikers
         .find({}).toArray(done);
@@ -226,6 +239,22 @@ function overzichtMatches(req, res) {
         }
     }
 }
+//db 
+let db = null;
+let userCollection = null; 
 
+// function db
+function gebruikers (req, res){
+    db.collection('Users').find({}).toArray(done)
+    function done(err, data){
+      if (err){
+        next (err)
+      } else {
+        console.log(data);
+      res.render('add.ejs',{data: data})
+      }
+      }
+    }
+    
 // Welke poort het live staat
 app.listen(5000, () => console.log('App is listening on port', port));
