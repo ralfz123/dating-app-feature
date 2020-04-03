@@ -6,8 +6,7 @@ const
     mongo = require('mongodb'),
     bodyParser = require('body-parser'),
     session = require('express-session'),
-    flash = require('connect-flash'),
-    cookieParser = require('cookie-parser');
+    flash = require('connect-flash');
 let
     db,
     Gebruikers;
