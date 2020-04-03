@@ -47,22 +47,17 @@ mongo.MongoClient
         Gebruikers.createIndex({ email: 1 }, { unique: true });
     });
 
-/// Root
-app.get('/', goHome);
-// Registration
-app.get('/registration', registreren);
-app.post('/registrating', gebruikerMaken);
-// Inloggen
-app.post('/log-in', inloggen);
-// Uitloggen
-app.get('/logout', uitloggen);
-// Wachtwoord wijzigen
-app.get('/edit-pass', wachtwoordform);
-app.post('/edit', wachtwoordVeranderen);
-// account verwijderen
-app.get('/delete', accountVerwijderen);
-// error404
-app.get('/*', error404);
+// routing
+app
+    .get('/', goHome) //root 
+    .get('/registration', registreren)
+    .post('/registrating', gebruikerMaken)
+    .post('/log-in', inloggen)
+    .get('/logout', uitloggen)
+    .get('/edit-pass', wachtwoordform)
+    .post('/edit', wachtwoordVeranderen)
+    .get('/delete', accountVerwijderen)
+    .get('/*', error404);
 
 // Checkt of er een ingelogde gebruiker is en stuurt aan de hand hiervan de juiste pagina door
 function registreren(req, res) {
