@@ -18,8 +18,6 @@ app
     .set('view engine', 'ejs')
     .use(bodyParser.json())
     .use(bodyParser.urlencoded({ extended: true }))
-    .use(passport.initialize())
-    .use(passport.session())
     .use(session({
         secret: 'ahbn ahbn ahbn ',
         cookie: { maxAge: 60000 },
