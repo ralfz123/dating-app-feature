@@ -2,7 +2,7 @@
 const
     express = require('express'),
     app = express(),
-    port = 3000,
+    port = 5000,
     mongo = require('mongodb'),
     bodyParser = require('body-parser'),
     session = require('express-session'),
@@ -211,8 +211,8 @@ function error404(req, res) {
 // na dat je gebruiker hebt gekozen
 app.post("/login", inloggen);
 // pagina om gebruiker te kiezen
-app.get('/start',gebruikers)
-// route naar matches
+app.get('/start', gebruikers)
+    // route naar matches
 app.get('/matches', overzichtMatches);
 // route naar profiel liken page
 app.get('/findlove', gebruiker1);
@@ -224,7 +224,7 @@ function inloggen(req, res, next) {
     userCollection = db.collection("user" + userid);
     res.redirect("findlove");
     console.log("Je bent ingelogd! Find true LOVE!! " + userid);
-  }
+}
 // function pagina gebruiker 1
 function gebruiker1(req, res) {
     Gebruikers
@@ -251,21 +251,21 @@ function overzichtMatches(req, res) {
     }
 }
 //db 
-let db = null;
-let userCollection = null; 
+let userCollection = null;
 
 // function db
-function gebruikers (req, res){
+function gebruikers(req, res) {
     db.collection('Users').find({}).toArray(done)
-    function done(err, data){
-      if (err){
-        next (err)
-      } else {
-        console.log(data);
-      res.render('add.ejs',{data: data})
-      }
-      }
+
+    function done(err, data) {
+        if (err) {
+            next(err)
+        } else {
+            console.log(data);
+            res.render('add.ejs', { data: data })
+        }
     }
-    
+}
+
 // Welke poort het live staat
 app.listen(5000, () => console.log('App is listening on port', port));
