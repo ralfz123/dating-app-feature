@@ -14,16 +14,16 @@
     <main>
         <!-- <%- include('partials/registration-form'); -%> -->
         
-        <form class="registratepage" action="registrate" method="POST" enctype="multipart/form-data">
+        <form class="registratepage" action="registrating" method="POST">
             <fieldset>
                 <label for="voornaam">Voornaam</label>
-                <input class="firsttype" type="text" name="firstName" placeholder="Voornaam" required>
+                <input class="firsttype" type="text" name="voornaam" placeholder="Voornaam" required>
     
                 <label for="achternaam">Achternaam</label>
-                <input class="firsttype" type="text" name="firstName" placeholder="Achternaam" required>
+                <input class="firsttype" type="text" name="achternaam" placeholder="Achternaam" required>
 
                 <label for="geboortedatum">Geboortedatum</label>
-                <input type="date" name="age" placeholder="dd - mm - jjjj" required>
+                <input type="date" name="geboortedatum" placeholder="dd - mm - jjjj" required>
 
                 <label for="email">Email</label>
                 <input type="email" required name="email" minlength="6 " maxlength="60 " placeholder="B.v blabla@outlook.com ">
@@ -69,10 +69,10 @@
                 <img class="renderedphoto" src=" " alt="foto1">
     
                 <label for="functie">Functie</label>
-                <input class="firsttype" type="text" name="firstName" placeholder="B.v. fotograaf">    
+                <input class="firsttype" type="text" name="functie" placeholder="B.v. fotograaf">    
             
                 <label for="bio">Bio</label>
-                <input class="firsttype" type="text" name="firstName" placeholder="Vertel iets over jezelf...">
+                <input class="firsttype" type="text" name="bio" placeholder="Vertel iets over jezelf...">
             </fieldset>
     
             <button class="back" name="back">Terug</button>

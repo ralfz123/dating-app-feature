@@ -75,23 +75,23 @@ function goHome(req, res) {
 }
 // Maakt de gebruiker aan op post
 function gebruikerMaken(req, res) {
-
-    let voornaam = req.body.voornaam;
-    let achternaam = req.body.achternaam;
-    let geboorteDatum = req.body.geboortedatum;
-    let email = req.body.email;
-    let wachtwoord = req.body.wachtwoord;
-
     let data = {
-        'voornaam': voornaam,
-        'achternaam': achternaam,
-        'geboortedatum': geboorteDatum,
-        'email': email,
-        'wachtwoord': wachtwoord,
+        'voornaam': req.body.voornaam,
+        'achternaam': req.body.achternaam,
+        'geboortedatum': req.body.geboortedatum,
+        'email': req.body.email,
+        'wachtwoord': req.body.wachtwoord,
+        'gender' : req.body.gender,
+        'searchSex' : req.body.searchSex,
+        'photo' : req.body.photo,
+        'functie' : req.body.functie,
+        'bio' : req.body.bio
     };
+    
     // Pusht de data naar database
     Gebruikers
         .insertOne(data, function(err) {
+            console.log(data)
             if (err) {
                 throw err;
             } else {
