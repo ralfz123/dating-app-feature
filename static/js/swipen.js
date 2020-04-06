@@ -2,19 +2,19 @@
 const main = document.getElementsByTagName('main')[0];
 const people = main.getElementsByTagName('li');
 const likeButtons = document.querySelectorAll('.likebut');
-const dislikeButtons = document.querySelectorAll('.dislikebut');
+const dislikeButtons = document.querySelectorAll('.disLikebut');
 
 let i = 0;
 
 // functie liken en disliken
 function ratePerson() {
-        if (i < (people.length)) { // show next person
+        if (i < (people.length)) { 
             this.closest('li').style.display = 'none';
             i++;
 
             let node = event.target;
 
-            if (node.classList.contains('dislikebut')) {
+            if (node.classList.contains('disLikebut')) {
                 let id = node.dataset.id;
 
                 var res = new XMLHttpRequest();

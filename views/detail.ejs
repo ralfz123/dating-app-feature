@@ -26,13 +26,13 @@
   </a>  
 
   <figcaption>
-  <h2><%= data[i].firstName + ' ' + data[i].lastName %></h2>
-  <h3><%= data[i].age %> </h3>
+  <h2><%= data[i].voornaam + ' ' + data[i].achternaam %></h2>
+  <h3><%= data[i].leeftijd %> </h3>
   <p><%= data[i].bio %></p>
 
   <form action="/<%= data[i].id %>" method="post">
-  <button class="likebut" type="button"> <img src="/static/images/no.png" alt="DislikeButton"> </button>
-  <button class="likebut" type="button"> <img src="/static/images/undo.png" alt="TerugButton"> </button>
+  <button class="disLikebut" type="button"> <img src="/static/images/no.png" alt="DislikeButton"> </button>
+
   <button class="likebut" type="button"> <img src="/static/images/like.png" alt="LikeButton"> </button>
                     
   </form>
