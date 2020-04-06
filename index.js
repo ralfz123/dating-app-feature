@@ -2,8 +2,8 @@
 const
     express = require('express'),
     app = express(),
-    port = 5000,
-    database = require('mongodb'),
+    port = 3000,
+    mongo = require('mongodb'),
     bodyParser = require('body-parser'),
     session = require('express-session'),
     flash = require('connect-flash');
@@ -34,29 +34,34 @@ app
 require('dotenv').config();
 let url = 'mongodb+srv://' + process.env.DB_USER + ':' + process.env.DB_PASS + '@' + process.env.DB_URL + process.env.DB_EN;
 
-database.MongoClient
-    .connect(url, { useUnifiedTopology: true })
-    .then(connection => {
-        db = connection.db(process.env.DB_NAME);
+mongo.MongoClient
+    .connect(url, { useUnifiedTopology: true }, function(err, client) {
+        if (err) {
+            console.log('Database is niet connected');
+        } else if (client) {
+            console.log('Connectie met database is live');
+        }
+        db = client.db(process.env.DB_NAME);
         Gebruikers = db.collection(process.env.DB_NAME);
         Gebruikers.createIndex({ email: 1 }, { unique: true });
-        console.log('db is connected');
-    })
-    .catch(err => {
-        console.error(`Niet verbonden door error: ${err.code}`);
     });
 
-// routing
-app
-    .get('/', goHome) //root 
-    .get('/registration', registreren)
-    .post('/registrating', gebruikerMaken)
-    .post('/log-in', inloggen)
-    .get('/logout', uitloggen)
-    .get('/edit-pass', wachtwoordform)
-    .post('/edit', wachtwoordVeranderen)
-    .get('/delete', accountVerwijderen)
-    .get('/*', error404);
+/// Root
+app.get('/', goHome);
+// Registration
+app.get('/registration', registreren);
+app.post('/registrating', gebruikerMaken);
+// Inloggen
+app.post('/log-in', inloggen);
+// Uitloggen
+app.get('/logout', uitloggen);
+// Wachtwoord wijzigen
+app.get('/edit-pass', wachtwoordform);
+app.post('/edit', wachtwoordVeranderen);
+// account verwijderen
+app.get('/delete', accountVerwijderen);
+// error404
+app.get('/*', error404);
 
 // Checkt of er een ingelogde gebruiker is en stuurt aan de hand hiervan de juiste pagina door
 function registreren(req, res) {
@@ -85,10 +90,18 @@ function gebruikerMaken(req, res) {
         'geboortedatum': req.body.geboortedatum,
         'email': req.body.email,
         'wachtwoord': req.body.wachtwoord,
+        'gender': req.body.gender,
+        'searchSex': req.body.searchSex,
+        'photo': req.body.photo,
+        'functie': req.body.functie,
+        'bio': req.body.bio
     };
+
     // Pusht de data + input naar database (gebruikers = collection('users'))
+
     Gebruikers
         .insertOne(data, function(err) {
+            console.log(data)
             if (err) {
                 req.flash('error', err);
                 res.render('registration');
@@ -116,7 +129,7 @@ function inloggen(req, res) {
                     req.session.userId = data.email;
                     req.session.userName = data.voornaam;
                     req.flash('succes', 'Hoi ' + req.session.userName);
-                    res.redirect('findlove');
+                    res.render('readytostart');
                     console.log('ingelogd als ' + req.session.userId);
                 } else {
                     req.flash('error', 'Wachtwoord is incorrect');
@@ -166,9 +179,7 @@ function wachtwoordVeranderen(req, res) {
                             }
                             return updatedDocument;
                         })
-                        .catch(err => console.error(`
-                    Gefaald om het te updaten door error: $ { err }
-                    `));
+                        .catch(err => console.error(`Gefaald om het te updaten door error: ${err}`));
                 }
             })
             .catch(err => {
@@ -188,21 +199,14 @@ function accountVerwijderen(req, res) {
         .then(data => {
             Gebruikers
                 .deleteOne({ email: req.session.userId })
-                .then(result => console.log(`
-                    Heeft $ { result.deletedCount }
-                    account verwijderd.
-                    `))
-                .catch(err => console.error(`
-                    Delete failed with error: $ { err }
-                    `));
+                .then(result => console.log(`Heeft ${result.deletedCount} account verwijderd.`))
+                .catch(err => console.error(`Delete failed with error: ${err}`));
             req.flash('succes', 'Uw account is met succes verwijderd');
             req.session.loggedIN = false;
             res.render('index');
             return data;
         })
-        .catch(err => console.error(`
-                    Error: $ { err }
-                    `));
+        .catch(err => console.error(`Error: ${err}`));
 }
 // Zet de session.loggedIN naar false = niemand ingelogd. Session destroyen is niet mogelijk, omdat flash sessions nodig heeft
 function uitloggen(req, res) {
@@ -216,24 +220,10 @@ function error404(req, res) {
     res.render('404');
 }
 
-// code nina liken/ matches
-// na dat je gebruiker hebt gekozen
-app.post("/login", inloggen);
-// pagina om gebruiker te kiezen
-app.get('/start', gebruikers);
-// route naar matches
-app.get('/matches', overzichtMatches);
-// route naar profiel liken page
+// code nina matches
+// route naar ejs. Renderen
 app.get('/findlove', gebruiker1);
 
-// wanneer je bent ingelogd kom je op de findlove pagina
-function inloggen(req, res, next) {
-    req.session.currentUser = req.body.user;
-    userid = req.session.currentUser;
-    userCollection = db.collection("user" + userid);
-    res.redirect('findlove');
-    console.log('Je bent ingelogd! Find true LOVE!! ' + userid);
-}
 // function pagina gebruiker 1
 function gebruiker1(req, res) {
     Gebruikers
@@ -244,8 +234,9 @@ function gebruiker1(req, res) {
         res.render('detail.ejs', { data: data });
     }
 }
-
-// function pagina gebruiker1 matches
+// route naar ejs. Renderen
+app.get('/matches', overzichtMatches);
+// function pagina gebruiker 1
 function overzichtMatches(req, res) {
     Gebruikers
         .find({}).toArray(done);
@@ -256,23 +247,6 @@ function overzichtMatches(req, res) {
         } else {
             console.log(data);
             res.render('match.ejs', { data: data });
-        }
-    }
-}
-//db 
-let userCollection = null;
-
-// function db
-function gebruikers(req, res) {
-    Gebruikers
-        .find({}).toArray(done);
-
-    function done(err, data) {
-        if (err) {
-            next(err);
-        } else {
-            console.log(data);
-            res.render('add.ejs', { data: data });
         }
     }
 }
