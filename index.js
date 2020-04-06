@@ -85,10 +85,20 @@ function gebruikerMaken(req, res) {
         'geboortedatum': req.body.geboortedatum,
         'email': req.body.email,
         'wachtwoord': req.body.wachtwoord,
+        'gender' : req.body.gender,
+        'searchSex' : req.body.searchSex,
+        'photo' : req.body.photo,
+        'functie' : req.body.functie,
+        'bio' : req.body.bio
+    };
+    
+    // Pusht de data naar database
     };
     // Pusht de data + input naar database (gebruikers = collection('users'))
+ 
     Gebruikers
         .insertOne(data, function(err) {
+            console.log(data)
             if (err) {
                 req.flash('error', err);
                 res.render('registration');
