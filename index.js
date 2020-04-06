@@ -60,6 +60,14 @@ app.get('/edit-pass', wachtwoordform);
 app.post('/edit', wachtwoordVeranderen);
 // account verwijderen
 app.get('/delete', accountVerwijderen);
+//
+app.get('/start', gebruikers)
+    // route naar matches
+app.get('/matches', overzichtMatches);
+// route naar profiel liken page
+app.get('/findlove', gebruiker1);
+// liken
+app.post("/:id", like);
 // error404
 app.get('/*', error404);
 
@@ -129,7 +137,7 @@ function inloggen(req, res) {
                     req.session.userId = data.email;
                     req.session.userName = data.voornaam;
                     req.flash('succes', 'Hoi ' + req.session.userName);
-                    res.render('readytostart');
+                    res.redirect("findlove");
                     console.log('ingelogd als ' + req.session.userId);
                 } else {
                     req.flash('error', 'Wachtwoord is incorrect');
@@ -220,10 +228,6 @@ function error404(req, res) {
     res.render('404');
 }
 
-// code nina matches
-// route naar ejs. Renderen
-app.get('/findlove', gebruiker1);
-
 // function pagina gebruiker 1
 function gebruiker1(req, res) {
     Gebruikers
@@ -247,6 +251,48 @@ function overzichtMatches(req, res) {
         } else {
             console.log(data);
             res.render('match.ejs', { data: data });
+        }
+    }
+}
+//db 
+
+let userCollection = null;
+
+// function db
+function gebruikers(req, res) {
+    z
+    db.collection('Users').find({}).toArray(done)
+
+    function done(err, data) {
+        if (err) {
+            next(err)
+        } else {
+            console.log(data);
+            res.render('add.ejs', { data: data })
+        }
+    }
+}
+// Functie liken 
+function like(req, res, next) {
+    let id = req.params.id;
+
+    // like toevoegen aan lijst/array hasliked
+    allUsersCollection.updateOne({ id: userid }, { $push: { "hasLiked": id } });
+
+    // like toevoegen aan users liked collection
+    allUsersCollection.findOne({ id: id }, addToCollection)
+}
+let matchedStatus;
+
+function addToCollection(err, data) {
+    if (err) {
+        next(err)
+    } else {
+
+        if (!data.hasNotliked.includes(userid)) {
+            if (data.hasLiked.includes(userid)) {
+                matchedStatus = true;
+            }
         }
     }
 }
