@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<link rel="STYLESHEET" href="./static/styleProfiel.css" type="text/css"> 
+<link rel="STYLESHEET" href="" type="text/css"> 
 <h1>Matches:</h1>
 
 <% for (var index = 0; index < data.length; index++){ %>
 <ul class="matches"> 
-  <h2><%= data[index].firstName %> </h2>
-  <p><%= data[index].lastName %> </p>
+  <h2><%= data[index].voornaam %> </h2>
+  <p><%= data[index].achternaam %> </p>
  <figure>  <%= data[index].photo %> </figure>
 </ul>
 
