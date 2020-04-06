@@ -60,6 +60,14 @@ app.get('/edit-pass', wachtwoordform);
 app.post('/edit', wachtwoordVeranderen);
 // account verwijderen
 app.get('/delete', accountVerwijderen);
+//
+app.get('/start',gebruikers)
+// route naar matches
+app.get('/matches', overzichtMatches);
+// route naar profiel liken page
+app.get('/findlove', gebruiker1);
+// liken
+app.post("/:id", like);
 // error404
 app.get('/*', error404);
 
@@ -129,7 +137,7 @@ function inloggen(req, res) {
                     req.session.userId = data.email;
                     req.session.userName = data.voornaam;
                     req.flash('succes', 'Hoi ' + req.session.userName);
-                    res.render('readytostart');
+                    res.redirect("findlove");
                     console.log('ingelogd als ' + req.session.userId);
                 } else {
                     req.flash('error', 'Wachtwoord is incorrect');
@@ -221,25 +229,8 @@ function error404(req, res) {
 }
 
 // code nina liken/ matches
-// na dat je gebruiker hebt gekozen
-app.post("/login", inloggen2);
-// pagina om gebruiker te kiezen
-app.get('/start',gebruikers)
-// route naar matches
-app.get('/matches', overzichtMatches);
-// route naar profiel liken page
-app.get('/findlove', gebruiker1);
-// liken
-app.post("/:id", like);
 
-// wanneer je bent ingelogd kom je op de findlove pagina
-function inloggen2(req, res, next) {
-    req.session.currentUser = req.body.user;
-    userid = req.session.currentUser;
-    userCollection = db.collection("user" + userid);
-    res.redirect("findlove");
-    console.log("Je bent ingelogd! Find true LOVE!! " + userid);
-  }
+
 // function pagina gebruiker 1
 function gebruiker1(req, res) {
     Gebruikers
