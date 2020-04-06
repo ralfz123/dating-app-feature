@@ -3,7 +3,7 @@ const
     express = require('express'),
     app = express(),
     port = 5000,
-    mongo = require('mongodb'),
+    database = require('mongodb'),
     bodyParser = require('body-parser'),
     session = require('express-session'),
     flash = require('connect-flash');
@@ -34,16 +34,16 @@ app
 require('dotenv').config();
 let url = 'mongodb+srv://' + process.env.DB_USER + ':' + process.env.DB_PASS + '@' + process.env.DB_URL + process.env.DB_EN;
 
-mongo.MongoClient
-    .connect(url, { useUnifiedTopology: true }, function(err, client) {
-        if (err) {
-            console.log('Database is niet connected');
-        } else if (client) {
-            console.log('Connectie met database is live');
-        }
-        db = client.db(process.env.DB_NAME);
+database.MongoClient
+    .connect(url, { useUnifiedTopology: true })
+    .then(connection => {
+        db = connection.db(process.env.DB_NAME);
         Gebruikers = db.collection(process.env.DB_NAME);
         Gebruikers.createIndex({ email: 1 }, { unique: true });
+        console.log('db is connected');
+    })
+    .catch(err => {
+        console.error(`Niet verbonden door error: ${err.code}`);
     });
 
 // routing
@@ -85,20 +85,10 @@ function gebruikerMaken(req, res) {
         'geboortedatum': req.body.geboortedatum,
         'email': req.body.email,
         'wachtwoord': req.body.wachtwoord,
-        'gender' : req.body.gender,
-        'searchSex' : req.body.searchSex,
-        'photo' : req.body.photo,
-        'functie' : req.body.functie,
-        'bio' : req.body.bio
-    };
-    
-    // Pusht de data naar database
     };
     // Pusht de data + input naar database (gebruikers = collection('users'))
- 
     Gebruikers
         .insertOne(data, function(err) {
-            console.log(data)
             if (err) {
                 req.flash('error', err);
                 res.render('registration');
@@ -176,7 +166,9 @@ function wachtwoordVeranderen(req, res) {
                             }
                             return updatedDocument;
                         })
-                        .catch(err => console.error(`Gefaald om het te updaten door error: ${err}`));
+                        .catch(err => console.error(`
+                    Gefaald om het te updaten door error: $ { err }
+                    `));
                 }
             })
             .catch(err => {
@@ -196,14 +188,21 @@ function accountVerwijderen(req, res) {
         .then(data => {
             Gebruikers
                 .deleteOne({ email: req.session.userId })
-                .then(result => console.log(`Heeft ${result.deletedCount} account verwijderd.`))
-                .catch(err => console.error(`Delete failed with error: ${err}`));
+                .then(result => console.log(`
+                    Heeft $ { result.deletedCount }
+                    account verwijderd.
+                    `))
+                .catch(err => console.error(`
+                    Delete failed with error: $ { err }
+                    `));
             req.flash('succes', 'Uw account is met succes verwijderd');
             req.session.loggedIN = false;
             res.render('index');
             return data;
         })
-        .catch(err => console.error(`Error: ${err}`));
+        .catch(err => console.error(`
+                    Error: $ { err }
+                    `));
 }
 // Zet de session.loggedIN naar false = niemand ingelogd. Session destroyen is niet mogelijk, omdat flash sessions nodig heeft
 function uitloggen(req, res) {
