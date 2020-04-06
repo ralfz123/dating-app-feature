@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('partials/head'); -%>
+</head>
+
+<body>
+    <header>
+        <%- include('partials/header-login'); -%>
+
+    </header>
+    <main>
+        <!-- Maakt een div aan met flashmessages met class error of succes -->
+        <%- messages() %>
+            <%- include('partials/login-form'); -%>
+                <%- include('partials/registration-option'); -%>
+    </main>
+    <footer>
+        <%- include('partials/footer'); -%>
+    </footer>
+</body>
+
+</html>
