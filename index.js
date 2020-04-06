@@ -198,16 +198,18 @@ function error404(req, res) {
 
 // code nina liken/ matches
 // na dat je gebruiker hebt gekozen
-app.post("/login", inloggen);
+app.post("/login", inloggen2);
 // pagina om gebruiker te kiezen
 app.get('/start',gebruikers)
 // route naar matches
 app.get('/matches', overzichtMatches);
 // route naar profiel liken page
 app.get('/findlove', gebruiker1);
+// liken
+app.post("/:id", like);
 
 // wanneer je bent ingelogd kom je op de findlove pagina
-function inloggen(req, res, next) {
+function inloggen2(req, res, next) {
     req.session.currentUser = req.body.user;
     userid = req.session.currentUser;
     userCollection = db.collection("user" + userid);
@@ -240,7 +242,7 @@ function overzichtMatches(req, res) {
     }
 }
 //db 
-let db = null;
+
 let userCollection = null; 
 
 // function db
@@ -255,6 +257,26 @@ function gebruikers (req, res){
       }
       }
     }
+    // Functie liken 
+    function like(req, res, next) {
+        let id = req.params.id;
+     
+    // like toevoegen aan lijst/array hasliked
+        allUsersCollection.updateOne({id: userid}, {$push: {"hasLiked": id}});
+      
+    // like toevoegen aan users liked collection
+        allUsersCollection.findOne({id : id}, addToCollection)
+    }
+    let matchedStatus;
+
+    function addToCollection(err, data) {
+        if (err) {
+          next (err)
+        } else {
     
+         if (!data.hasNotliked.includes(userid)) {
+          if(data.hasLiked.includes(userid)) {
+            matchedStatus = true;} }}}
+
 // Welke poort het live staat
 app.listen(5000, () => console.log('App is listening on port', port));
