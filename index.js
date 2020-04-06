@@ -6,8 +6,7 @@ const
     mongo = require('mongodb'),
     bodyParser = require('body-parser'),
     session = require('express-session'),
-    flash = require('connect-flash'),
-    cookieParser = require('cookie-parser');
+    flash = require('connect-flash');
 let
     db,
     Gebruikers;
@@ -18,8 +17,6 @@ app
     .set('view engine', 'ejs')
     .use(bodyParser.json())
     .use(bodyParser.urlencoded({ extended: true }))
-    .use(passport.initialize())
-    .use(passport.session())
     .use(session({
         secret: 'ahbn ahbn ahbn ',
         cookie: { maxAge: 60000 },
@@ -93,17 +90,15 @@ function gebruikerMaken(req, res) {
         'geboortedatum': req.body.geboortedatum,
         'email': req.body.email,
         'wachtwoord': req.body.wachtwoord,
-        'gender' : req.body.gender,
-        'searchSex' : req.body.searchSex,
-        'photo' : req.body.photo,
-        'functie' : req.body.functie,
-        'bio' : req.body.bio
+        'gender': req.body.gender,
+        'searchSex': req.body.searchSex,
+        'photo': req.body.photo,
+        'functie': req.body.functie,
+        'bio': req.body.bio
     };
-    
-    // Pusht de data naar database
-    };
+
     // Pusht de data + input naar database (gebruikers = collection('users'))
- 
+
     Gebruikers
         .insertOne(data, function(err) {
             console.log(data)
