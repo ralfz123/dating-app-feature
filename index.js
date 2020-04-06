@@ -116,7 +116,7 @@ function inloggen(req, res) {
                     req.session.userId = data.email;
                     req.session.userName = data.voornaam;
                     req.flash('succes', 'Hoi ' + req.session.userName);
-                    res.render('readytostart');
+                    res.redirect('findlove');
                     console.log('ingelogd als ' + req.session.userId);
                 } else {
                     req.flash('error', 'Wachtwoord is incorrect');
@@ -211,8 +211,8 @@ function error404(req, res) {
 // na dat je gebruiker hebt gekozen
 app.post("/login", inloggen);
 // pagina om gebruiker te kiezen
-app.get('/start', gebruikers)
-    // route naar matches
+app.get('/start', gebruikers);
+// route naar matches
 app.get('/matches', overzichtMatches);
 // route naar profiel liken page
 app.get('/findlove', gebruiker1);
@@ -222,8 +222,8 @@ function inloggen(req, res, next) {
     req.session.currentUser = req.body.user;
     userid = req.session.currentUser;
     userCollection = db.collection("user" + userid);
-    res.redirect("findlove");
-    console.log("Je bent ingelogd! Find true LOVE!! " + userid);
+    res.redirect('findlove');
+    console.log('Je bent ingelogd! Find true LOVE!! ' + userid);
 }
 // function pagina gebruiker 1
 function gebruiker1(req, res) {
@@ -255,14 +255,15 @@ let userCollection = null;
 
 // function db
 function gebruikers(req, res) {
-    db.collection('Users').find({}).toArray(done)
+    Gebruikers
+        .find({}).toArray(done);
 
     function done(err, data) {
         if (err) {
-            next(err)
+            next(err);
         } else {
             console.log(data);
-            res.render('add.ejs', { data: data })
+            res.render('add.ejs', { data: data });
         }
     }
 }
