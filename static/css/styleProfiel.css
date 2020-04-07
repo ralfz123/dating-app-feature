@@ -108,12 +108,17 @@ margin-top: 20px;
 top: -65px;
 width: 75px;
 height: 75px;
-margin-left: 40px;
+margin-left: 340px;
 background-color: transparent;
 position: absolute;
-
-
 }
+
+.disLikebut {top: -65px;
+    width: 75px;
+    height: 75px;
+    margin-left: 40px;
+    background-color: transparent;
+    position: absolute;}
 
 /* desktop responsive website */
 @media only screen and (min-width: 800px) {

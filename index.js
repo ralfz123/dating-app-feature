@@ -277,7 +277,7 @@ function gebruikers (req, res){
         let id = req.params.id;
      
     // like toevoegen aan lijst/array hasliked
-        allUsersCollection.updateOne({id: userid}, {$push: {"hasLiked": id}});
+        allUsersCollection.updateOne({id: userid}, {$push: {"hasLiked": id}}); 
       
     // like toevoegen aan users liked collection
         allUsersCollection.findOne({id : id}, addToCollection)
