@@ -67,9 +67,10 @@ app.get('/matches', overzichtMatches);
 // route naar profiel liken page
 app.get('/findlove', gebruiker1);
 // liken
-app.post("/:id", like);
+// app.post("/:id", like);
 // error404
 app.get('/*', error404);
+app.post('/matches', overzichtMatches);
 
 // Checkt of er een ingelogde gebruiker is en stuurt aan de hand hiervan de juiste pagina door
 function registreren(req, res) {
@@ -84,7 +85,7 @@ function registreren(req, res) {
 function goHome(req, res) {
     if (req.session.loggedIN) {
         req.flash('succes', 'Hoi ' + req.session.userName);
-        res.render('readytostart');
+        res.render('readytostart' , {data: data});
     } else {
         res.render('index');
     }
@@ -137,7 +138,8 @@ function inloggen(req, res) {
                     req.session.userId = data.email;
                     req.session.userName = data.voornaam;
                     req.flash('succes', 'Hoi ' + req.session.userName);
-                    res.redirect("findlove");
+                    // res.redirect("findlove");
+                    res.render('readytostart', {data: data});
                     console.log('ingelogd als ' + req.session.userId);
                 } else {
                     req.flash('error', 'Wachtwoord is incorrect');
@@ -273,15 +275,15 @@ function gebruikers (req, res){
       }
     }
     // Functie liken 
-    function like(req, res, next) {
-        let id = req.params.id;
+    // function like(req, res, next) {
+    //     let id = req.params.id;
      
-    // like toevoegen aan lijst/array hasliked
-        allUsersCollection.updateOne({id: userid}, {$push: {"hasLiked": id}});
+    // // like toevoegen aan lijst/array hasliked
+    //     allUsersCollection.updateOne({id: userid}, {$push: {"hasLiked": id}});
       
-    // like toevoegen aan users liked collection
-        allUsersCollection.findOne({id : id}, addToCollection)
-    }
+    // // like toevoegen aan users liked collection
+    //     allUsersCollection.findOne({id : id}, addToCollection)
+    // }
     let matchedStatus;
 
     function addToCollection(err, data) {
