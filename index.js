@@ -12,6 +12,9 @@ let
     db,
     Gebruikers;
 
+// .env bestand gebruiken
+require('dotenv').config();
+
 // Middleware set-up
 app
     .use(express.static('static'))
@@ -19,10 +22,10 @@ app
     .use(bodyParser.json())
     .use(bodyParser.urlencoded({ extended: true }))
     .use(session({
-        secret: 'ahbn ahbn ahbn ',
+        secret: process.env.SESSION_SECRET,
         cookie: { maxAge: 60000 },
         resave: false,
-        saveUninitialized: true,
+        saveUninitialized: false,
         secure: true,
     }))
     .use(function(req, res, next) {
@@ -32,7 +35,6 @@ app
     .use(flash());
 
 // Database connectie via .env
-require('dotenv').config();
 let url = 'mongodb+srv://' + process.env.DB_USER + ':' + process.env.DB_PASS + '@' + process.env.DB_URL + process.env.DB_EN;
 
 mongo.MongoClient
@@ -49,10 +51,10 @@ mongo.MongoClient
 
 /// Root
 app
+    .post('/log-in', inloggen)
     .get('/', goHome)
     .get('/registration', registreren)
     .post('/registrating', gebruikerMaken)
-    .post('/log-in', inloggen)
     .get('/logout', uitloggen)
     .get('/edit-pass', wachtwoordform)
     .post('/edit', wachtwoordVeranderen)
@@ -65,7 +67,7 @@ app
 
 // Checkt of er een ingelogde gebruiker is en stuurt aan de hand hiervan de juiste pagina door
 function registreren(req, res) {
-    if (req.session.loggedIN) {
+    if (req.session.loggedIn) {
         req.flash('succes', 'Hoi ' + req.session.userName);
         res.render('readytostart');
     } else {
@@ -76,7 +78,7 @@ function registreren(req, res) {
 function goHome(req, res) {
     if (req.session.loggedIN) {
         req.flash('succes', 'Hoi ' + req.session.userName);
-        res.render('readytostart');
+        res.redirect('findlove');
     } else {
         res.render('index');
     }
@@ -107,7 +109,7 @@ function gebruikerMaken(req, res) {
                 res.render('registration');
             } else {
                 req.session.loggedIN = true;
-                req.session.userId = data.email;
+                req.session.userMail = data.email;
                 req.session.userName = data.voornaam;
                 req.flash('succes', 'Hoi ' + req.session.userName + ', jouw account is met succes aangemaakt');
                 res.render('readytostart');
@@ -125,12 +127,11 @@ function inloggen(req, res) {
         .then(data => {
             if (data) {
                 if (data.wachtwoord === req.body.wachtwoord) {
-                    req.session.loggedIN = true;
-                    req.session.userId = data.email;
-                    req.session.userName = data.voornaam;
-                    req.flash('succes', 'Hoi ' + req.session.userName);
+                    req.session.user = data;
+                    console.log('ingelogd als ' + req.session.user.email);
+                    req.flash('succes', 'Hoi ' + req.session.user.voornaam);
                     res.redirect('findlove');
-                    console.log('ingelogd als ' + req.session.userId);
+                    req.session.loggedIN = true;
                 } else {
                     req.flash('error', 'Wachtwoord is incorrect');
                     res.render('index');
@@ -156,15 +157,15 @@ function wachtwoordVeranderen(req, res) {
     if (req.session.loggedIN) {
         Gebruikers
             .findOne({
-                email: req.session.userId,
+                email: req.session.user.email,
             })
             .then(data => {
                 if (data) {
-                    const query = { email: req.session.userId };
+                    const query = { email: req.session.user.email };
                     // Wat wil je aanpassen
                     const update = {
                         '$set': {
-                            'email': req.session.userId,
+                            'email': req.session.user.email,
                             'wachtwoord': req.body.nieuwwachtwoord,
                         }
                     };
@@ -195,10 +196,10 @@ function wachtwoordVeranderen(req, res) {
 // Deze functie verwijderd het account door eerst te controleren of gebruiker ingelogd is en daarna account te vinden met die email en verwijderd het account en zet de session.loggedIn naar false  + flasht status naar user
 function accountVerwijderen(req, res) {
     Gebruikers
-        .findOne({ email: req.session.userId })
+        .findOne({ email: req.session.user.email })
         .then(data => {
             Gebruikers
-                .deleteOne({ email: req.session.userId })
+                .deleteOne({ email: req.session.user.email })
                 .then(result => console.log(`Heeft ${result.deletedCount} account verwijderd.`))
                 .catch(err => console.error(`Delete failed with error: ${err}`));
             req.flash('succes', 'Uw account is met succes verwijderd');
@@ -222,8 +223,11 @@ function error404(req, res) {
 
 // function pagina gebruiker 1
 function gebruiker1(req, res) {
-    Gebruikers
-        .find({}).toArray(done);
+    Gebruikers.find({
+        $and: [
+            { _id: { $ne: mongo.ObjectId(req.session.user._id) } }
+        ]
+    }).toArray(done);
 
     function done(err, data) {
         console.log(data);
@@ -232,16 +236,22 @@ function gebruiker1(req, res) {
 }
 // route naar ejs. Renderen
 app.get('/matches', overzichtMatches);
+
 // function pagina gebruiker 1
 function overzichtMatches(req, res) {
     Gebruikers
-        .find({}).toArray(done);
+        .find({
+            $and: [
+                { _id: { $ne: mongo.ObjectId(req.session.user._id) } },
+            ]
+        }).toArray(done);
 
     function done(err, data) {
         if (err) {
             throw err;
         } else {
             console.log(data);
+            console.log(req.session.userMail);
             res.render('match.ejs', { data: data });
         }
     }
@@ -252,7 +262,11 @@ function overzichtMatches(req, res) {
 
 // function db
 function gebruikers(req, res) {
-    Gebruikers.find({}).toArray(done);
+    Gebruikers.find({
+        $and: [
+            { mail: { $ne: req.session.user.email } },
+        ]
+    }).toArray(done);
 
     function done(err, data) {
         if (err) {
