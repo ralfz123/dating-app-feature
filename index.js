@@ -2,11 +2,12 @@
 const
     express = require('express'),
     app = express(),
-    port = 3000,
+    port = 5000,
     mongo = require('mongodb'),
     bodyParser = require('body-parser'),
     session = require('express-session'),
-    flash = require('connect-flash');
+    flash = require('connect-flash'),
+    multer = require('multer');
 let
     db,
     Gebruikers;
