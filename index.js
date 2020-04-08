@@ -148,7 +148,7 @@ function wachtwoordform(req, res) {
 function wachtwoordVeranderen(req, res) {
     if (req.session.user.loggedIN === true) {
         Gebruikers
-            .findOne({ email: req.session.user.email, })
+            .findOne({ email: req.session.user.email })
             .then(data => {
                 const query = { email: data.email };
                 const update = { '$set': { 'wachtwoord': req.body.nieuwwachtwoord } };
@@ -177,16 +177,12 @@ function wachtwoordVeranderen(req, res) {
 // Deze functie verwijderd het account door eerst te controleren of gebruiker ingelogd is en daarna account te vinden met die email en verwijderd het account en zet de session.loggedIn naar false  + flasht status naar user
 function accountVerwijderen(req, res) {
     Gebruikers
-        .findOne({ email: req.session.user.email })
-        .then(data => {
-            Gebruikers
-                .deleteOne({ email: req.session.user.email })
-                .then(result => console.log(`Heeft ${result.deletedCount} account verwijderd.`))
-                .catch(err => console.error(`Delete failed with error: ${err}`));
+        .findOneAndDelete({ email: req.session.user.email })
+        .then(result => {
+            console.log(`Heeft ${result.deletedCount} account verwijderd.`)
             req.flash('succes', 'Uw account is met succes verwijderd');
             req.session.user.loggedIN = false;
             res.render('index');
-            return data;
         })
         .catch(err => console.error(`Error: ${err}`));
 }
@@ -205,9 +201,8 @@ function error404(req, res) {
 // function pagina gebruiker 1
 function gebruiker1(req, res) {
     Gebruikers
-        .find({ $and: [{ _id: { $ne: mongo.ObjectId(req.session.user._id) } }] })
+        .find({ _id: { $ne: mongo.ObjectId(req.session.user._id) } }).toArray()
         .then(data => {
-            data.toArray;
             res.render('detail', { data: data });
         })
         .catch(err => { console.log(err); });
@@ -215,9 +210,8 @@ function gebruiker1(req, res) {
 // function pagina gebruiker 1
 function overzichtMatches(req, res) {
     Gebruikers
-        .find({ $and: [{ _id: { $ne: mongo.ObjectId(req.session.user._id) } }] })
+        .find({ _id: { $ne: mongo.ObjectId(req.session.user._id) } }).toArray()
         .then(data => {
-            data.toArray;
             res.render('match', { data: data });
         })
         .catch(err => { console.log(err); });
@@ -225,10 +219,9 @@ function overzichtMatches(req, res) {
 // function db
 function gebruikers(req, res) {
     Gebruikers
-        .find({ $and: [{ _id: { $ne: mongo.ObjectId(req.session.user._id) } }, ] })
+        .find({ _id: { $ne: mongo.ObjectId(req.session.user._id) } }).toArray()
         .then(data => {
-            data.toArray;
-            res.render('add.ejs', { data: data });
+            res.render('add', { data: data });
         })
         .catch(err => { console.log(err); });
 }
