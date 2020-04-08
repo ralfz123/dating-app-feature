@@ -47,29 +47,20 @@ mongo.MongoClient
     });
 
 /// Root
-app.get('/', goHome);
-// Registration
-app.get('/registration', registreren);
-app.post('/registrating', gebruikerMaken);
-// Inloggen
-app.post('/log-in', inloggen);
-// Uitloggen
-app.get('/logout', uitloggen);
-// Wachtwoord wijzigen
-app.get('/edit-pass', wachtwoordform);
-app.post('/edit', wachtwoordVeranderen);
-// account verwijderen
-app.get('/delete', accountVerwijderen);
-//
-app.get('/start',gebruikers)
-// route naar matches
-app.get('/matches', overzichtMatches);
-// route naar profiel liken page
-app.get('/findlove', gebruiker1);
-// liken
-app.post("/:id", like);
-// error404
-app.get('/*', error404);
+app
+    .get('/', goHome)
+    .get('/registration', registreren)
+    .post('/registrating', gebruikerMaken)
+    .post('/log-in', inloggen)
+    .get('/logout', uitloggen)
+    .get('/edit-pass', wachtwoordform)
+    .post('/edit', wachtwoordVeranderen)
+    .get('/delete', accountVerwijderen)
+    .get('/start', gebruikers)
+    .get('/matches', overzichtMatches)
+    .get('/findlove', gebruiker1)
+    .post('/:id', like)
+    .get('/*', error404);
 
 // Checkt of er een ingelogde gebruiker is en stuurt aan de hand hiervan de juiste pagina door
 function registreren(req, res) {
@@ -109,7 +100,7 @@ function gebruikerMaken(req, res) {
 
     Gebruikers
         .insertOne(data, function(err) {
-            console.log(data)
+            console.log(data);
             if (err) {
                 req.flash('error', err);
                 res.render('registration');
@@ -137,7 +128,7 @@ function inloggen(req, res) {
                     req.session.userId = data.email;
                     req.session.userName = data.voornaam;
                     req.flash('succes', 'Hoi ' + req.session.userName);
-                    res.redirect("findlove");
+                    res.redirect('findlove');
                     console.log('ingelogd als ' + req.session.userId);
                 } else {
                     req.flash('error', 'Wachtwoord is incorrect');
@@ -228,9 +219,6 @@ function error404(req, res) {
     res.render('404');
 }
 
-// code nina liken/ matches
-
-
 // function pagina gebruiker 1
 function gebruiker1(req, res) {
     Gebruikers
@@ -241,15 +229,16 @@ function gebruiker1(req, res) {
         res.render('detail.ejs', { data: data });
     }
 }
-
-// function pagina gebruiker1 matches
+// route naar ejs. Renderen
+app.get('/matches', overzichtMatches);
+// function pagina gebruiker 1
 function overzichtMatches(req, res) {
     Gebruikers
         .find({}).toArray(done);
 
     function done(err, data) {
         if (err) {
-            next(err);
+            throw err;
         } else {
             console.log(data);
             res.render('match.ejs', { data: data });
@@ -258,40 +247,47 @@ function overzichtMatches(req, res) {
 }
 //db 
 
-let userCollection = null; 
+// let userCollection = null;
 
 // function db
-function gebruikers (req, res){
-    db.collection('Users').find({}).toArray(done)
-    function done(err, data){
-      if (err){
-        next (err)
-      } else {
-        console.log(data);
-      res.render('add.ejs',{data: data})
-      }
-      }
-    }
-    // Functie liken 
-    function like(req, res, next) {
-        let id = req.params.id;
-     
-    // like toevoegen aan lijst/array hasliked
-        allUsersCollection.updateOne({id: userid}, {$push: {"hasLiked": id}});
-      
-    // like toevoegen aan users liked collection
-        allUsersCollection.findOne({id : id}, addToCollection)
-    }
-    let matchedStatus;
+function gebruikers(req, res) {
+    Gebruikers.find({}).toArray(done);
 
-    function addToCollection(err, data) {
+    function done(err, data) {
         if (err) {
-          next (err)
+            throw err;
         } else {
-    
-         if (!data.hasNotliked.includes(userid)) {
-          if(data.hasLiked.includes(userid)) {
-            matchedStatus = true;} }}}
+            console.log(data);
+            res.render('add.ejs', { data: data });
+        }
+    }
+}
+// Functie liken 
+function like(req) {
+    let id = req.params.id;
+
+    // like toevoegen aan lijst/array hasliked
+    Gebruikers
+        .updateOne({ id: userid }, { $push: { 'hasLiked': id } });
+
+    // like toevoegen aan users liked collection
+    Gebruikers
+        .findOne({ id: id }, addToCollection);
+}
+let matchedStatus;
+
+function addToCollection(err, data, userid) {
+    if (err) {
+        throw err;
+    } else {
+
+        if (!data.hasNotliked.includes(userid)) {
+            if (data.hasLiked.includes(userid)) {
+                matchedStatus = true;
+            }
+        }
+    }
+}
 
 // Welke poort het live staat
 app.listen(5000, () => console.log('App is listening on port', port));
