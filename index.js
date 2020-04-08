@@ -19,7 +19,6 @@ require('dotenv').config();
 app
     .use(express.static('static'))
     .set('view engine', 'ejs')
-    .use(bodyParser.json())
     .use(bodyParser.urlencoded({ extended: true }))
     .use(session({
         secret: process.env.SESSION_SECRET,
@@ -51,7 +50,7 @@ mongo.MongoClient
     });
 
 
-/// Root
+// Routing
 app
     .post('/log-in', inloggen)
     .get('/', goHome)
@@ -69,7 +68,7 @@ app
 
 // Checkt of er een ingelogde gebruiker is en stuurt aan de hand hiervan de juiste pagina door
 function registreren(req, res) {
-    if (req.session.loggedIn) {
+    if (req.session.user.loggedIN) {
         req.flash('succes', 'Hoi ' + req.session.userName);
         res.render('readytostart');
     } else {
@@ -78,7 +77,7 @@ function registreren(req, res) {
 }
 // Gaat naar home
 function goHome(req, res) {
-    if (req.session.user) {
+    if (req.session.user.loggedIN) {
         req.flash('succes', 'Hoi ' + req.session.user.voornaam);
         res.redirect('findlove');
     } else {
@@ -106,6 +105,7 @@ function gebruikerMaken(req, res) {
         .insertOne(data)
         .then(data => {
             req.session.user = data;
+            req.session.user.loggedIN = true;
             req.flash('succes', 'Hoi ' + req.session.user.voornaam + ', jouw account is met succes aangemaakt');
             res.render('readytostart');
             console.log('Gebruiker toegevoegd');
@@ -179,7 +179,7 @@ function accountVerwijderen(req, res) {
     Gebruikers
         .findOneAndDelete({ email: req.session.user.email })
         .then(result => {
-            console.log(`Heeft ${result.deletedCount} account verwijderd.`)
+            console.log(`Heeft ${result.deletedCount} account verwijderd.`);
             req.flash('succes', 'Uw account is met succes verwijderd');
             req.session.user.loggedIN = false;
             res.render('index');
@@ -194,7 +194,7 @@ function uitloggen(req, res) {
 }
 
 // Bij een 404
-function error404(req, res) {
+function error404(res) {
     res.render('404');
 }
 
