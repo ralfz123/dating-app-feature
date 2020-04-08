@@ -76,8 +76,8 @@ function registreren(req, res) {
 }
 // Gaat naar home
 function goHome(req, res) {
-    if (req.session.loggedIN) {
-        req.flash('succes', 'Hoi ' + req.session.userName);
+    if (req.session.user) {
+        req.flash('succes', 'Hoi ' + req.session.user.voornaam);
         res.redirect('findlove');
     } else {
         res.render('index');
@@ -108,10 +108,8 @@ function gebruikerMaken(req, res) {
                 req.flash('error', err);
                 res.render('registration');
             } else {
-                req.session.loggedIN = true;
-                req.session.userMail = data.email;
-                req.session.userName = data.voornaam;
-                req.flash('succes', 'Hoi ' + req.session.userName + ', jouw account is met succes aangemaakt');
+                req.session.user = data;
+                req.flash('succes', 'Hoi ' + req.session.user.voornaam + ', jouw account is met succes aangemaakt');
                 res.render('readytostart');
                 console.log('Gebruiker toegevoegd');
             }
@@ -121,30 +119,24 @@ function gebruikerMaken(req, res) {
 // req.Flash('class voor de div', 'het bericht') geeft dat  error/succes bericht door naar de template en daar staat weer code die het omzet naar html
 function inloggen(req, res) {
     Gebruikers
-        .findOne({
-            email: req.body.email
-        })
+        .findOne({ email: req.body.email })
         .then(data => {
-            if (data) {
-                if (data.wachtwoord === req.body.wachtwoord) {
-                    req.session.user = data;
-                    console.log('ingelogd als ' + req.session.user.email);
-                    req.flash('succes', 'Hoi ' + req.session.user.voornaam);
-                    res.redirect('findlove');
-                    req.session.loggedIN = true;
-                } else {
-                    req.flash('error', 'Wachtwoord is incorrect');
-                    res.render('index');
-                    console.log('Wachtwoord is incorrect');
-                }
+            if (data.wachtwoord === req.body.wachtwoord) {
+                req.session.user = data;
+                console.log('ingelogd als ' + req.session.user.email);
+                req.flash('succes', 'Hoi ' + req.session.user.voornaam);
+                res.redirect('findlove');
+                req.session.user.loggedIN = true;
             } else {
-                req.flash('error', 'Account is niet gevonden');
+                req.flash('error', 'Wachtwoord is incorrect');
                 res.render('index');
-                console.log('Account is niet gevonden');
+                console.log('Wachtwoord is incorrect');
             }
         })
         .catch(err => {
             console.log(err);
+            req.flash('error', 'Account is niet gevonden');
+            res.render('index');
         });
 }
 
@@ -154,38 +146,27 @@ function wachtwoordform(req, res) {
 
 // Deze functie veranderd het wachtwoord door eerst te controleren of gebruiker ingelogd is en daarna account te vinden met die email en verander het wachtwoord vanuit de form naar database + flasht status naar user
 function wachtwoordVeranderen(req, res) {
-    if (req.session.loggedIN) {
+    if (req.session.user.loggedIN === true) {
         Gebruikers
-            .findOne({
-                email: req.session.user.email,
-            })
+            .findOne({ email: req.session.user.email, })
             .then(data => {
-                if (data) {
-                    const query = { email: req.session.user.email };
-                    // Wat wil je aanpassen
-                    const update = {
-                        '$set': {
-                            'email': req.session.user.email,
-                            'wachtwoord': req.body.nieuwwachtwoord,
+                const query = { email: data.email };
+                const update = { '$set': { 'wachtwoord': req.body.nieuwwachtwoord } };
+                const options = { returnNewDocument: true };
+
+                Gebruikers
+                    .findOneAndUpdate(query, update, options)
+                    .then(updatedDocument => {
+                        if (updatedDocument) {
+                            req.session.user.loggedIN = false;
+                            req.flash('succes', 'Je wachtwoord is met succes veranderd. Log opnieuw in met uw nieuwe wachtwoord');
+                            res.render('index');
                         }
-                    };
-                    const options = { returnNewDocument: true };
-                    Gebruikers
-                        .findOneAndUpdate(query, update, options)
-                        .then(updatedDocument => {
-                            if (updatedDocument) {
-                                req.session.loggedIN = false;
-                                req.flash('succes', 'Je wachtwoord is met succes veranderd. Log opnieuw in met uw nieuwe wachtwoord');
-                                res.render('index');
-                            }
-                            return updatedDocument;
-                        })
-                        .catch(err => console.error(`Gefaald om het te updaten door error: ${err}`));
-                }
+                        return updatedDocument;
+                    })
+                    .catch(err => console.error(`Gefaald om het te updaten door error: ${err}`));
             })
-            .catch(err => {
-                console.log(err);
-            });
+            .catch(err => { console.log(err); });
     } else {
         req.flash('error', 'U moet eerst inloggen');
         res.render('index');
@@ -203,7 +184,7 @@ function accountVerwijderen(req, res) {
                 .then(result => console.log(`Heeft ${result.deletedCount} account verwijderd.`))
                 .catch(err => console.error(`Delete failed with error: ${err}`));
             req.flash('succes', 'Uw account is met succes verwijderd');
-            req.session.loggedIN = false;
+            req.session.user.loggedIN = false;
             res.render('index');
             return data;
         })
@@ -211,7 +192,7 @@ function accountVerwijderen(req, res) {
 }
 // Zet de session.loggedIN naar false = niemand ingelogd. Session destroyen is niet mogelijk, omdat flash sessions nodig heeft
 function uitloggen(req, res) {
-    req.session.loggedIN = false;
+    req.session.user.loggedIN = false;
     req.flash('succes', 'U bent uitgelogd');
     res.render('index');
 }
@@ -223,59 +204,33 @@ function error404(req, res) {
 
 // function pagina gebruiker 1
 function gebruiker1(req, res) {
-    Gebruikers.find({
-        $and: [
-            { _id: { $ne: mongo.ObjectId(req.session.user._id) } }
-        ]
-    }).toArray(done);
-
-    function done(err, data) {
-        console.log(data);
-        res.render('detail.ejs', { data: data });
-    }
+    Gebruikers
+        .find({ $and: [{ _id: { $ne: mongo.ObjectId(req.session.user._id) } }] })
+        .then(data => {
+            data.toArray;
+            res.render('detail', { data: data });
+        })
+        .catch(err => { console.log(err); });
 }
-// route naar ejs. Renderen
-app.get('/matches', overzichtMatches);
-
 // function pagina gebruiker 1
 function overzichtMatches(req, res) {
     Gebruikers
-        .find({
-            $and: [
-                { _id: { $ne: mongo.ObjectId(req.session.user._id) } },
-            ]
-        }).toArray(done);
-
-    function done(err, data) {
-        if (err) {
-            throw err;
-        } else {
-            console.log(data);
-            console.log(req.session.userMail);
-            res.render('match.ejs', { data: data });
-        }
-    }
+        .find({ $and: [{ _id: { $ne: mongo.ObjectId(req.session.user._id) } }] })
+        .then(data => {
+            data.toArray;
+            res.render('match', { data: data });
+        })
+        .catch(err => { console.log(err); });
 }
-//db 
-
-// let userCollection = null;
-
 // function db
 function gebruikers(req, res) {
-    Gebruikers.find({
-        $and: [
-            { mail: { $ne: req.session.user.email } },
-        ]
-    }).toArray(done);
-
-    function done(err, data) {
-        if (err) {
-            throw err;
-        } else {
-            console.log(data);
+    Gebruikers
+        .find({ $and: [{ _id: { $ne: mongo.ObjectId(req.session.user._id) } }, ] })
+        .then(data => {
+            data.toArray;
             res.render('add.ejs', { data: data });
-        }
-    }
+        })
+        .catch(err => { console.log(err); });
 }
 // Functie liken 
 function like(req) {
