@@ -38,16 +38,18 @@ app
 let url = 'mongodb+srv://' + process.env.DB_USER + ':' + process.env.DB_PASS + '@' + process.env.DB_URL + process.env.DB_EN;
 
 mongo.MongoClient
-    .connect(url, { useUnifiedTopology: true }, function(err, client) {
-        if (err) {
-            console.log('Database is niet connected');
-        } else if (client) {
-            console.log('Connectie met database is live');
-        }
+    .connect(url, { useUnifiedTopology: true })
+    .then(client => {
+        console.log('Connectie met database is live');
         db = client.db(process.env.DB_NAME);
         Gebruikers = db.collection(process.env.DB_NAME);
         Gebruikers.createIndex({ email: 1 }, { unique: true });
+    })
+    .catch(err => {
+        console.log('Database is niet connected');
+        console.log(err);
     });
+
 
 /// Root
 app
@@ -100,19 +102,17 @@ function gebruikerMaken(req, res) {
     };
 
     // Pusht de data + input naar database (gebruikers = collection('users'))
-
     Gebruikers
-        .insertOne(data, function(err) {
-            console.log(data);
-            if (err) {
-                req.flash('error', err);
-                res.render('registration');
-            } else {
-                req.session.user = data;
-                req.flash('succes', 'Hoi ' + req.session.user.voornaam + ', jouw account is met succes aangemaakt');
-                res.render('readytostart');
-                console.log('Gebruiker toegevoegd');
-            }
+        .insertOne(data)
+        .then(data => {
+            req.session.user = data;
+            req.flash('succes', 'Hoi ' + req.session.user.voornaam + ', jouw account is met succes aangemaakt');
+            res.render('readytostart');
+            console.log('Gebruiker toegevoegd');
+        })
+        .catch(err => {
+            req.flash('error', err);
+            res.render('registration');
         });
 }
 // checkt of gebruiker bestaat en logt in door sessie aan te maken met de email als ID (omdat email uniek is)
