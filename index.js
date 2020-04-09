@@ -62,9 +62,9 @@ app
     .get('/matches', overzichtMatches)
     .post('/matches', overzichtMatches)
     .get('/findlove', gebruiker1)
-    .post('/:id', like);
-// .get('/*', error404);
-
+    // .post('/:id', like)
+    .post('/<%= data[i]._id %>', like)
+    // .get('/*', error404);
 
 
 // Checkt of er een ingelogde gebruiker is en stuurt aan de hand hiervan de juiste pagina door
@@ -232,32 +232,22 @@ function overzichtMatches(req, res) {
         .catch(err => { console.log(err); });
 }
 
+
 // Functie liken 
-function like(req) {
+function like(req, res) {
     let id = req.params.id;
+    console.log(req.params.id)
+    Gebruikers.updateOne({id: mongo.ObjectId(req.session.user._id)}, {$push: {"hasLiked": id}});
+    req.session.user.hasLiked.push(id);
+    console.log('hoi')
+    res.redirect("/findlove");
 
-    // like toevoegen aan lijst/array hasliked
-    Gebruikers
-        .updateOne({ id: userid }, { $push: { 'hasLiked': id } });
+  
 
-    // like toevoegen aan users liked collection
-    Gebruikers
-        .findOne({ id: id }, addToCollection);
 }
-let matchedStatus;
 
-function addToCollection(err, data, userid) {
-    if (err) {
-        throw err;
-    } else {
 
-        if (!data.hasNotliked.includes(userid)) {
-            if (data.hasLiked.includes(userid)) {
-                matchedStatus = true;
-            }
-        }
-    }
-}
+  
 
 // // Bij een 404
 // function error404(res) {
