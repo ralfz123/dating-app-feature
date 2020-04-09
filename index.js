@@ -211,32 +211,18 @@ function overzichtMatches(req, res) {
         .catch(err => { console.log(err); });
 }
 
-//test test
 
-Gebruikers.find({email: {$in: req.session.user.hasLiked}}).toArray(done)
-
-function done(err, data) {
-  if (err) {
-    next (err);
-  } else {
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].hasLiked.includes(req.session.user.id) && !req.session.user.hasDisliked.includes(data[i].id) && !data[i].hasDisliked.includes(req.session.user.id)) {
-        matches.push(data[i]);
-      } else if (!req.session.user.hasDisliked.includes(data[i].id) && !data[i].hasDisliked.includes(req.session.user.id)) {
-        pending.push(data[i]);
-      }
-    }
 
 
 // Functie liken 
-function like(req) {
+function like(req, res) {
     let id = req.params.id;
     Gebruikers.updateOne({id: mongo.ObjectId(req.session.user._id)}, {$push: {"hasLiked": id}});
     req.session.user.hasLiked.push(id);
     res.redirect("/findlove");
   
 
-}}}
+}
 
 
   
