@@ -89,12 +89,12 @@ app
     .get('/matches', overzichtMatches)
     .get('/findlove', gebruiker1)
     .post('/:id', like)
-    .get('/*', error404);
+    // .get('/*', error404);
 
 // Checkt of er een ingelogde gebruiker is en stuurt aan de hand hiervan de juiste pagina door
 function registreren(req, res) {
-    if (req.session.user.loggedIN) {
-        req.flash('succes', 'Hoi ' + req.session.userName);
+    if (req.session.loggedIN === true) {
+        req.flash('succes', 'Hoi ' + req.session.user.voornaam);
         res.render('readytostart');
     } else {
         res.render('registration');
@@ -102,7 +102,7 @@ function registreren(req, res) {
 }
 // Gaat naar home
 function goHome(req, res) {
-    if (req.session.user.loggedIN) {
+    if (req.session.loggedIN === true) {
         req.flash('succes', 'Hoi ' + req.session.user.voornaam);
         res.redirect('findlove');
     } else {
@@ -130,7 +130,7 @@ function gebruikerMaken(req, res) {
         .insertOne(data)
         .then(data => {
             req.session.user = data;
-            req.session.user.loggedIN = true;
+            req.session.loggedIN = true;
             req.flash('succes', 'Hoi ' + req.session.user.voornaam + ', jouw account is met succes aangemaakt');
             res.render('readytostart');
             console.log('Gebruiker toegevoegd');
@@ -151,7 +151,7 @@ function inloggen(req, res) {
                 console.log('ingelogd als ' + req.session.user.email);
                 req.flash('succes', 'Hoi ' + req.session.user.voornaam);
                 res.redirect('findlove');
-                req.session.user.loggedIN = true;
+                req.session.loggedIN = true;
             } else {
                 req.flash('error', 'Wachtwoord is incorrect');
                 res.render('index');
@@ -171,7 +171,7 @@ function wachtwoordform(req, res) {
 
 // Deze functie veranderd het wachtwoord door eerst te controleren of gebruiker ingelogd is en daarna account te vinden met die email en verander het wachtwoord vanuit de form naar database + flasht status naar user
 function wachtwoordVeranderen(req, res) {
-    if (req.session.user.loggedIN === true) {
+    if (req.session.loggedIN === true) {
         Gebruikers
             .findOne({ email: req.session.user.email })
             .then(data => {
@@ -183,7 +183,7 @@ function wachtwoordVeranderen(req, res) {
                     .findOneAndUpdate(query, update, options)
                     .then(updatedDocument => {
                         if (updatedDocument) {
-                            req.session.user.loggedIN = false;
+                            req.session.loggedIN = false;
                             req.flash('succes', 'Je wachtwoord is met succes veranderd. Log opnieuw in met uw nieuwe wachtwoord');
                             res.render('index');
                         }
@@ -213,14 +213,9 @@ function accountVerwijderen(req, res) {
 }
 // Zet de session.loggedIN naar false = niemand ingelogd. Session destroyen is niet mogelijk, omdat flash sessions nodig heeft
 function uitloggen(req, res) {
-    req.session.user.loggedIN = false;
+    req.session.loggedIN = false;
     req.flash('succes', 'U bent uitgelogd');
     res.render('index');
-}
-
-// Bij een 404
-function error404(res) {
-    res.render('404');
 }
 
 // function pagina gebruiker 1
@@ -277,5 +272,9 @@ function addToCollection(err, data, userid) {
     }
 }
 
+// // Bij een 404
+// function error404(res) {
+//     res.render('404');
+// }
 // Welke poort het live staat
 app.listen(5000, () => console.log('App is listening on port', port));
