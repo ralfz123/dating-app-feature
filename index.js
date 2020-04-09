@@ -60,7 +60,6 @@ app
     .get('/edit-pass', wachtwoordform)
     .post('/edit', wachtwoordVeranderen)
     .get('/delete', accountVerwijderen)
-    .get('/start', gebruikers)
     .get('/matches', overzichtMatches)
     .get('/findlove', gebruiker1)
     .post('/:id', like)
@@ -211,41 +210,36 @@ function overzichtMatches(req, res) {
         })
         .catch(err => { console.log(err); });
 }
-// function db
-function gebruikers(req, res) {
-    Gebruikers
-        .find({ _id: { $ne: mongo.ObjectId(req.session.user._id) } }).toArray()
-        .then(data => {
-            res.render('add', { data: data });
-        })
-        .catch(err => { console.log(err); });
-}
+
+//test test
+
+Gebruikers.find({email: {$in: req.session.user.hasLiked}}).toArray(done)
+
+function done(err, data) {
+  if (err) {
+    next (err);
+  } else {
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].hasLiked.includes(req.session.user.id) && !req.session.user.hasDisliked.includes(data[i].id) && !data[i].hasDisliked.includes(req.session.user.id)) {
+        matches.push(data[i]);
+      } else if (!req.session.user.hasDisliked.includes(data[i].id) && !data[i].hasDisliked.includes(req.session.user.id)) {
+        pending.push(data[i]);
+      }
+    }
+
+
 // Functie liken 
 function like(req) {
     let id = req.params.id;
+    Gebruikers.updateOne({id: mongo.ObjectId(req.session.user._id)}, {$push: {"hasLiked": id}});
+    req.session.user.hasLiked.push(id);
+    res.redirect("/findlove");
+  
 
-    // like toevoegen aan lijst/array hasliked
-    Gebruikers
-        .updateOne({ id: userid }, { $push: { 'hasLiked': id } });
+}}}
 
-    // like toevoegen aan users liked collection
-    Gebruikers
-        .findOne({ id: id }, addToCollection);
-}
-let matchedStatus;
 
-function addToCollection(err, data, userid) {
-    if (err) {
-        throw err;
-    } else {
-
-        if (!data.hasNotliked.includes(userid)) {
-            if (data.hasLiked.includes(userid)) {
-                matchedStatus = true;
-            }
-        }
-    }
-}
+  
 
 // // Bij een 404
 // function error404(res) {
