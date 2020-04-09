@@ -60,14 +60,49 @@ app
     .post('/edit', wachtwoordVeranderen)
     .get('/delete', accountVerwijderen)
     .get('/start', gebruikers)
-    .get('/matches', overzichtMatches)
-    .post('/matches', function(req, res) {
-        res.render('readytostart');
-    })
+    .get('/matches', overzichtMatches) // Hebben we deze nog nodig?
+    .post('/matches', editProfile) 
     .get('/findlove', gebruiker1)
     .post('/:id', like)
     .get('/profile', profiel);
     // .get('/*', error404);
+
+
+    // Update profile page
+function editProfile (req, res) {
+    const query = {  _id : mongo.ObjectId(req.session.user._id)}; // the current user
+    console.log(req.session.userId);
+    const updatedValues = { // the new data values
+        $set: {
+            'voornaam': req.body.voornaam,
+            'achternaam': req.body.achternaam,
+            'geboortedatum': req.body.geboortedatum,
+            'email': req.body.email,
+            'wachtwoord': req.body.wachtwoord,
+            'gender': req.body.gender,
+            'searchSex': req.body.searchSex,
+            'photo': req.body.photo,
+            'functie': req.body.functie,
+            'bio': req.body.bio
+        }
+    };
+    console.log(updatedValues);
+
+    db.collection('users')
+        .findOneAndUpdate(query, updatedValues)
+
+        .then(data => {
+           console.log('heeft data gevonden');
+           console.log(query);
+           console.log(data);
+             if (data){
+                 res.redirect('/profile'); // profile with updated data
+            }
+        })
+        .catch(err =>{
+            console.log(err);
+    });
+}
 
     function profiel(req, res) {
         Gebruikers
