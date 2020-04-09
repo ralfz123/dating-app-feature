@@ -61,9 +61,14 @@ app
     .get('/delete', accountVerwijderen)
     .get('/start', gebruikers)
     .get('/matches', overzichtMatches)
-    .post('/matches', overzichtMatches)
+    .post('/matches', function(req, res) {
+        res.render('readytostart');
+    })
     .get('/findlove', gebruiker1)
     .post('/:id', like)
+    .get('/profile', function(req, res) {
+        res.render('profile.ejs', {data: data});
+    })
     // .get('/*', error404);
 
     
@@ -131,7 +136,7 @@ function inloggen(req, res) {
                 console.log('ingelogd als ' + req.session.user.email);
                 req.flash('succes', 'Hoi ' + req.session.user.voornaam);
                 // res.redirect('findlove');
-                res.render('readytostart', {data: data});
+                res.render('readytostart');
                 req.session.loggedIN = true;
             } else {
                 req.flash('error', 'Wachtwoord is incorrect');
