@@ -49,32 +49,6 @@ mongo.MongoClient
         console.log(err);
     });
 
-/// Root
-app.get('/', goHome);
-// Registration
-app.get('/registration', registreren);
-app.post('/registrating', gebruikerMaken);
-// Inloggen
-app.post('/log-in', inloggen);
-// Uitloggen
-app.get('/logout', uitloggen);
-// Wachtwoord wijzigen
-app.get('/edit-pass', wachtwoordform);
-app.post('/edit', wachtwoordVeranderen);
-// account verwijderen
-app.get('/delete', accountVerwijderen);
-//
-app.get('/start',gebruikers)
-// route naar matches
-app.get('/matches', overzichtMatches);
-// route naar profiel liken page
-app.get('/findlove', gebruiker1);
-// liken
-// app.post("/:id", like);
-// error404
-app.get('/*', error404);
-app.post('/matches', overzichtMatches);
-
 // Routing
 app
     .post('/log-in', inloggen)
@@ -87,9 +61,12 @@ app
     .get('/delete', accountVerwijderen)
     .get('/start', gebruikers)
     .get('/matches', overzichtMatches)
+    .post('/matches', overzichtMatches)
     .get('/findlove', gebruiker1)
     .post('/:id', like)
     // .get('/*', error404);
+
+    
 
 // Checkt of er een ingelogde gebruiker is en stuurt aan de hand hiervan de juiste pagina door
 function registreren(req, res) {
@@ -104,9 +81,12 @@ function registreren(req, res) {
 function goHome(req, res) {
     if (req.session.loggedIN === true) {
         req.flash('succes', 'Hoi ' + req.session.user.voornaam);
-        res.redirect('findlove');
+        // res.redirect('findlove');
+        res.render('readytostart' , {data: data});
+
     } else {
         res.render('index');
+
     }
 }
 // Maakt de gebruiker aan op post
@@ -150,11 +130,13 @@ function inloggen(req, res) {
                 req.session.user = data;
                 console.log('ingelogd als ' + req.session.user.email);
                 req.flash('succes', 'Hoi ' + req.session.user.voornaam);
-                res.redirect('findlove');
+                // res.redirect('findlove');
+                res.render('readytostart', {data: data});
                 req.session.loggedIN = true;
             } else {
                 req.flash('error', 'Wachtwoord is incorrect');
-                res.render('index');
+                // res.render('index');
+                res.render('readytostart', {data: data});
                 console.log('Wachtwoord is incorrect');
             }
         })
