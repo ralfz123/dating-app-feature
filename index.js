@@ -59,16 +59,18 @@ app
     .get('/edit-pass', wachtwoordform)
     .post('/edit', wachtwoordVeranderen)
     .get('/delete', accountVerwijderen)
-    .get('/start', gebruikers)
-    .get('/matches', overzichtMatches) // Hebben we deze nog nodig?
+    .get('/matches', overzichtMatches)// Hebben we deze nog nodig?
     .post('/matches', editProfile) 
     .get('/findlove', gebruiker1)
-    .post('/:id', like)
-    .get('/profile', profiel);
+      // .post('/:id', like)
+     .get('/profile', profiel);
+    .post('/<%= data[i]._id %>', like)
     // .get('/*', error404);
 
 
-    // Update profile page
+
+    
+// Update profile page
 function editProfile (req, res) {
     const query = {  _id : mongo.ObjectId(req.session.user._id)}; // the current user
     console.log(req.session.userId);
@@ -104,14 +106,15 @@ function editProfile (req, res) {
     });
 }
 
-    function profiel(req, res) {
-        Gebruikers
-            .findOne(_id= mongo.ObjectId(req.session.user._id))
-            .then(data => {
-                res.render('profile.ejs', { data: data });
-            })
-            .catch(err => { console.log(err); });
-    }
+// Profiel
+function profiel(req, res) {
+    Gebruikers
+        .findOne(_id= mongo.ObjectId(req.session.user._id))
+        .then(data => {
+            res.render('profile.ejs', { data: data });
+        })
+        .catch(err => { console.log(err); });
+}
 
 
 // Checkt of er een ingelogde gebruiker is en stuurt aan de hand hiervan de juiste pagina door
@@ -128,8 +131,7 @@ function goHome(req, res) {
     if (req.session.loggedIN === true) {
         req.flash('succes', 'Hoi ' + req.session.user.voornaam);
         // res.redirect('findlove');
-        res.render('readytostart' , {data: data});
-
+        res.render('readytostart', { data: data });
     } else {
         res.render('index');
 
@@ -158,7 +160,7 @@ function gebruikerMaken(req, res) {
             req.session.user = data;
             req.session.loggedIN = true;
             req.flash('succes', 'Hoi ' + req.session.user.voornaam + ', jouw account is met succes aangemaakt');
-            res.render('readytostart');
+            res.render('readytostart', { data: data });
             console.log('Gebruiker toegevoegd');
         })
         .catch(err => {
@@ -178,6 +180,7 @@ function inloggen(req, res) {
                 req.flash('succes', 'Hoi ' + req.session.user.voornaam);
                 // res.redirect('findlove');
                 res.render('readytostart');
+
                 req.session.loggedIN = true;
             } else {
                 req.flash('error', 'Wachtwoord is incorrect');
@@ -233,7 +236,7 @@ function accountVerwijderen(req, res) {
         .then(result => {
             console.log(`Heeft ${result.deletedCount} account verwijderd.`);
             req.flash('succes', 'Uw account is met succes verwijderd');
-            req.session.user.loggedIN = false;
+            req.session.loggedIN = false;
             res.render('index');
         })
         .catch(err => console.error(`Error: ${err}`));
@@ -247,12 +250,28 @@ function uitloggen(req, res) {
 
 // function pagina gebruiker 1
 function gebruiker1(req, res) {
-    Gebruikers
-        .find({ _id: { $ne: mongo.ObjectId(req.session.user._id) } }).toArray()
-        .then(data => {
-            res.render('detail', { data: data });
-        })
-        .catch(err => { console.log(err); });
+    if (req.session.user) {
+        Gebruikers
+            .find({
+                _id: { $ne: mongo.ObjectId(req.session.user._id) },
+                email: { $nin: req.session.user.hasLiked },
+                // { email: { $nin: req.session.user.hasDisliked } },
+                gender: req.session.user.searchSex,
+                searchSex: req.session.user.searchSex
+            }).toArray()
+            .then(data => {
+                res.render('detail', { data: data });
+                console.log(data);
+            })
+            .catch(err => {
+                console.log(err);
+                req.flash('errror', 'Excuses! er ging iets fout. Probeer het opnieuw');
+                res.render('readytostart');
+            });
+    } else {
+        req.flash('errror', 'U moet eerst inloggen');
+        res.render('index');
+    }
 }
 // function pagina gebruiker 1
 function overzichtMatches(req, res) {
@@ -263,41 +282,23 @@ function overzichtMatches(req, res) {
         })
         .catch(err => { console.log(err); });
 }
-// function db
-function gebruikers(req, res) {
-    Gebruikers
-        .find({ _id: { $ne: mongo.ObjectId(req.session.user._id) } }).toArray()
-        .then(data => {
-            res.render('add', { data: data });
-        })
-        .catch(err => { console.log(err); });
-}
+
+
 // Functie liken 
-function like(req) {
+function like(req, res) {
     let id = req.params.id;
+    console.log(req.params.id)
+    Gebruikers.updateOne({id: mongo.ObjectId(req.session.user._id)}, {$push: {"hasLiked": id}});
+    req.session.user.hasLiked.push(id);
+    console.log('hoi')
+    res.redirect("/findlove");
 
-    // like toevoegen aan lijst/array hasliked
-    Gebruikers
-        .updateOne({ id: userid }, { $push: { 'hasLiked': id } });
+  
 
-    // like toevoegen aan users liked collection
-    Gebruikers
-        .findOne({ id: id }, addToCollection);
 }
-let matchedStatus;
 
-function addToCollection(err, data, userid) {
-    if (err) {
-        throw err;
-    } else {
 
-        if (!data.hasNotliked.includes(userid)) {
-            if (data.hasLiked.includes(userid)) {
-                matchedStatus = true;
-            }
-        }
-    }
-}
+  
 
 // // Bij een 404
 // function error404(res) {

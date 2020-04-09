@@ -30,12 +30,12 @@
   <h3><%= data[i].age %> </h3>
   <p><%= data[i].bio %></p>
 
-  <form action="/<%= data[i].id %>" method="post">
+  <form action="<%= data[i]._id %>" method="post">
   <button class="disLikebut" type="button"> <img src="images/no.png" alt="DislikeButton"> </button>
 
   <button class="likebut" type="button"> <img src="images/like.png" alt="LikeButton"> </button>
-                    
-  </form>
+</form>                  
+
               
   </figcaption>
  </figure>
@@ -44,9 +44,10 @@
   <% } %>
 
   </ul>
+  <p>Geen mensen meer om weer te geven..  </p>
 </main>
 
-<script src="../static/js/swipen.js"></script>
+<script src="js/swipen.js"></script>
 
 </body>
 </html>
