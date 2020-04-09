@@ -63,7 +63,7 @@ app
     .post('/matches', editProfile) 
     .get('/findlove', gebruiker1)
       // .post('/:id', like)
-     .get('/profile', profiel);
+    .get('/profile', profiel)
     .post('/<%= data[i]._id %>', like)
     // .get('/*', error404);
 
