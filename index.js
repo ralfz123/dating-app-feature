@@ -66,12 +66,18 @@ app
     })
     .get('/findlove', gebruiker1)
     .post('/:id', like)
-    .get('/profile', function(req, res) {
-        res.render('profile.ejs', {data: data});
-    })
+    .get('/profile', profiel);
     // .get('/*', error404);
 
-    
+    function profiel(req, res) {
+        Gebruikers
+            .findOne(_id= mongo.ObjectId(req.session.user._id))
+            .then(data => {
+                res.render('profile.ejs', { data: data });
+            })
+            .catch(err => { console.log(err); });
+    }
+
 
 // Checkt of er een ingelogde gebruiker is en stuurt aan de hand hiervan de juiste pagina door
 function registreren(req, res) {
