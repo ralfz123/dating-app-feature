@@ -64,7 +64,7 @@ app
     .get('/matches', overzichtMatches)
     .get('/findlove', gebruiker1)
     .post('/:id', like)
-    .get('/*', error404);
+    // .get('/*', error404);
 
 // Checkt of er een ingelogde gebruiker is en stuurt aan de hand hiervan de juiste pagina door
 function registreren(req, res) {
@@ -193,11 +193,6 @@ function uitloggen(req, res) {
     res.render('index');
 }
 
-// Bij een 404
-function error404(res) {
-    res.render('404');
-}
-
 // function pagina gebruiker 1
 function gebruiker1(req, res) {
     Gebruikers
@@ -252,5 +247,9 @@ function addToCollection(err, data, userid) {
     }
 }
 
+// // Bij een 404
+// function error404(res) {
+//     res.render('404');
+// }
 // Welke poort het live staat
 app.listen(5000, () => console.log('App is listening on port', port));
