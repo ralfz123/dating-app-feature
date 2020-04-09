@@ -10,7 +10,9 @@ const
     multer = require('multer');
 let
     db,
-    Gebruikers;
+    Gebruikers,
+    matches,
+    geliked
 
 // .env bestand gebruiken
 require('dotenv').config();
@@ -100,7 +102,9 @@ function gebruikerMaken(req, res) {
         'searchSex': req.body.searchSex,
         'photo': req.body.photo,
         'functie': req.body.functie,
-        'bio': req.body.bio
+        'bio': req.body.bio,
+        'HasLiked': [],
+        'hasNotLiked': []
     };
 
     // Pusht de data + input naar database (gebruikers = collection('users'))
@@ -128,7 +132,6 @@ function inloggen(req, res) {
                 req.session.user = data;
                 console.log('ingelogd als ' + req.session.user.email);
                 req.flash('succes', 'Hoi ' + req.session.user.voornaam);
-                // res.redirect('findlove');
                 res.render('readytostart', { data: data });
                 req.session.loggedIN = true;
             } else {
@@ -199,12 +202,12 @@ function uitloggen(req, res) {
 
 // function pagina gebruiker 1
 function gebruiker1(req, res) {
-    if (req.session.user) {
+    if (req.session.loggedIN === true) {
         Gebruikers
             .find({
                 _id: { $ne: mongo.ObjectId(req.session.user._id) },
                 email: { $nin: req.session.user.hasLiked },
-                // { email: { $nin: req.session.user.hasDisliked } },
+                // { email: { $nin: req.session.user.hasNotLiked } },
                 gender: req.session.user.searchSex,
                 searchSex: req.session.user.searchSex
             }).toArray()
@@ -224,12 +227,26 @@ function gebruiker1(req, res) {
 }
 // function pagina gebruiker 1
 function overzichtMatches(req, res) {
-    Gebruikers
-        .find({ _id: { $ne: mongo.ObjectId(req.session.user._id) } }).toArray()
-        .then(data => {
-            res.render('match', { data: data });
-        })
-        .catch(err => { console.log(err); });
+    if (req.session.loggedIN === true) {
+        Gebruikers
+            .find({ email: req.session.user.hasLiked }).toArray()
+            .then(data => {
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].hasLiked.includes(req.session.user.email)) {
+                        matches.push(data[i]);
+                    }
+                }
+                res.render('match', { data: matches });
+            })
+            .catch(err => {
+                console.log(err);
+                req.flash('errror', 'Excuses! er ging iets fout. Probeer het opnieuw');
+                res.render('readytostart');
+            });
+    } else {
+        req.flash('errror', 'U moet eerst inloggen');
+        res.render('index');
+    }
 }
 
 // Functie liken 

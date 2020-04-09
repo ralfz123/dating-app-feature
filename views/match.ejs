@@ -1,12 +1,18 @@
 <!DOCTYPE html>
-<link rel="STYLESHEET" href="/css/styleProfiel.css" type="text/css"> 
+<link rel="STYLESHEET" href="/css/styleProfiel.css" type="text/css">
 <h1>Matches:</h1>
 
-<% for (var index = 0; index < data.length; index++){ %>
-<ul class="matches"> 
-  <h2><%= data[index].voornaam %> </h2>
-  <p><%= data[index].achternaam %> </p>
- <figure>  <%= data[index].photo %> </figure>
-</ul>
+<% for (var index = 0; index < data.matches.length; index++){ %>
+    <ul class="matches">
+        <h2>
+            <%= data[i].matches.voornaam %>
+        </h2>
+        <p>
+            <%= data[i].matches.achternaam %>
+        </p>
+        <figure>
+            <%= data[i].matches.photo %>
+        </figure>
+    </ul>
 
-<% } %>
+    <% } %>
