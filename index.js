@@ -135,8 +135,7 @@ function inloggen(req, res) {
                 req.session.loggedIN = true;
             } else {
                 req.flash('error', 'Wachtwoord is incorrect');
-                // res.render('index');
-                res.render('readytostart', {data: data});
+                res.render('index');
                 console.log('Wachtwoord is incorrect');
             }
         })
