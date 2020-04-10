@@ -82,8 +82,7 @@ function registreren(req, res) {
 function goHome(req, res) {
     if (req.session.loggedIN === true) {
         req.flash('succes', 'Hoi ' + req.session.user.voornaam);
-        // res.redirect('findlove');
-        res.render('readytostart', { data: data });
+        res.render('readytostart');
     } else {
         res.render('index');
 
@@ -130,10 +129,10 @@ function inloggen(req, res) {
         .then(data => {
             if (data.wachtwoord === req.body.wachtwoord) {
                 req.session.user = data;
+                req.session.loggedIN = true;
                 console.log('ingelogd als ' + req.session.user.email);
                 req.flash('succes', 'Hoi ' + req.session.user.voornaam);
                 res.render('readytostart', { data: data });
-                req.session.loggedIN = true;
             } else {
                 req.flash('error', 'Wachtwoord is incorrect');
                 res.render('index');
@@ -202,14 +201,16 @@ function uitloggen(req, res) {
 
 // function pagina gebruiker 1
 function gebruiker1(req, res) {
-    if (req.session.loggedIN === true) {
+    if (req.session.loggedIN) {
         Gebruikers
             .find({
-                _id: { $ne: mongo.ObjectId(req.session.user._id) },
-                email: { $nin: req.session.user.hasLiked },
-                // { email: { $nin: req.session.user.hasNotLiked } },
-                gender: req.session.user.searchSex,
-                searchSex: req.session.user.searchSex
+                $and: [
+                    { _id: { $ne: mongo.ObjectId(req.session.user._id) } },
+                    // { email: { $nin: req.session.user.hasLiked } },
+                    // { email: { $nin: req.session.user.hasNotLiked } },
+                    { gender: req.session.user.searchSex },
+                    { searchSex: req.session.user.gender }
+                ]
             }).toArray()
             .then(data => {
                 res.render('detail', { data: data });
@@ -227,9 +228,10 @@ function gebruiker1(req, res) {
 }
 // function pagina gebruiker 1
 function overzichtMatches(req, res) {
+
     if (req.session.loggedIN === true) {
         Gebruikers
-            .find({ email: req.session.user.hasLiked }).toArray()
+            .find({ email: { $in: req.session.user.hasLiked } }).toArray()
             .then(data => {
                 for (let i = 0; i < data.length; i++) {
                     if (data[i].hasLiked.includes(req.session.user.email)) {
@@ -237,10 +239,12 @@ function overzichtMatches(req, res) {
                     }
                 }
                 res.render('match', { data: matches });
+                console.log(matches);
+
             })
             .catch(err => {
                 console.log(err);
-                req.flash('errror', 'Excuses! er ging iets fout. Probeer het opnieuw');
+                req.flash('error', 'Excuses! er ging iets fout. Probeer het opnieuw');
                 res.render('readytostart');
             });
     } else {
