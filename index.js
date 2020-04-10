@@ -61,12 +61,62 @@ app
     .get('/edit-pass', wachtwoordform)
     .post('/edit', wachtwoordVeranderen)
     .get('/delete', accountVerwijderen)
-    .get('/matches', overzichtMatches)
-    .post('/matches', overzichtMatches)
+    .get('/matches', overzichtMatches) // Hebben we deze nog nodig?
+    .post('/matches', editProfile)
     .get('/findlove', gebruiker1)
-    .post('/:id', like);
-// .get('/*', error404);
+    // .post('/:id', like)
+    .get('/profile', profiel)
+    .post('/<%= data[i]._id %>', like)
+    // .get('/*', error404);
 
+
+
+
+// Update profile page
+function editProfile(req, res) {
+    const query = { _id: mongo.ObjectId(req.session.user._id) }; // the current user
+    console.log(req.session.user._id);
+    const updatedValues = { // the new data values
+        $set: {
+            'voornaam': req.body.voornaam,
+            'achternaam': req.body.achternaam,
+            'geboortedatum': req.body.geboortedatum,
+            'email': req.body.email,
+            'wachtwoord': req.body.wachtwoord,
+            'gender': req.body.gender,
+            'searchSex': req.body.searchSex,
+            'photo': req.body.photo,
+            'functie': req.body.functie,
+            'bio': req.body.bio
+        }
+    };
+    console.log(updatedValues);
+
+    db.collection('users')
+        .findOneAndUpdate(query, updatedValues)
+
+    .then(data => {
+            console.log('heeft data gevonden');
+            console.log(query);
+            console.log(data);
+            if (data) {
+                res.redirect('/profile'); // profile with updated data
+            }
+        })
+        .catch(err => {
+            console.log(err);
+        });
+}
+
+// Profiel
+function profiel(req, res) {
+    Gebruikers
+        .findOne(_id = mongo.ObjectId(req.session.user._id))
+        .then(data => {
+            res.render('profile.ejs', { data: data });
+        })
+        .catch(err => { console.log(err); });
+}
 
 
 // Checkt of er een ingelogde gebruiker is en stuurt aan de hand hiervan de juiste pagina door
@@ -132,7 +182,8 @@ function inloggen(req, res) {
                 req.session.loggedIN = true;
                 console.log('ingelogd als ' + req.session.user.email);
                 req.flash('succes', 'Hoi ' + req.session.user.voornaam);
-                res.render('readytostart', { data: data });
+                res.render('readytostart');
+                req.session.loggedIN = true;
             } else {
                 req.flash('error', 'Wachtwoord is incorrect');
                 res.render('index');
@@ -253,32 +304,19 @@ function overzichtMatches(req, res) {
     }
 }
 
+
 // Functie liken 
-function like(req) {
+function like(req, res) {
     let id = req.params.id;
-
-    // like toevoegen aan lijst/array hasliked
-    Gebruikers
-        .updateOne({ id: userid }, { $push: { 'hasLiked': id } });
-
-    // like toevoegen aan users liked collection
-    Gebruikers
-        .findOne({ id: id }, addToCollection);
+    console.log(req.params.id);
+    Gebruikers.updateOne({ id: mongo.ObjectId(req.session.user._id) }, { $push: { 'hasLiked': id } });
+    req.session.user.hasLiked.push(id);
+    console.log('hoi');
+    res.redirect('findlove');
 }
-let matchedStatus;
 
-function addToCollection(err, data, userid) {
-    if (err) {
-        throw err;
-    } else {
 
-        if (!data.hasNotliked.includes(userid)) {
-            if (data.hasLiked.includes(userid)) {
-                matchedStatus = true;
-            }
-        }
-    }
-}
+
 
 // // Bij een 404
 // function error404(res) {

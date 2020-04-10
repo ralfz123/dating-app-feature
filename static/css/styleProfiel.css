@@ -78,6 +78,14 @@ padding: 25px;
 main > ul > li:last-of-type {
 box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.2);
 }
+
+main > p:last-child {
+    position: absolute;
+    top: 45vh;
+    width: 100vw;
+    text-align: center;
+    z-index: -999;
+}
 /* profiel foto */
 main > ul figure {
 height: 100%;
@@ -108,12 +116,22 @@ margin-top: 20px;
 top: -65px;
 width: 75px;
 height: 75px;
-margin-left: 40px;
+margin-left: 340px;
 background-color: transparent;
 position: absolute;
 
 
 }
+.disLikebut {
+    top: -65px;
+    width: 75px;
+    height: 75px;
+    margin-left: 40px;
+    background-color: transparent;
+    position: absolute;
+    
+    
+    }
 
 /* desktop responsive website */
 @media only screen and (min-width: 800px) {
