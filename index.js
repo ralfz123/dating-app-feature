@@ -73,7 +73,7 @@ app
 // Update profile page
 function editProfile (req, res) {
     const query = {  _id : mongo.ObjectId(req.session.user._id)}; // the current user
-    console.log(req.session.userId);
+    console.log(req.session.user._id);
     const updatedValues = { // the new data values
         $set: {
             'voornaam': req.body.voornaam,
