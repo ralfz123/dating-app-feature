@@ -12,21 +12,16 @@
 <body>
     <header>
         <img class="lobbie" src="images/logo.png" alt="Logo">
-
     </header>
     <main>
         <ul>
-
             <% for (let i = 0; i < data.length; i++) { %>
-
                 <li>
                     <figure>
-
                         <a href="/profile/<%= data[i].id %>">
-    
-  <img src="images/<%= data[i].photo %>" alt="Profilepicture">
-  </a>
 
+<img src="images/<%= data[i].photo %>" alt="Profilepicture">
+</a>
                         <figcaption>
                             <h2>
                                 <%= data[i].voornaam + ' ' + data[i].achternaam %>

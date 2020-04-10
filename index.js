@@ -11,8 +11,7 @@ const
 let
     db,
     Gebruikers,
-    matches,
-    geliked
+    geliked;
 
 // .env bestand gebruiken
 require('dotenv').config();
@@ -66,8 +65,8 @@ app
     .get('/findlove', gebruiker1)
     // .post('/:id', like)
     .get('/profile', profiel)
-    .post('/<%= data[i]._id %>', like)
-    // .get('/*', error404);
+    .post('/<%= data[i]._id %>', like);
+// .get('/*', error404);
 
 
 
@@ -279,29 +278,35 @@ function gebruiker1(req, res) {
 }
 // function pagina gebruiker 1
 function overzichtMatches(req, res) {
-
+    let matches = [];
     if (req.session.loggedIN === true) {
-        Gebruikers
-            .find({ email: { $in: req.session.user.hasLiked } }).toArray()
-            .then(data => {
-                for (let i = 0; i < data.length; i++) {
-                    if (data[i].hasLiked.includes(req.session.user.email)) {
-                        matches.push(data[i]);
+        let gelikedeusers = req.session.user.hasLiked;
+        let huidigemail = req.session.user.email;
+        if (gelikedeusers) {
+            Gebruikers
+                .find({ email: { $in: gelikedeusers } }).toArray()
+                .then(data => {
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].hasLiked.includes(huidigemail)) {
+                            matches.push(data[i]);
+                        }
                     }
-                }
-                res.render('match', { data: matches });
-                console.log(matches);
-
-            })
-            .catch(err => {
-                console.log(err);
-                req.flash('error', 'Excuses! er ging iets fout. Probeer het opnieuw');
-                res.render('readytostart');
-            });
+                    res.render('match', { data: matches });
+                })
+                .catch(err => {
+                    console.log(err);
+                    req.flash('error', 'Excuses! er ging iets fout. Probeer het opnieuw');
+                    res.render('readytostart');
+                });
+        } else {
+            req.flash('error', 'U heeft nog geen matches');
+            res.render('match');
+        }
     } else {
-        req.flash('errror', 'U moet eerst inloggen');
+        req.flash('error', 'U moet eerst inloggen');
         res.render('index');
     }
+
 }
 
 
