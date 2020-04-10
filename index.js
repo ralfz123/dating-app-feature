@@ -79,7 +79,6 @@ function editProfile (req, res) {
             'voornaam': req.body.voornaam,
             'achternaam': req.body.achternaam,
             'geboortedatum': req.body.geboortedatum,
-            'email': req.body.email,
             'wachtwoord': req.body.wachtwoord,
             'gender': req.body.gender,
             'searchSex': req.body.searchSex,
