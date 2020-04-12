@@ -1,12 +1,23 @@
 <!DOCTYPE html>
-<link rel="STYLESHEET" href="/css/styleProfiel.css" type="text/css"> 
+<link rel="STYLESHEET" href="/css/styleProfiel.css" type="text/css">
 <h1>Matches:</h1>
+<!-- Maakt een div aan met flashmessages met class error of succes -->
+<%- messages() %>
+    <!-- <% if (data.length > 0){ %> -->
+    <% for (var i = 0; i < data.length; i++){ %>
+        <ul class="matches">
+            <h2>
+                <%= data[i].voornaam %>
+            </h2>
+            <p>
+                <%= data[i].achternaam %>
+            </p>
+            <figure>
+                <%= data[i].photo %>
+            </figure>
+        </ul>
 
-<% for (var index = 0; index < data.length; index++){ %>
-<ul class="matches"> 
-  <h2><%= data[index].voornaam %> </h2>
-  <p><%= data[index].achternaam %> </p>
- <figure>  <%= data[index].photo %> </figure>
-</ul>
-
-<% } %>
+        <% } %>
+            <% }else { %>
+                <p>U heeft nog geen matches</p>
+                <% } %>
