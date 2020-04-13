@@ -1,12 +1,12 @@
-# Date-IT
-For our project Tech, the intention is that we eventually make a dating app together with a project group. The first part of the project is completely individual. You come up with a feature for a dating app and work it out. At the end of the project, you only combine all the features of everyone into one app. And that app is called: Date-IT.
+# DateIT
+For our project Tech, the intention is that we eventually make a dating app together with a project group. The first part of the project is completely individual. You come up with a feature for a dating app and work it out. At the end of the project, you only combine all the features of everyone into one app. And that app is called: DateIT.
 
 <!-- <img src="https://raw.githubusercontent.com/ralfz123/prototype_datingapp/master/docs/readme/design_mockup2.png" width="1000" /> -->
 -- 3 foto's UI iPhone--
 
 Take a look at our process in the [Wiki](https://github.com/ralfz123/dating-app-feature/wiki).
-# :heart: What is Date-IT?
-In **Date-IT** you can create an account and like users. When there is a match between you and the other user, it appears on the matchlist.
+# :heart: What is DateIT?
+In **DateIT** you can create an account and like users. When there is a match between you and the other user, it appears on the matchlist.
 
 # :heart_eyes: Jobstories
 _When I'm looking for a serious connection with someone,  
@@ -25,7 +25,7 @@ _so that (maybe) eventually a match will come.___
 [Here](https://www.heroku.com/) you can see a live version of the app.
 
 # :nerd_face: Technical summary
-**Date-IT** is built, using:
+**DateIT** is built, using:
 - [Express](https://expressjs.com/)
 - [Node.JS](https://nodejs.org/en/)
 - [MongoDB](https://www.mongodb.com/)
