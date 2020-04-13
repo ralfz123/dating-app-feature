@@ -141,12 +141,14 @@ function goHome(req, res) {
 // Maakt de gebruiker aan op post
 
 function gebruikerMaken(req, res) {
+    const hashedPassword = bcrypt.hash(req.body.wachtwoord, saltRounds)
+
     let data = {
         'voornaam': req.body.voornaam,
         'achternaam': req.body.achternaam,
         'geboortedatum': req.body.geboortedatum,
         'email': req.body.email,
-        'wachtwoord': req.body.wachtwoord,
+        'wachtwoord': hashedPassword,
         'gender': req.body.gender,
         'searchSex': req.body.searchSex,
         'photo': req.body.photo,
