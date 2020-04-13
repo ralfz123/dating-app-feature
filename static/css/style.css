@@ -100,6 +100,7 @@ main {
     display: inline-flex;
     height: 25px;
     width: auto;
+    cursor: pointer;
 }
 
 .registratepage input[type="file"]:valid {
