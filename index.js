@@ -12,7 +12,8 @@ const
     saltRounds = 10;
 let
     db,
-    Gebruikers;
+    Gebruikers,
+    geliked;
 
 // .env bestand gebruiken
 require('dotenv').config();
@@ -61,20 +62,20 @@ app
     .get('/edit-pass', wachtwoordform)
     .post('/edit', wachtwoordVeranderen)
     .get('/delete', accountVerwijderen)
-    .get('/matches', overzichtMatches)// Hebben we deze nog nodig?
-    .post('/matches', editProfile) 
+    .get('/matches', overzichtMatches) // Hebben we deze nog nodig?
+    .post('/matches', editProfile)
     .get('/findlove', gebruiker1)
-      // .post('/:id', like)
+    // .post('/:id', like)
     .get('/profile', profiel)
-    .post('/<%= data[i]._id %>', like)
-    // .get('/*', error404);
+    .post('/<%= data[i]._id %>', like);
+// .get('/*', error404);
 
 
 
-    
+
 // Update profile page
-function editProfile (req, res) {
-    const query = {  _id : mongo.ObjectId(req.session.user._id)}; // the current user
+function editProfile(req, res) {
+    const query = { _id: mongo.ObjectId(req.session.user._id) }; // the current user
     console.log(req.session.user._id);
     const updatedValues = { // the new data values
         $set: {
@@ -101,17 +102,18 @@ function editProfile (req, res) {
              if (data){
                 //  res.redirect('/profile'); // profile with updated data
                  res.render('readytostart');
+
             }
         })
-        .catch(err =>{
+        .catch(err => {
             console.log(err);
-    });
+        });
 }
 
 // Profiel
 function profiel(req, res) {
     Gebruikers
-        .findOne(_id= mongo.ObjectId(req.session.user._id))
+        .findOne(_id = mongo.ObjectId(req.session.user._id))
         .then(data => {
             res.render('profile.ejs', { data: data });
         })
@@ -132,8 +134,7 @@ function registreren(req, res) {
 function goHome(req, res) {
     if (req.session.loggedIN === true) {
         req.flash('succes', 'Hoi ' + req.session.user.voornaam);
-        // res.redirect('findlove');
-        res.render('readytostart', { data: data });
+        res.render('readytostart');
     } else {
         res.render('index');
 
@@ -152,7 +153,9 @@ function gebruikerMaken(req, res) {
         'searchSex': req.body.searchSex,
         'photo': req.body.photo,
         'functie': req.body.functie,
-        'bio': req.body.bio
+        'bio': req.body.bio,
+        'HasLiked': [],
+        'hasNotLiked': []
     };
 
     // Pusht de data + input naar database (gebruikers = collection('users'))
@@ -178,11 +181,10 @@ function inloggen(req, res) {
         .then(data => {
             if (data.wachtwoord === req.body.wachtwoord) {
                 req.session.user = data;
+                req.session.loggedIN = true;
                 console.log('ingelogd als ' + req.session.user.email);
                 req.flash('succes', 'Hoi ' + req.session.user.voornaam);
-                // res.redirect('findlove');
                 res.render('readytostart');
-
                 req.session.loggedIN = true;
             } else {
                 req.flash('error', 'Wachtwoord is incorrect');
@@ -252,14 +254,16 @@ function uitloggen(req, res) {
 
 // function pagina gebruiker 1
 function gebruiker1(req, res) {
-    if (req.session.user) {
+    if (req.session.loggedIN) {
         Gebruikers
             .find({
-                _id: { $ne: mongo.ObjectId(req.session.user._id) },
-                email: { $nin: req.session.user.hasLiked },
-                // { email: { $nin: req.session.user.hasDisliked } },
-                gender: req.session.user.searchSex,
-                searchSex: req.session.user.searchSex
+                $and: [
+                    { _id: { $ne: mongo.ObjectId(req.session.user._id) } },
+                    // { email: { $nin: req.session.user.hasLiked } },
+                    // { email: { $nin: req.session.user.hasNotLiked } },
+                    { gender: req.session.user.searchSex },
+                    { searchSex: req.session.user.gender }
+                ]
             }).toArray()
             .then(data => {
                 res.render('detail', { data: data });
@@ -277,30 +281,50 @@ function gebruiker1(req, res) {
 }
 // function pagina gebruiker 1
 function overzichtMatches(req, res) {
-    Gebruikers
-        .find({ _id: { $ne: mongo.ObjectId(req.session.user._id) } }).toArray()
-        .then(data => {
-            res.render('match', { data: data });
-        })
-        .catch(err => { console.log(err); });
+    let matches = [];
+    if (req.session.loggedIN === true) {
+        let gelikedeusers = req.session.user.hasLiked;
+        let huidigemail = req.session.user.email;
+        if (gelikedeusers) {
+            Gebruikers
+                .find({ email: { $in: gelikedeusers } }).toArray()
+                .then(data => {
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].hasLiked.includes(huidigemail)) {
+                            matches.push(data[i]);
+                        }
+                    }
+                    res.render('match', { data: matches });
+                })
+                .catch(err => {
+                    console.log(err);
+                    req.flash('error', 'Excuses! er ging iets fout. Probeer het opnieuw');
+                    res.render('readytostart');
+                });
+        } else {
+            req.flash('error', 'U heeft nog geen matches');
+            res.render('match');
+        }
+    } else {
+        req.flash('error', 'U moet eerst inloggen');
+        res.render('index');
+    }
+
 }
 
 
 // Functie liken 
 function like(req, res) {
     let id = req.params.id;
-    console.log(req.params.id)
-    Gebruikers.updateOne({id: mongo.ObjectId(req.session.user._id)}, {$push: {"hasLiked": id}});
+    console.log(req.params.id);
+    Gebruikers.updateOne({ id: mongo.ObjectId(req.session.user._id) }, { $push: { 'hasLiked': id } });
     req.session.user.hasLiked.push(id);
-    console.log('hoi')
-    res.redirect("/findlove");
-
-  
-
+    console.log('hoi');
+    res.redirect('findlove');
 }
 
 
-  
+
 
 // // Bij een 404
 // function error404(res) {
