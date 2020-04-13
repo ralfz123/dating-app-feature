@@ -7,9 +7,9 @@ const
     bodyParser = require('body-parser'),
     session = require('express-session'),
     flash = require('connect-flash'),
-    multer = require('multer');
-bcrypt = require('bcrypt');
-saltRounds = 10;
+    multer = require('multer'),
+    bcrypt = require('bcrypt'),
+    saltRounds = 10;
 let
     db,
     Gebruikers,
