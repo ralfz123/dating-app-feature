@@ -7,8 +7,7 @@ const
     bodyParser = require('body-parser'),
     session = require('express-session'),
     flash = require('connect-flash'),
-    multer = require('multer'),
-    path = require('path');
+    multer = require('multer');
 let
     db,
     Gebruikers,
