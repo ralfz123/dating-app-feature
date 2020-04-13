@@ -8,8 +8,8 @@ const
     session = require('express-session'),
     flash = require('connect-flash'),
     multer = require('multer'),
-    bcrypt = require('bcrypt');
-saltRounds = 10;
+    bcrypt = require('bcrypt'),
+    saltRounds = 10;
 let
     db,
     Gebruikers,
@@ -19,7 +19,7 @@ let
 // Multer setup
 const opslag = multer.diskStorage({
     destination: './static/images/profielfotos',
-    filename: function (req, file, cb) {
+    filename: function(req, file, cb) {
         cb(null, file.originalname);
     }
 });
@@ -53,7 +53,7 @@ app
         saveUninitialized: true,
         secure: true,
     }))
-    .use(function (req, res, next) {
+    .use(function(req, res, next) {
         res.locals.messages = require('express-messages')(req, res);
         next();
     })
@@ -85,12 +85,11 @@ app
     .get('/edit-pass', wachtwoordform)
     .post('/edit', wachtwoordVeranderen)
     .get('/delete', accountVerwijderen)
-    .get('/matches', overzichtMatches) // Hebben we deze nog nodig?
-    .post('/matches', editProfile)
+    .get('/matches', overzichtMatches)
+    // .post('/matches', editProfile)
     .get('/findlove', gebruiker1)
-    // .post('/:id', like)
-    .get('/profile', profiel)
-    .post('/<%= data[i]._id %>', like);
+    .post('/:email', like)
+    .get('/profile', profiel);
 // .get('/*', error404);
 
 
@@ -116,12 +115,8 @@ function editProfile(req, res) {
     Gebruikers
         .findOneAndUpdate(query, updatedValues)
         .then(data => {
-            console.log(query);
-            console.log(data);
-            if (data) {
-                console.log('heeft data gevonden');
-                res.render('readytostart', { data: data });
-            }
+            console.log('heeft data gevonden');
+            res.render('readytostart', { data: data });
         })
         .catch(err => {
             console.log(err);
@@ -192,6 +187,7 @@ function gebruikerMaken(req, res, file) {
             res.render('registration');
         });
 }
+
 // checkt of gebruiker bestaat en logt in door sessie aan te maken met de email als ID (omdat email uniek is)
 // req.Flash('class voor de div', 'het bericht') geeft dat  error/succes bericht door naar de template en daar staat weer code die het omzet naar html
 function inloggen(req, res) {
@@ -201,14 +197,11 @@ function inloggen(req, res) {
             if (data.wachtwoord === req.body.wachtwoord) {
                 req.session.user = data;
                 req.session.loggedIN = true;
-                console.log('ingelogd als ' + req.session.user.email);
                 req.flash('succes', 'Hoi ' + req.session.user.voornaam);
                 res.render('readytostart');
-                req.session.loggedIN = true;
             } else {
                 req.flash('error', 'Wachtwoord is incorrect');
                 res.render('index');
-                console.log('Wachtwoord is incorrect');
             }
         })
         .catch(err => {
@@ -331,23 +324,22 @@ function overzichtMatches(req, res) {
 
 }
 
-
-// Functie liken 
 function like(req, res) {
-    let id = req.params.id;
-    console.log(req.params.id);
-    Gebruikers.updateOne({ id: mongo.ObjectId(req.session.user._id) }, { $push: { 'hasLiked': id } });
+    let id = req.params.email;
+    console.log(id);
+    Gebruikers
+        .updateOne({ _id: mongo.ObjectId(req.session.user._id) }, {
+            $push: { 'hasLiked': id }
+        });
     req.session.user.hasLiked.push(id);
-    console.log('hoi');
-    res.redirect('findlove');
+    console.log('liked');
+    res.redirect('/findlove');
 }
-
-
-
 
 // // Bij een 404
 // function error404(res) {
 //     res.render('404');
 // }
+
 // Welke poort het live staat
 app.listen(5000, () => console.log('App is listening on port', port));
