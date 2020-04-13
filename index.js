@@ -88,9 +88,9 @@ app
     .get('/matches', overzichtMatches) // Hebben we deze nog nodig?
     .post('/matches', editProfile)
     .get('/findlove', gebruiker1)
-    // .post('/:id', like)
+    .post('/:email', like)
     .get('/profile', profiel)
-    .post('/<%= data[i]._id %>', like);
+    // .post('/<%= data[i]._id %>', like);
 // .get('/*', error404);
 
 
@@ -333,13 +333,25 @@ function overzichtMatches(req, res) {
 
 
 // Functie liken 
+// function like(req, res) {
+//     let id = req.params.id;
+//     console.log(req.params.id);
+//     Gebruikers.updateOne({ id: mongo.ObjectId(req.session.user._id) }, { $push: { 'hasLiked': id } });
+//     req.session.user.hasLiked.push(id);
+//     console.log('hoi');
+//     res.redirect('findlove');
+// }
+
 function like(req, res) {
-    let id = req.params.id;
-    console.log(req.params.id);
-    Gebruikers.updateOne({ id: mongo.ObjectId(req.session.user._id) }, { $push: { 'hasLiked': id } });
+    let id = req.params.email;
+    console.log(id);
+    Gebruikers.updateOne(
+    {_id: mongo.ObjectId(req.session.user._id)},
+    {$push: {"hasLiked": id}
+    });
     req.session.user.hasLiked.push(id);
-    console.log('hoi');
-    res.redirect('findlove');
+    console.log('liked')
+    res.redirect("/findlove");
 }
 
 
