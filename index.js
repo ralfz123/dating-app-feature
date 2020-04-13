@@ -86,7 +86,7 @@ app
     .post('/edit', wachtwoordVeranderen)
     .get('/delete', accountVerwijderen)
     .get('/matches', overzichtMatches)
-    .post('/matches', editProfile)
+    // .post('/matches', editProfile)
     .get('/findlove', gebruiker1)
     // .post('/:id', like)
     .get('/profile', profiel)
@@ -120,6 +120,7 @@ function editProfile(req, res) {
             console.log(query);
             console.log(data);
             if (data) {
+                req.session.user = data;
                 res.redirect('/profile'); // profile with updated data
                 res.render('readytostart');
             }
