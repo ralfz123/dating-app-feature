@@ -56,10 +56,26 @@ p {
 body>header {
     padding: 20px 0px;
     margin-bottom: 25px;
+    width: 90%;
+    margin: auto;
 }
 
 body#registration header {
     margin-bottom: 5px;
+}
+
+header nav ul {
+    display: flex;
+    list-style: none;
+    justify-content: space-between;
+}
+
+header nav .navicon {
+    max-width: 50px;
+}
+
+header nav .logo {
+    max-width: 100px;
 }
 
 
@@ -71,22 +87,26 @@ main {
     padding: 30px 5px;
 }
 
+
 /********************
     MULTI STEP FORM
 ********************/
 
-.registratepage fieldset{
+.registratepage fieldset {
     margin: 15px auto;
     display: none;
 }
 
-.registratepage fieldset label{
+.registratepage fieldset label {
     display: block;
     /* padding-top: 26px; */
     font-size: 1rem;
     font-family: 'maven pro';
 }
-.registratepage fieldset .man, .registratepage fieldset .vrouw, .registratepage fieldset .beide{
+
+.registratepage fieldset .man,
+.registratepage fieldset .vrouw,
+.registratepage fieldset .beide {
     /* font-family: omnes-pro, sans-serif; */
     display: inline;
     /* background-color: red; */
@@ -97,7 +117,7 @@ main {
     font-size: 1.4rem;
 }
 
-.registratepage fieldset input{
+.registratepage fieldset input {
     /* width: 96%; */
     /* border-bottom: 1px solid rgb(255, 0, 0); */
     /* margin-left: 20px; */
@@ -105,12 +125,12 @@ main {
     padding-bottom: 0px;
 }
 
-.registratepage fieldset input::placeholder{
+.registratepage fieldset input::placeholder {
     font-weight: lighter;
     line-height: 50px;
 }
 
-.registratepage button{
+.registratepage button {
     margin: 20px;
     padding: 12px 0px;
     width: 100px;
@@ -124,26 +144,27 @@ main {
     text-align: center;
 }
 
-.registratepage fieldset input[type="radio"]{
+.registratepage fieldset input[type="radio"] {
     display: inline-flex;
     width: 20px;
 }
 
-.registratepage .optionphoto{
+.registratepage .optionphoto {
     padding: 0px;
 }
 
-.registratepage .optionphoto img, .registratepage fieldset p{
+.registratepage .optionphoto img,
+.registratepage fieldset p {
     flex-wrap: wrap;
     justify-content: start;
 }
 
-.registratepage .optionphoto img{
+.registratepage .optionphoto img {
     width: 25%;
     height: 55%;
 }
 
-.registratepage .optionphoto p{
+.registratepage .optionphoto p {
     width: 60vw;
     font-size: 1.5rem;
     font-weight: 300;
@@ -158,12 +179,11 @@ main {
     color: black;
 }
 
-
-.registratepage .optionphoto .fileContainer{
+.registratepage .optionphoto .fileContainer {
     overflow: hidden;
     position: relative;
 }
-    
+
 .registratepage .optionphoto .file {
     cursor: pointer;
     /* display: inline; */
@@ -182,18 +202,15 @@ main {
     margin: auto;
 }
 
-
-
-.registratepage ul{
+.registratepage ul {
     width: 80vw;
     /* margin: 20px auto; */
     text-align: center;
     /* float: right; */
     position: absolute;
-
 }
 
-.registratepage ul li{
+.registratepage ul li {
     width: 20px;
     height: 20px;
     border-radius: 50%;
@@ -203,10 +220,7 @@ main {
     /* border: 1px solid rgb(133, 126, 126); */
 }
 
-
-
-
-.registratepage fieldset input[type="radio"]{
+.registratepage fieldset input[type="radio"] {
     /* position: absolute;
     opacity: 20;
     cursor: pointer;
@@ -214,29 +228,26 @@ main {
     width: 21px;
     background-color: red; */
     /* margin-left: 50px; */
-
-        /* position: absolute; */
-        opacity: 20;
-        cursor: pointer;
-        height: 25px;
-        width: 21px;
-        background-color: red;
-        /* margin-left: 50px; */
-        /* margin-bottom: 14px;*/
-
+    /* position: absolute; */
+    opacity: 20;
+    cursor: pointer;
+    height: 25px;
+    width: 21px;
+    background-color: red;
+    /* margin-left: 50px; */
+    /* margin-bottom: 14px;*/
 }
 
+.registratepage fieldset input[type="radio"]:focus {
+    box-shadow: none;
+}
 
-  .registratepage fieldset input[type="radio"]:focus{
-     box-shadow: none;
-    }
-    
-.renderedphoto{
+.renderedphoto {
     min-width: 25%;
     /* width: 10px; */
     height: 10px;
     list-style-type: none;
-    color:blue;
+    color: blue;
     flex-wrap: wrap;
     justify-content: space-around;
     flex-direction: row;
@@ -244,16 +255,11 @@ main {
     /* padding: 48px; */
     /* margin: 8px; */
     border-radius: 10px;
-
     margin: auto;
     width: 50%;
     padding: 64px;
     margin-top: 20px;
-
- }
-
-
-
+}
 
 body#registration main {
     padding: 10px 5px 30px 5px;
