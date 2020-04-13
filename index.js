@@ -9,6 +9,8 @@ const
     flash = require('connect-flash'),
     multer = require('multer'),
     path = require('path');
+    bcrypt = require('bcrypt');
+    saltRounds = 10;
 let
     db,
     Gebruikers,
@@ -120,6 +122,15 @@ function editProfile(req, res) {
             console.log(data);
             if (data) {
                 res.redirect('/profile'); // profile with updated data
+
+        .then(data => {
+           console.log('heeft data gevonden');
+           console.log(query);
+           console.log(data);
+             if (data){
+                //  res.redirect('/profile'); // profile with updated data
+                 res.render('readytostart');
+
             }
         })
         .catch(err => {
