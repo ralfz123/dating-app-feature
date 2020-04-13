@@ -92,24 +92,27 @@ main {
     MULTI STEP FORM
 ********************/
 
-.registratepage fieldset {
-    margin: 15px auto;
+.registratepage #accountgegevens {
     display: none;
 }
 
-.registratepage fieldset label {
-    display: block;
-    /* padding-top: 26px; */
-    font-size: 1rem;
-    font-family: 'maven pro';
+.registratepage fieldset input[type="radio"] {
+    display: inline-flex;
+    height: 25px;
+    width: auto;
+    cursor: pointer;
+}
+
+.registratepage input[type="file"]:valid {
+    border: 0 !important;
+    opacity: 1;
+    background-color: #ffffff00;
 }
 
 .registratepage fieldset .man,
 .registratepage fieldset .vrouw,
 .registratepage fieldset .beide {
-    /* font-family: omnes-pro, sans-serif; */
     display: inline;
-    /* background-color: red; */
     padding: 4px;
     padding-top: 12px;
     margin: auto;
@@ -117,17 +120,31 @@ main {
     font-size: 1.4rem;
 }
 
-.registratepage fieldset input {
-    /* width: 96%; */
-    /* border-bottom: 1px solid rgb(255, 0, 0); */
-    /* margin-left: 20px; */
-    font-family: omnes-pro, sans-serif;
-    padding-bottom: 0px;
+.registratepage ul li {
+    display: inline-flex;
+    margin: 15px;
 }
 
-.registratepage fieldset input::placeholder {
-    font-weight: lighter;
-    line-height: 50px;
+.registratepage ul {
+    list-style: none;
+}
+
+.registratepage label {
+    display: block;
+    font-size: 1rem;
+    font-family: 'maven pro';
+    width: auto;
+}
+
+.man,
+.vrouw,
+.beide {
+    display: inline;
+    padding: 4px;
+    padding-top: 12px;
+    margin: auto;
+    margin-bottom: 18px;
+    font-size: 1.4rem;
 }
 
 .registratepage button {
@@ -142,123 +159,6 @@ main {
     font-weight: 600;
     text-transform: uppercase;
     text-align: center;
-}
-
-.registratepage fieldset input[type="radio"] {
-    display: inline-flex;
-    width: 20px;
-}
-
-.registratepage .optionphoto {
-    padding: 0px;
-}
-
-.registratepage .optionphoto img,
-.registratepage fieldset p {
-    flex-wrap: wrap;
-    justify-content: start;
-}
-
-.registratepage .optionphoto img {
-    width: 25%;
-    height: 55%;
-}
-
-.registratepage .optionphoto p {
-    width: 60vw;
-    font-size: 1.5rem;
-    font-weight: 300;
-    /* margin: auto; */
-    position: absolute;
-    /* z-index: 12; */
-    margin: 0;
-    padding: 0;
-    left: 40px;
-    top: 21px;
-    opacity: 10;
-    color: black;
-}
-
-.registratepage .optionphoto .fileContainer {
-    overflow: hidden;
-    position: relative;
-}
-
-.registratepage .optionphoto .file {
-    cursor: pointer;
-    /* display: inline; */
-    font-size: 12px;
-    filter: alpha(opacity=0);
-    /* min-height: 100%; */
-    /* min-width: 100%; */
-    opacity: 1;
-    /* position: absolute; */
-    left: 0;
-    right: 0;
-    text-align: center;
-    /* top: 0; */
-    padding: 52px;
-    width: 80vw;
-    margin: auto;
-}
-
-.registratepage ul {
-    width: 80vw;
-    /* margin: 20px auto; */
-    text-align: center;
-    /* float: right; */
-    position: absolute;
-}
-
-.registratepage ul li {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #b3b3b3;
-    margin: 2px 5px;
-    display: inline-flex;
-    /* border: 1px solid rgb(133, 126, 126); */
-}
-
-.registratepage fieldset input[type="radio"] {
-    /* position: absolute;
-    opacity: 20;
-    cursor: pointer;
-    height: 25px;
-    width: 21px;
-    background-color: red; */
-    /* margin-left: 50px; */
-    /* position: absolute; */
-    opacity: 20;
-    cursor: pointer;
-    height: 25px;
-    width: 21px;
-    background-color: red;
-    /* margin-left: 50px; */
-    /* margin-bottom: 14px;*/
-}
-
-.registratepage fieldset input[type="radio"]:focus {
-    box-shadow: none;
-}
-
-.renderedphoto {
-    min-width: 25%;
-    /* width: 10px; */
-    height: 10px;
-    list-style-type: none;
-    color: blue;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    flex-direction: row;
-    border: 1px solid red;
-    /* padding: 48px; */
-    /* margin: 8px; */
-    border-radius: 10px;
-    margin: auto;
-    width: 50%;
-    padding: 64px;
-    margin-top: 20px;
 }
 
 body#registration main {
