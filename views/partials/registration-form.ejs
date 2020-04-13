@@ -1,23 +1,53 @@
 <section>
     <article>
-        <form action="registrating" id="registration" method="POST">
-            <fieldset>
-                <legend>Personalia</legend>
+        <form class="registratepage" action="registrating" enctype="multipart/form-data" method="POST">
+            <fieldset class='persoonsgegevens'>
                 <label for="voornaam">Voornaam</label>
-                <input type="text" required name='voornaam' placeholder='B.v Rob'>
-                <label for="achternaam ">Achternaam</label>
-                <input type="text" required name='achternaam' placeholder="B.v de Vries ">
-                <label for="geboortedatum ">Geboortedatum</label>
-                <input type="date" required name="geboortedatum">
-            </fieldset>
-            <fieldset>
-                <legend>Inloggegevens</legend>
+                <input class="firsttype" type="text" name="voornaam" placeholder="Voornaam" required>
+
+                <label for="achternaam">Achternaam</label>
+                <input class="firsttype" type="text" name="achternaam" placeholder="Achternaam" required>
+
+                <label for="geboortedatum">Geboortedatum</label>
+                <input type="date" name="geboortedatum" placeholder="dd - mm - jjjj" required>
+
                 <label for="email">Email</label>
                 <input type="email" required name="email" minlength="6 " maxlength="60 " placeholder="B.v blabla@outlook.com ">
-                <label for='wachtwoord'>Wachtwoord</label>
+
+                <label for="password">Wachtwoord</label>
                 <input type="password" required name="wachtwoord" minlength="6 " placeholder="Minimaal 6 tekens ">
+
+
+                <label for="geslacht">Geslacht</label>
+                <input type="radio" name="gender" value="man" checked="checked" required>
+                <label class="man" for="man">Man</label>
+                <input type="radio" name="gender" value="vrouw" required>
+                <label class="vrouw" for="vrouw">Vrouw</label>
+                <input type="radio" name="gender" value="beide" required>
+                <label class="beide" for="beide">Beide</label>
+
+
+                <label for="geslachtZoekend">Geïnteresseerd in</label>
+                <input type="radio" name="searchSex" value="man" checked="checked" required>
+                <label class="man" for="man">Man</label>
+                <input type="radio" name="searchSex" value="vrouw" required>
+                <label class="vrouw" for="vrouw">Vrouw</label>
+                <input type="radio" name="searchSex" value="beide" required>
+                <label class="beide" for="beide">Beide</label>
+                <button class="next" type="button" name="next">Volgende stap</button>
             </fieldset>
-            <input type="submit" value="Registreren">
+            <fieldset class="accountgegevens">
+                <label class="fileContainer" for="photo">Upload je profielfoto</label>
+                <input class="file" type="file" name="photo" accept="image/*">
+                <label for="functie">Functie</label>
+                <input class="firsttype" type="text" name="functie" placeholder="B.v. fotograaf">
+
+                <label for="bio">Bio</label>
+                <input class="firsttype" type="text" name="bio" placeholder="Vertel iets over jezelf...">
+                <button class="back" type="button" class="back">Terug</button>
+                <input type='submit' value="registreren">
+            </fieldset>
+
         </form>
     </article>
 </section>
