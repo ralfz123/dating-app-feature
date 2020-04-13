@@ -33,8 +33,11 @@
                             </p>
                             <form action="<%= data[i].email %>" method="post">
                                 <button class="disLikebut" type="submit"> <img src="images/no.png" alt="DislikeButton"> </button>
+                                
+                                </form>
+                                <form action="<%= data[i]._id %>" method="post">
                                 <button class="likebut" type="submit"> <img src="images/like.png" alt="LikeButton"> </button>
-                            </form>
+                          </form>
                         </figcaption>
                     </figure>
                 </li>

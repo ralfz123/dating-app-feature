@@ -89,7 +89,7 @@ app
     .post('/matches', editProfile)
     .get('/findlove', gebruiker1)
     .post('/:email', like)
-    .post("/:email", disLike)
+    // .post('/:_id', disLike)
     .get('/profile', profiel)
 
 // .get('/*', error404);
@@ -356,7 +356,7 @@ function like(req, res) {
 }
 
 function disLike(req, res) {
-    let id = req.params.email;
+    let id = req.params._id;
     console.log(id);
     Gebruikers.updateOne(
     {_id: mongo.ObjectId(req.session.user._id)},
@@ -364,7 +364,7 @@ function disLike(req, res) {
 });
    Gebruikers.deleteOne({id: id});
    console.log('disliked' + voornaam)
-    res.redirect("/findlove");
+    res.redirect("/");
 }
 
 
