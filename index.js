@@ -8,8 +8,7 @@ const
     session = require('express-session'),
     flash = require('connect-flash'),
     multer = require('multer'),
-    path = require('path');
-bcrypt = require('bcrypt');
+    bcrypt = require('bcrypt');
 saltRounds = 10;
 let
     db,
