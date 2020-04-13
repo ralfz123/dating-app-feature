@@ -1,8 +1,7 @@
 # DateIT
 For our project Tech, the intention is that we eventually make a dating app together with a project group. The first part of the project is completely individual. You come up with a feature for a dating app and work it out. At the end of the project, you only combine all the features of everyone into one app. And that app is called: DateIT.
 
-<!-- <img src="https://raw.githubusercontent.com/ralfz123/prototype_datingapp/master/docs/readme/design_mockup2.png" width="1000" /> -->
--- 3 foto's UI iPhone--
+<img src="https://github.com/ralfz123/dating-app-feature/blob/development/Doc/dateit3screensv2?raw=true" width="600" />
 
 Take a look at our process in the [Wiki](https://github.com/ralfz123/dating-app-feature/wiki).
 # :heart: What is DateIT?
@@ -54,8 +53,8 @@ npm node index.js
 (:heavy_exclamation_mark: Ask us the link to connect to our database :heavy_exclamation_mark:) 
 
 # :chart_with_upwards_trend: Database structure
-<img src="https://github.com/ralfz123/dating-app-feature/blob/development/Doc/dbcollection.png?raw=true" width="300" />
-<img src="https://github.com/ralfz123/dating-app-feature/blob/development/Doc/dbstructure.png?raw=true" width="300" />
+<img src="https://github.com/ralfz123/dating-app-feature/blob/development/Doc/dbcollection.png?raw=true" width="450" />
+<img src="https://github.com/ralfz123/dating-app-feature/blob/development/Doc/dbstructure.png?raw=true" width="450" />
 
 # :cop: License
 [MIT © License](https://github.com/ralfz123/dating-app-feature/blob/master/LICENSE)
