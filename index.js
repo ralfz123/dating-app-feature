@@ -121,7 +121,6 @@ function editProfile(req, res) {
             console.log(data);
             if (data) {
                 res.redirect('/profile'); // profile with updated data
-                //  res.redirect('/profile'); // profile with updated data
                 res.render('readytostart');
             }
         })
@@ -194,6 +193,7 @@ function gebruikerMaken(req, res, file) {
             res.render('registration');
         });
 }
+
 // checkt of gebruiker bestaat en logt in door sessie aan te maken met de email als ID (omdat email uniek is)
 // req.Flash('class voor de div', 'het bericht') geeft dat  error/succes bericht door naar de template en daar staat weer code die het omzet naar html
 function inloggen(req, res) {
