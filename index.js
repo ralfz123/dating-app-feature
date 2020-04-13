@@ -215,16 +215,26 @@ function overzichtMatches(req, res) {
 
 
 // Functie liken 
-function like(req, res) {
+// function like(req, res) {
+//     let id = req.params.email;
+//     console.log(id)
+//     Gebruikers.updateOne({id: mongo.ObjectId(req.session.user._id)}, {$push: {"hasLiked": id}});
+//     req.session.user.hasLiked.push(id);
+//     console.log('liked')
+//     res.redirect("findlove");
+
+// }
+
+// function like(req, res) {
     let id = req.params.email;
-    console.log(id)
-    Gebruikers.updateOne({id: mongo.ObjectId(req.session.user._id)}, {$push: {"hasLiked": id}});
+    console.log(id);
+    Gebruikers.updateOne(
+    {_id: mongo.ObjectId(req.session.user._id)},
+    {$push: {"hasLiked": id}
+    });
     req.session.user.hasLiked.push(id);
-    console.log('hoi')
-    res.redirect("/findlove");
-
-  
-
+    console.log('liked')
+    res.redirect("findlove");
 }
 
 
