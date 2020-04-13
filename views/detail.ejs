@@ -18,8 +18,7 @@
             <% for (let i = 0; i < data.length; i++) { %>
                 <li>
                     <figure>
-                        <a href="/profile/<%= data[i].id %>">
-
+                        <!-- <a href="/profile/<%= data[i].id %>"> -->
             <img src="images/profielfotos/<%= data[i].photo %>" alt="Profilepicture">
 </a>
                         <figcaption>
@@ -32,18 +31,13 @@
                             <p>
                                 <%= data[i].bio %>
                             </p>
-
-                            <form action="<%= data[i]._id %>" method="post">
-                                <button class="disLikebut" type="button"> <img src="images/no.png" alt="DislikeButton"> </button>
-
-                                <button class="likebut" type="button"> <img src="images/like.png" alt="LikeButton"> </button>
+                            <form action="<%= data[i].email %>" method="post">
+                                <button class="disLikebut" type="submit"> <img src="images/no.png" alt="DislikeButton"> </button>
+                                <button class="likebut" type="submit"> <img src="images/like.png" alt="LikeButton"> </button>
                             </form>
-
-
                         </figcaption>
                     </figure>
                 </li>
-
                 <% } %>
 
         </ul>
