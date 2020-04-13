@@ -85,7 +85,7 @@ app
     .get('/edit-pass', wachtwoordform)
     .post('/edit', wachtwoordVeranderen)
     .get('/delete', accountVerwijderen)
-    // .get('/matches', overzichtMatches)
+    .get('/matches', overzichtMatches)
     .post('/matches', editProfile)
     .get('/findlove', gebruiker1)
     .post('/:email', like)
