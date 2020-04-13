@@ -9,24 +9,42 @@
     <title>Find love</title>
 </head>
 
-  <form action="/<%= data[i].email %>" method="post">
-  <button class="disLikebut" type="submit"> <img src="images/no.png" alt="DislikeButton"> </button>
+<body>
+    <header>
+        <img class="lobbie" src="images/logo.png" alt="Logo">
+    </header>
+    <main>
+        <ul>
+            <% for (let i = 0; i < data.length; i++) { %>
+                <li>
+                    <figure>
+                        <!-- <a href="/profile/<%= data[i].id %>"> -->
+            <img src="images/profielfotos/<%= data[i].photo %>" alt="Profilepicture">
+</a>
+                        <figcaption>
+                            <h2>
+                                <%= data[i].voornaam + ' ' + data[i].achternaam %>
+                            </h2>
+                            <h3>
+                                <%= data[i].age %>
+                            </h3>
+                            <p>
+                                <%= data[i].bio %>
+                            </p>
+                            <form action="<%= data[i].email %>" method="post">
+                                <button class="disLikebut" type="submit"> <img src="images/no.png" alt="DislikeButton"> </button>
+                                <button class="likebut" type="submit"> <img src="images/like.png" alt="LikeButton"> </button>
+                            </form>
+                        </figcaption>
+                    </figure>
+                </li>
+                <% } %>
 
-  <button class="likebut" type="submit"> <img src="images/like.png" alt="LikeButton"> </button>
-</form>                  
+        </ul>
+        <p>Geen mensen meer om weer te geven.. </p>
+    </main>
 
-              
-  </figcaption>
- </figure>
-  </li>
-
-  <% } %>
-
-  </ul>
-  <p>Geen mensen meer om weer te geven..  </p>
-</main>
-
-<script src="js/swipen.js"></script>
+    <script src="js/swipen.js"></script>
 
 </body>
 

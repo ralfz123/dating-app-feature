@@ -86,102 +86,57 @@ app
     .post('/edit', wachtwoordVeranderen)
     .get('/delete', accountVerwijderen)
     .get('/matches', overzichtMatches) // Hebben we deze nog nodig?
-    // .post('/matches', editProfile)
+    .post('/matches', editProfile)
     .get('/findlove', gebruiker1)
     .post('/:email', like)
-    // .get('/*', error404);
-
-       
-
-                // Profiel
-                function profiel(req, res) {
-                    Gebruikers
-                        .findOne({ email: req.session.user.email })
-                        .then(data => {
-                            res.render('profile.ejs', { data: data });
-                        })
-                        .catch(err => { console.log(err); });
-                }
+    .get('/profile', profiel)
+    // .post('/<%= data[i]._id %>', like);
+// .get('/*', error404);
 
 
-                // Checkt of er een ingelogde gebruiker is en stuurt aan de hand hiervan de juiste pagina door
-                function registreren(req, res) {
-                    if (req.session.loggedIN === true) {
-                        req.flash('succes', 'Hoi ' + req.session.user.voornaam);
-                        res.render('readytostart');
-                    } else {
-                        res.render('registration');
-                    }
-                }
-                // Gaat naar home
-                function goHome(req, res) {
-                    if (req.session.loggedIN === true) {
-                        req.flash('succes', 'Hoi ' + req.session.user.voornaam);
-                        res.render('readytostart');
-                    } else {
-                        res.render('index');
+// Update profile page
+function editProfile(req, res) {
+    const query = { _id: mongo.ObjectId(req.session.user._id) }; // the current user
+    console.log(req.session.user._id);
+    const updatedValues = { // the new data values
+        $set: {
+            'voornaam': req.body.voornaam,
+            'achternaam': req.body.achternaam,
+            'geboortedatum': req.body.geboortedatum,
+            'wachtwoord': req.body.wachtwoord,
+            'gender': req.body.gender,
+            'searchSex': req.body.searchSex,
+            'photo': req.body.photo,
+            'functie': req.body.functie,
+            'bio': req.body.bio
+        }
+    };
+    console.log(updatedValues);
 
-                    }
-                }
-                // Maakt de gebruiker aan op post
+    Gebruikers
+        .findOneAndUpdate(query, updatedValues)
+        .then(data => {
+            console.log(query);
+            console.log(data);
+            if (data) {
+                console.log('heeft data gevonden');
+                res.render('readytostart', { data: data });
+            }
+        })
+        .catch(err => {
+            console.log(err);
+        });
+}
 
-                function gebruikerMaken(req, res, file) {
-
-                    let data = {
-                        'voornaam': req.body.voornaam,
-                        'achternaam': req.body.achternaam,
-                        'geboortedatum': req.body.geboortedatum,
-                        'email': req.body.email,
-                        'wachtwoord': req.body.wachtwoord,
-                        'gender': req.body.gender,
-                        'searchSex': req.body.searchSex,
-                        'photo': req.file.originalname,
-                        'functie': req.body.functie,
-                        'bio': req.body.bio,
-                        'HasLiked': [],
-                        'hasNotLiked': []
-                    };
-
-                    // Pusht de data + input naar database (gebruikers = collection('users'))
-                    Gebruikers
-                        .insertOne(data)
-                        .then(data => {
-                            req.session.user = data;
-                            req.session.loggedIN = true;
-                            req.flash('succes', 'Hoi ' + req.session.user.voornaam + ', jouw account is met succes aangemaakt');
-                            res.render('readytostart', { data: data });
-                            console.log('Gebruiker toegevoegd');
-                        })
-                        .catch(err => {
-                            req.flash('error', err);
-                            res.render('registration');
-                        });
-                }
-                // checkt of gebruiker bestaat en logt in door sessie aan te maken met de email als ID (omdat email uniek is)
-                // req.Flash('class voor de div', 'het bericht') geeft dat  error/succes bericht door naar de template en daar staat weer code die het omzet naar html
-                function inloggen(req, res) {
-                    Gebruikers
-                        .findOne({ email: req.body.email })
-                        .then(data => {
-                            if (data.wachtwoord === req.body.wachtwoord) {
-                                req.session.user = data;
-                                req.session.loggedIN = true;
-                                console.log('ingelogd als ' + req.session.user.email);
-                                req.flash('succes', 'Hoi ' + req.session.user.voornaam);
-                                res.render('readytostart');
-                                req.session.loggedIN = true;
-                            } else {
-                                req.flash('error', 'Wachtwoord is incorrect');
-                                res.render('index');
-                                console.log('Wachtwoord is incorrect');
-                            }
-                        })
-                        .catch(err => {
-                            console.log(err);
-                            req.flash('error', 'Account is niet gevonden');
-                            res.render('index');
-                        });
-                }
+// Profiel
+function profiel(req, res) {
+    Gebruikers
+        .findOne({ email: req.session.user.email })
+        .then(data => {
+            res.render('profile.ejs', { data: data });
+        })
+        .catch(err => { console.log(err); });
+}
 
 
 // Checkt of er een ingelogde gebruiker is en stuurt aan de hand hiervan de juiste pagina door
@@ -379,13 +334,12 @@ function overzichtMatches(req, res) {
 
 // Functie liken 
 // function like(req, res) {
-//     let id = req.params.email;
-//     console.log(id)
-//     Gebruikers.updateOne({id: mongo.ObjectId(req.session.user._id)}, {$push: {"hasLiked": id}});
+//     let id = req.params.id;
+//     console.log(req.params.id);
+//     Gebruikers.updateOne({ id: mongo.ObjectId(req.session.user._id) }, { $push: { 'hasLiked': id } });
 //     req.session.user.hasLiked.push(id);
-//     console.log('liked')
-//     res.redirect("findlove");
-
+//     console.log('hoi');
+//     res.redirect('findlove');
 // }
 
 function like(req, res) {
@@ -397,7 +351,7 @@ function like(req, res) {
     });
     req.session.user.hasLiked.push(id);
     console.log('liked')
-    res.redirect("findlove");
+    res.redirect("/findlove");
 }
 
 
