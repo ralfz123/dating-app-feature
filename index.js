@@ -19,7 +19,7 @@ let
 // Multer setup
 const opslag = multer.diskStorage({
     destination: './static/images/profielfotos',
-    filename: function(req, file, cb) {
+    filename: function (req, file, cb) {
         cb(null, file.originalname);
     }
 });
@@ -53,7 +53,7 @@ app
         saveUninitialized: true,
         secure: true,
     }))
-    .use(function(req, res, next) {
+    .use(function (req, res, next) {
         res.locals.messages = require('express-messages')(req, res);
         next();
     })
@@ -183,118 +183,198 @@ app
                         });
                 }
 
-                function wachtwoordform(req, res) {
-                    res.render('edit-pass');
-                }
 
-                // Deze functie veranderd het wachtwoord door eerst te controleren of gebruiker ingelogd is en daarna account te vinden met die email en verander het wachtwoord vanuit de form naar database + flasht status naar user
-                function wachtwoordVeranderen(req, res) {
-                    if (req.session.loggedIN === true) {
-                        Gebruikers
-                            .findOne({ email: req.session.user.email })
-                            .then(data => {
-                                const query = { email: data.email };
-                                const update = { '$set': { 'wachtwoord': req.body.nieuwwachtwoord } };
-                                const options = { returnNewDocument: true };
+// Checkt of er een ingelogde gebruiker is en stuurt aan de hand hiervan de juiste pagina door
+function registreren(req, res) {
+    if (req.session.loggedIN === true) {
+        req.flash('succes', 'Hoi ' + req.session.user.voornaam);
+        res.render('readytostart');
+    } else {
+        res.render('registration');
+    }
+}
+// Gaat naar home
+function goHome(req, res) {
+    if (req.session.loggedIN === true) {
+        req.flash('succes', 'Hoi ' + req.session.user.voornaam);
+        res.render('readytostart');
+    } else {
+        res.render('index');
 
-                                Gebruikers
-                                    .findOneAndUpdate(query, update, options)
-                                    .then(updatedDocument => {
-                                        if (updatedDocument) {
-                                            req.session.loggedIN = false;
-                                            req.flash('succes', 'Je wachtwoord is met succes veranderd. Log opnieuw in met uw nieuwe wachtwoord');
-                                            res.render('index');
-                                        }
-                                        return updatedDocument;
-                                    })
-                                    .catch(err => console.error(`Gefaald om het te updaten door error: ${err}`));
-                            })
-                            .catch(err => { console.log(err); });
-                    } else {
-                        req.flash('error', 'U moet eerst inloggen');
-                        res.render('index');
-                        console.log('u bent niet ingelogd');
-                    }
-                }
+    }
+}
+// Maakt de gebruiker aan op post
 
-                // Deze functie verwijderd het account door eerst te controleren of gebruiker ingelogd is en daarna account te vinden met die email en verwijderd het account en zet de session.loggedIn naar false  + flasht status naar user
-                function accountVerwijderen(req, res) {
-                    Gebruikers
-                        .findOneAndDelete({ email: req.session.user.email })
-                        .then(result => {
-                            console.log(`Heeft ${result.deletedCount} account verwijderd.`);
-                            req.flash('succes', 'Uw account is met succes verwijderd');
+function gebruikerMaken(req, res, file) {
+
+    let data = {
+        'voornaam': req.body.voornaam,
+        'achternaam': req.body.achternaam,
+        'geboortedatum': req.body.geboortedatum,
+        'email': req.body.email,
+        'wachtwoord': req.body.wachtwoord,
+        'gender': req.body.gender,
+        'searchSex': req.body.searchSex,
+        'photo': req.file.originalname,
+        'functie': req.body.functie,
+        'bio': req.body.bio,
+        'HasLiked': [],
+        'hasNotLiked': []
+    };
+
+    // Pusht de data + input naar database (gebruikers = collection('users'))
+    Gebruikers
+        .insertOne(data)
+        .then(data => {
+            req.session.user = data;
+            req.session.loggedIN = true;
+            req.flash('succes', 'Hoi ' + req.session.user.voornaam + ', jouw account is met succes aangemaakt');
+            res.render('readytostart', { data: data });
+            console.log('Gebruiker toegevoegd');
+        })
+        .catch(err => {
+            req.flash('error', err);
+            res.render('registration');
+        });
+}
+// checkt of gebruiker bestaat en logt in door sessie aan te maken met de email als ID (omdat email uniek is)
+// req.Flash('class voor de div', 'het bericht') geeft dat  error/succes bericht door naar de template en daar staat weer code die het omzet naar html
+function inloggen(req, res) {
+    Gebruikers
+        .findOne({ email: req.body.email })
+        .then(data => {
+            if (data.wachtwoord === req.body.wachtwoord) {
+                req.session.user = data;
+                req.session.loggedIN = true;
+                console.log('ingelogd als ' + req.session.user.email);
+                req.flash('succes', 'Hoi ' + req.session.user.voornaam);
+                res.render('readytostart');
+                req.session.loggedIN = true;
+            } else {
+                req.flash('error', 'Wachtwoord is incorrect');
+                res.render('index');
+                console.log('Wachtwoord is incorrect');
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            req.flash('error', 'Account is niet gevonden');
+            res.render('index');
+        });
+}
+
+function wachtwoordform(req, res) {
+    res.render('edit-pass');
+}
+
+// Deze functie veranderd het wachtwoord door eerst te controleren of gebruiker ingelogd is en daarna account te vinden met die email en verander het wachtwoord vanuit de form naar database + flasht status naar user
+function wachtwoordVeranderen(req, res) {
+    if (req.session.loggedIN === true) {
+        Gebruikers
+            .findOne({ email: req.session.user.email })
+            .then(data => {
+                const query = { email: data.email };
+                const update = { '$set': { 'wachtwoord': req.body.nieuwwachtwoord } };
+                const options = { returnNewDocument: true };
+
+                Gebruikers
+                    .findOneAndUpdate(query, update, options)
+                    .then(updatedDocument => {
+                        if (updatedDocument) {
                             req.session.loggedIN = false;
+                            req.flash('succes', 'Je wachtwoord is met succes veranderd. Log opnieuw in met uw nieuwe wachtwoord');
                             res.render('index');
-                        })
-                        .catch(err => console.error(`Error: ${err}`));
-                }
-                // Zet de session.loggedIN naar false = niemand ingelogd. Session destroyen is niet mogelijk, omdat flash sessions nodig heeft
-                function uitloggen(req, res) {
-                    req.session.loggedIN = false;
-                    req.flash('succes', 'U bent uitgelogd');
-                    res.render('index');
-                }
-
-                // function pagina gebruiker 1
-                function gebruiker1(req, res) {
-                    if (req.session.loggedIN) {
-                        Gebruikers
-                            .find({
-                                $and: [
-                                    { _id: { $ne: mongo.ObjectId(req.session.user._id) } },
-                                    // { email: { $nin: req.session.user.hasLiked } },
-                                    // { email: { $nin: req.session.user.hasNotLiked } },
-                                    { gender: req.session.user.searchSex },
-                                    { searchSex: req.session.user.gender }
-                                ]
-                            }).toArray()
-                            .then(data => {
-                                res.render('detail', { data: data });
-                                console.log(data);
-                            })
-                            .catch(err => {
-                                console.log(err);
-                                req.flash('errror', 'Excuses! er ging iets fout. Probeer het opnieuw');
-                                res.render('readytostart');
-                            });
-                    } else {
-                        req.flash('errror', 'U moet eerst inloggen');
-                        res.render('index');
-                    }
-                }
-                // function pagina gebruiker 1
-                function overzichtMatches(req, res) {
-                    let matches = [];
-                    if (req.session.loggedIN === true) {
-                        let gelikedeusers = req.session.user.hasLiked;
-                        let huidigemail = req.session.user.email;
-                        if (gelikedeusers) {
-                            Gebruikers
-                                .find({ email: { $in: gelikedeusers } }).toArray()
-                                .then(data => {
-                                    for (let i = 0; i < data.length; i++) {
-                                        if (data[i].hasLiked.includes(huidigemail)) {
-                                            matches.push(data[i]);
-                                        }
-                                    }
-                                    res.render('match', { data: matches });
-                                })
-                                .catch(err => {
-                                    console.log(err);
-                                    req.flash('error', 'Excuses! er ging iets fout. Probeer het opnieuw');
-                                    res.render('readytostart');
-                                });
-                        } else {
-                            req.flash('error', 'U heeft nog geen matches');
-                            res.render('match');
                         }
-                    } else {
-                        req.flash('error', 'U moet eerst inloggen');
-                        res.render('index');
-                    }
+                        return updatedDocument;
+                    })
+                    .catch(err => console.error(`Gefaald om het te updaten door error: ${err}`));
+            })
+            .catch(err => { console.log(err); });
+    } else {
+        req.flash('error', 'U moet eerst inloggen');
+        res.render('index');
+        console.log('u bent niet ingelogd');
+    }
+}
 
-                }
+// Deze functie verwijderd het account door eerst te controleren of gebruiker ingelogd is en daarna account te vinden met die email en verwijderd het account en zet de session.loggedIn naar false  + flasht status naar user
+function accountVerwijderen(req, res) {
+    Gebruikers
+        .findOneAndDelete({ email: req.session.user.email })
+        .then(result => {
+            console.log(`Heeft ${result.deletedCount} account verwijderd.`);
+            req.flash('succes', 'Uw account is met succes verwijderd');
+            req.session.loggedIN = false;
+            res.render('index');
+        })
+        .catch(err => console.error(`Error: ${err}`));
+}
+// Zet de session.loggedIN naar false = niemand ingelogd. Session destroyen is niet mogelijk, omdat flash sessions nodig heeft
+function uitloggen(req, res) {
+    req.session.loggedIN = false;
+    req.flash('succes', 'U bent uitgelogd');
+    res.render('index');
+}
+
+// function pagina gebruiker 1
+function gebruiker1(req, res) {
+    if (req.session.loggedIN) {
+        Gebruikers
+            .find({
+                $and: [
+                    { _id: { $ne: mongo.ObjectId(req.session.user._id) } },
+                    // { email: { $nin: req.session.user.hasLiked } },
+                    // { email: { $nin: req.session.user.hasNotLiked } },
+                    { gender: req.session.user.searchSex },
+                    { searchSex: req.session.user.gender }
+                ]
+            }).toArray()
+            .then(data => {
+                res.render('detail', { data: data });
+                console.log(data);
+            })
+            .catch(err => {
+                console.log(err);
+                req.flash('errror', 'Excuses! er ging iets fout. Probeer het opnieuw');
+                res.render('readytostart');
+            });
+    } else {
+        req.flash('errror', 'U moet eerst inloggen');
+        res.render('index');
+    }
+}
+// function pagina gebruiker 1
+function overzichtMatches(req, res) {
+    let matches = [];
+    if (req.session.loggedIN === true) {
+        let gelikedeusers = req.session.user.hasLiked;
+        let huidigemail = req.session.user.email;
+        if (gelikedeusers) {
+            Gebruikers
+                .find({ email: { $in: gelikedeusers } }).toArray()
+                .then(data => {
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].hasLiked.includes(huidigemail)) {
+                            matches.push(data[i]);
+                        }
+                    }
+                    res.render('match', { data: matches });
+                })
+                .catch(err => {
+                    console.log(err);
+                    req.flash('error', 'Excuses! er ging iets fout. Probeer het opnieuw');
+                    res.render('readytostart');
+                });
+        } else {
+            req.flash('error', 'U heeft nog geen matches');
+            res.render('match');
+        }
+    } else {
+        req.flash('error', 'U moet eerst inloggen');
+        res.render('index');
+    }
+
+}
 
 
 // Functie liken 
@@ -323,9 +403,9 @@ function like(req, res) {
 
 
 
-                // // Bij een 404
-                // function error404(res) {
-                //     res.render('404');
-                // }
-                // Welke poort het live staat
-                app.listen(5000, () => console.log('App is listening on port', port));
+// // Bij een 404
+// function error404(res) {
+//     res.render('404');
+// }
+// Welke poort het live staat
+app.listen(5000, () => console.log('App is listening on port', port));
