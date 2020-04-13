@@ -7,11 +7,35 @@ const
     bodyParser = require('body-parser'),
     session = require('express-session'),
     flash = require('connect-flash'),
-    multer = require('multer');
+    multer = require('multer'),
+    path = require('path');
 let
     db,
     Gebruikers,
     geliked;
+
+
+// Multer setup
+const opslag = multer.diskStorage({
+    destination: './static/images/profielfotos',
+    filename: function(req, file, cb) {
+        cb(null, file.originalname);
+    }
+});
+let fileFilter = (req, file, cb) => {
+    if (
+        file.mimetype === 'image/png' ||
+        file.mimetype === 'image/jpg' ||
+        file.mimetype === 'image/jpeg'
+    ) {
+        cb(null, true);
+    } else {
+        cb(new Error('Bestands formaat moet : PNG,JPG,JPEG zijn'), false);
+    }
+};
+let upload = multer({ storage: opslag, fileFilter: fileFilter });
+
+
 
 // .env bestand gebruiken
 require('dotenv').config();
@@ -25,7 +49,7 @@ app
         secret: process.env.SESSION_SECRET,
         cookie: { maxAge: 60000 },
         resave: false,
-        saveUninitialized: false,
+        saveUninitialized: true,
         secure: true,
     }))
     .use(function(req, res, next) {
@@ -55,7 +79,7 @@ app
     .post('/log-in', inloggen)
     .get('/', goHome)
     .get('/registration', registreren)
-    .post('/registrating', gebruikerMaken)
+    .post('/registrating', upload.single('photo'), gebruikerMaken)
     .get('/logout', uitloggen)
     .get('/edit-pass', wachtwoordform)
     .post('/edit', wachtwoordVeranderen)
@@ -67,8 +91,6 @@ app
     .get('/profile', profiel)
     .post('/<%= data[i]._id %>', like);
 // .get('/*', error404);
-
-
 
 
 // Update profile page
@@ -90,10 +112,9 @@ function editProfile(req, res) {
     };
     console.log(updatedValues);
 
-    db.collection('users')
+    Gebruikers
         .findOneAndUpdate(query, updatedValues)
-
-    .then(data => {
+        .then(data => {
             console.log('heeft data gevonden');
             console.log(query);
             console.log(data);
@@ -109,7 +130,7 @@ function editProfile(req, res) {
 // Profiel
 function profiel(req, res) {
     Gebruikers
-        .findOne(_id = mongo.ObjectId(req.session.user._id))
+        .findOne({ email: req.session.user.email })
         .then(data => {
             res.render('profile.ejs', { data: data });
         })
@@ -138,7 +159,8 @@ function goHome(req, res) {
 }
 // Maakt de gebruiker aan op post
 
-function gebruikerMaken(req, res) {
+function gebruikerMaken(req, res, file) {
+
     let data = {
         'voornaam': req.body.voornaam,
         'achternaam': req.body.achternaam,
@@ -147,7 +169,7 @@ function gebruikerMaken(req, res) {
         'wachtwoord': req.body.wachtwoord,
         'gender': req.body.gender,
         'searchSex': req.body.searchSex,
-        'photo': req.body.photo,
+        'photo': req.file.originalname,
         'functie': req.body.functie,
         'bio': req.body.bio,
         'HasLiked': [],
