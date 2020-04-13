@@ -1,4 +1,4 @@
-<img src="https://github.com/ralfz123/dating-app-feature/blob/development/static/images/logo.svg" width="100" />  
+<img src="https://github.com/ralfz123/dating-app-feature/blob/development/static/images/logo.svg" width="150" />  
 
 For our project Tech, the intention is that we eventually make a dating app together with a project group. The first part of the project is completely individual. You come up with a feature for a dating app and work it out. At the end of the project, you only combine all the features of everyone into one app. And that app is called: DateIT.
 
