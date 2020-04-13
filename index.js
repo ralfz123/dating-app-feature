@@ -8,9 +8,12 @@ const
     session = require('express-session'),
     flash = require('connect-flash'),
     multer = require('multer');
+    bcrypt = require('bcrypt');
+    saltRounds = 10;
 let
     db,
-    Gebruikers;
+    Gebruikers,
+    geliked;
 
 // .env bestand gebruiken
 require('dotenv').config();
@@ -49,7 +52,6 @@ mongo.MongoClient
         console.log(err);
     });
 
-
 // Routing
 app
     .post('/log-in', inloggen)
@@ -60,7 +62,8 @@ app
     .get('/edit-pass', wachtwoordform)
     .post('/edit', wachtwoordVeranderen)
     .get('/delete', accountVerwijderen)
-    .get('/matches', overzichtMatches)
+    .get('/matches', overzichtMatches) // Hebben we deze nog nodig?
+    // .post('/matches', editProfile)
     .get('/findlove', gebruiker1)
     .post('/:email', like)
     // .get('/*', error404);
@@ -78,9 +81,10 @@ function registreren(req, res) {
 function goHome(req, res) {
     if (req.session.loggedIN === true) {
         req.flash('succes', 'Hoi ' + req.session.user.voornaam);
-        res.redirect('findlove');
+        res.render('readytostart');
     } else {
         res.render('index');
+
     }
 }
 // Maakt de gebruiker aan op post
@@ -96,7 +100,9 @@ function gebruikerMaken(req, res) {
         'searchSex': req.body.searchSex,
         'photo': req.body.photo,
         'functie': req.body.functie,
-        'bio': req.body.bio
+        'bio': req.body.bio,
+        'HasLiked': [],
+        'hasNotLiked': []
     };
 
     // Pusht de data + input naar database (gebruikers = collection('users'))
@@ -106,7 +112,7 @@ function gebruikerMaken(req, res) {
             req.session.user = data;
             req.session.loggedIN = true;
             req.flash('succes', 'Hoi ' + req.session.user.voornaam + ', jouw account is met succes aangemaakt');
-            res.render('readytostart');
+            res.render('readytostart', { data: data });
             console.log('Gebruiker toegevoegd');
         })
         .catch(err => {
@@ -122,9 +128,10 @@ function inloggen(req, res) {
         .then(data => {
             if (data.wachtwoord === req.body.wachtwoord) {
                 req.session.user = data;
+                req.session.loggedIN = true;
                 console.log('ingelogd als ' + req.session.user.email);
                 req.flash('succes', 'Hoi ' + req.session.user.voornaam);
-                res.redirect('findlove');
+                res.render('readytostart');
                 req.session.loggedIN = true;
             } else {
                 req.flash('error', 'Wachtwoord is incorrect');
@@ -180,7 +187,7 @@ function accountVerwijderen(req, res) {
         .then(result => {
             console.log(`Heeft ${result.deletedCount} account verwijderd.`);
             req.flash('succes', 'Uw account is met succes verwijderd');
-            req.session.user.loggedIN = false;
+            req.session.loggedIN = false;
             res.render('index');
         })
         .catch(err => console.error(`Error: ${err}`));
@@ -194,24 +201,63 @@ function uitloggen(req, res) {
 
 // function pagina gebruiker 1
 function gebruiker1(req, res) {
-    Gebruikers
-        .find({ _id: { $ne: mongo.ObjectId(req.session.user._id) } }).toArray()
-        .then(data => {
-            res.render('detail', { data: data });
-        })
-        .catch(err => { console.log(err); });
+    if (req.session.loggedIN) {
+        Gebruikers
+            .find({
+                $and: [
+                    { _id: { $ne: mongo.ObjectId(req.session.user._id) } },
+                    // { email: { $nin: req.session.user.hasLiked } },
+                    // { email: { $nin: req.session.user.hasNotLiked } },
+                    { gender: req.session.user.searchSex },
+                    { searchSex: req.session.user.gender }
+                ]
+            }).toArray()
+            .then(data => {
+                res.render('detail', { data: data });
+                console.log(data);
+            })
+            .catch(err => {
+                console.log(err);
+                req.flash('errror', 'Excuses! er ging iets fout. Probeer het opnieuw');
+                res.render('readytostart');
+            });
+    } else {
+        req.flash('errror', 'U moet eerst inloggen');
+        res.render('index');
+    }
 }
 // function pagina gebruiker 1
 function overzichtMatches(req, res) {
-    Gebruikers
-        .find({ _id: { $ne: mongo.ObjectId(req.session.user._id) } }).toArray()
-        .then(data => {
-            res.render('match', { data: data });
-        })
-        .catch(err => { console.log(err); });
+    let matches = [];
+    if (req.session.loggedIN === true) {
+        let gelikedeusers = req.session.user.hasLiked;
+        let huidigemail = req.session.user.email;
+        if (gelikedeusers) {
+            Gebruikers
+                .find({ email: { $in: gelikedeusers } }).toArray()
+                .then(data => {
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].hasLiked.includes(huidigemail)) {
+                            matches.push(data[i]);
+                        }
+                    }
+                    res.render('match', { data: matches });
+                })
+                .catch(err => {
+                    console.log(err);
+                    req.flash('error', 'Excuses! er ging iets fout. Probeer het opnieuw');
+                    res.render('readytostart');
+                });
+        } else {
+            req.flash('error', 'U heeft nog geen matches');
+            res.render('match');
+        }
+    } else {
+        req.flash('error', 'U moet eerst inloggen');
+        res.render('index');
+    }
+
 }
-
-
 
 
 // Functie liken 
@@ -225,7 +271,7 @@ function overzichtMatches(req, res) {
 
 // }
 
-// function like(req, res) {
+function like(req, res) {
     let id = req.params.email;
     console.log(id);
     Gebruikers.updateOne(
@@ -238,7 +284,7 @@ function overzichtMatches(req, res) {
 }
 
 
-  
+
 
 // // Bij een 404
 // function error404(res) {
