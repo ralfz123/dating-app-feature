@@ -85,13 +85,23 @@ app
     .get('/edit-pass', wachtwoordform)
     .post('/edit', wachtwoordVeranderen)
     .get('/delete', accountVerwijderen)
-    .get('/matches', overzichtMatches)
-    // .post('/matches', editProfile)
+    // .get('/matches', overzichtMatches)
+    .post('/matches', editProfile)
     .get('/findlove', gebruiker1)
     .post('/:email', like)
-    .get('/profile', profiel);
+    .get('/profile', profiel)
+    .get('/readytostart' , readyToStart)
 // .get('/*', error404);
 
+
+function readyToStart(req, res) {
+    Gebruikers
+        .findOne({ email: req.session.user.email })
+        .then(data => {
+            res.render('readytostart.ejs');
+        })
+        .catch(err => { console.log(err); });
+}
 
 // Update profile page
 function editProfile(req, res) {
