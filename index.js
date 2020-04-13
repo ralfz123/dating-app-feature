@@ -8,6 +8,8 @@ const
     session = require('express-session'),
     flash = require('connect-flash'),
     multer = require('multer');
+    bcrypt = require('bcrypt');
+    saltRounds = 10;
 let
     db,
     Gebruikers;
@@ -97,7 +99,8 @@ function editProfile (req, res) {
            console.log(query);
            console.log(data);
              if (data){
-                 res.redirect('/profile'); // profile with updated data
+                //  res.redirect('/profile'); // profile with updated data
+                 res.render('readytostart');
             }
         })
         .catch(err =>{
