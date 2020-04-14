@@ -8,7 +8,8 @@
 <body>
     <header>
         <%- include('partials/nav'); -%>
-            <%- include('partials/header-delete'); -%>
+            <%- messages() %>
+                <%- include('partials/header-delete'); -%>
     </header>
     <main>
         <%- include('partials/delete-acc-form'); -%>

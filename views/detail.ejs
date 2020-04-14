@@ -2,11 +2,7 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="STYLESHEET" href="/css/style.css" type="text/css">
-    <title>Find love</title>
+    <%- include('partials/head'); -%>
 </head>
 
 <body>
@@ -18,9 +14,8 @@
             <% for (let i = 0; i < data.length; i++) { %>
                 <li>
                     <figure>
-                        <!-- <a href="/profile/<%= data[i].id %>"> -->
-            <img src="images/profielfotos/<%= data[i].photo %>" alt="Profilepicture">
-</a>
+                        <img src="images/profielfotos/<%= data[i].photo %>" alt="Profilepicture">
+                        </a>
                         <figcaption>
                             <h2>
                                 <%= data[i].voornaam + ' ' + data[i].achternaam %>
@@ -33,7 +28,7 @@
                             </p>
                             <form action="<%= data[i].email %>" method="post">
                                 <button class="disLikebut" type="submit"> <img src="images/no.png" alt="DislikeButton"> </button>
-                                <button class="likebut" type="submit"> <img src="images/like.png" alt="LikeButton"> </button>
+                                <button class="likebut" type="submit"> <img src="images/matches.svg" alt="LikeButton"> </button>
                             </form>
                         </figcaption>
                     </figure>
@@ -44,8 +39,7 @@
         <p>Geen mensen meer om weer te geven.. </p>
     </main>
 
-    <script src="js/swipen.js"></script>
-
+    <script src="./js/swipen.js"></script>
 </body>
 
 </html>
