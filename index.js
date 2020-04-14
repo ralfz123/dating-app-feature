@@ -167,7 +167,9 @@ async function gebruikerMaken(req, res, next) {
                 // req.flash('succes', 'Hoi ' + req.session.user.voornaam + ', jouw account is met succes aangemaakt');
                 // res.render('readytostart', { data: data });
                 // console.log('Gebruiker toegevoegd');
-                res.redirect('/')
+                // res.redirect('/')
+                req.flash('error', 'Account aangemaakt! Log in');
+                res.render('index');
             }
         }
 }
