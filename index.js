@@ -143,20 +143,7 @@ function goHome(req, res) {
 async function gebruikerMaken(req, res, next) {
     const hashedPassword = await bcrypt.hash(req.body.wachtwoord, saltRounds)
 
-    // let data = {
-    //     'voornaam': req.body.voornaam,
-    //     'achternaam': req.body.achternaam,
-    //     'geboortedatum': req.body.geboortedatum,
-    //     'email': req.body.email,
-    //     'wachtwoord': hashedPassword,
-    //     'gender': req.body.gender,
-    //     'searchSex': req.body.searchSex,
-    //     'photo': req.body.photo,
-    //     'functie': req.body.functie,
-    //     'bio': req.body.bio
-    // };
-
-    // Pusht de data + input naar database (gebruikers = collection('users'))
+ // Pusht de data + input naar database (gebruikers = collection('users'))
     Gebruikers
         .insertOne({
             voornaam: req.body.voornaam,
@@ -183,27 +170,12 @@ async function gebruikerMaken(req, res, next) {
                 res.redirect('/')
             }
         }
-
-
-        // .then(data => {
-        //     req.session.user = data;
-        //     req.session.loggedIN = true;
-        //     req.flash('succes', 'Hoi ' + req.session.user.voornaam + ', jouw account is met succes aangemaakt');
-        //     res.render('readytostart', { data: data });
-        //     console.log('Gebruiker toegevoegd');
-        // })
-        // .catch(err => {
-        //     req.flash('error', err);
-        //     res.render('registration');
-        // });
 }
 // checkt of gebruiker bestaat en logt in door sessie aan te maken met de email als ID (omdat email uniek is)
 // req.Flash('class voor de div', 'het bericht') geeft dat  error/succes bericht door naar de template en daar staat weer code die het omzet naar html
 
 // async
 async function inloggen(req, res) {
-    // Gebruikers
-    //     .findOne({ email: req.body.email })
         const user = await db.collection('users').findOne({email: req.body.email})
         if (user == null) {
             req.flash('error', 'Account is niet gevonden');
@@ -225,49 +197,6 @@ async function inloggen(req, res) {
                 console.log(err);
                 // res.render('404');
               }
-
-        // bcrypt.compare(req.body.wachtwoord, user.wachtwoord).then(function(result) {
-        // })
-        // .then(data => {
-        //     if (data.wachtwoord === req.body.wachtwoord) {
-        //         req.session.user = data;
-        //         console.log('ingelogd als ' + req.session.user.email);
-        //         req.flash('succes', 'Hoi ' + req.session.user.voornaam);
-        //         // res.redirect('findlove');
-        //         res.render('readytostart');
-        //         req.session.loggedIN = true;
-        //     } else {
-        //         req.flash('error', 'Wachtwoord is incorrect');
-        //         res.render('index');
-        //         console.log('Wachtwoord is incorrect');
-        //     }
-        // })
-        // .catch(err => {
-        //     console.log(err);
-        //     req.flash('error', 'Account is niet gevonden');
-        //     res.render('index');
-        // });
-    
-//     const user = await db.collection('users').findOne({email: req.body.email})
-
-//   if (user == null) {
-//     return res.status(400).send('Cannot find user')
-//   }
-//   try {
-//     if (await bcrypt.compare(req.body.wachtwoord, user.wachtwoord)) {
-//       const data = req.session.user;
-//       console.log('gelukt!!!!')
-//     //   res.render('readytostart' , {data: data})
-//       res.render('readytostart')
-//        req.session.loggedIN = true;
-
-
-//     } else {
-//       res.send('Login failed')
-//     }
-//   } catch (err) {
-//     console.log(err)
-//   }
 }
 
 function wachtwoordform(req, res) {
