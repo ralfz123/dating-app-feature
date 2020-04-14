@@ -168,8 +168,8 @@ function goHome(req, res) {
 
     }
 }
-// Maakt de gebruiker aan op post
 
+// Maakt de gebruiker aan op post
 async function gebruikerMaken(req, res, file) {
     const hashedPassword = await bcrypt.hash(req.body.wachtwoord, saltRounds);
 
@@ -204,7 +204,6 @@ async function gebruikerMaken(req, res, file) {
 
 // checkt of gebruiker bestaat en logt in door sessie aan te maken met de email als ID (omdat email uniek is)
 // req.Flash('class voor de div', 'het bericht') geeft dat  error/succes bericht door naar de template en daar staat weer code die het omzet naar html
-
 async function inloggen(req, res) {
     const user = await Gebruikers.findOne({ email: req.body.email });
     if (user == null) {
@@ -282,7 +281,7 @@ function uitloggen(req, res) {
     res.render('index');
 }
 
-// function pagina gebruiker 1
+// Deze functie toont alle gefilterde gebruikers die nog geliked moeten worden
 function gebruiker1(req, res) {
     if (req.session.loggedIN) {
         Gebruikers
@@ -309,7 +308,8 @@ function gebruiker1(req, res) {
         res.render('index');
     }
 }
-// function pagina gebruiker 1
+
+// functie die kijkt of er matches zijn en deze pusht naar matches om te laten zien op de matchpagina
 function overzichtMatches(req, res) {
     let matches = [];
     if (req.session.loggedIN === true) {
@@ -342,6 +342,7 @@ function overzichtMatches(req, res) {
 
 }
 
+// Functie om een gebruiker te liken door de email van die persoon toe te voegen aan de hasLiked array van huidige user
 function like(req, res) {
     let id = req.params.email;
     console.log(id);
