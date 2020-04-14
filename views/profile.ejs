@@ -6,9 +6,12 @@
 </head>
 
 <body>
+    <header>
+        <%- include('partials/nav'); -%>
+    </header>
     <main class="succes">
-       
-     <form class="registratepage" action="matches" method="POST">
+
+        <form class="registratepage" action="matches" method="POST">
             <label for="voornaam">Voornaam</label>
             <input class="firsttype" type="text" name="voornaam" placeholder="Voornaam" value="<%= data.voornaam %>">
 
@@ -29,52 +32,52 @@
             <label for="geslacht">Geslacht</label>
 
             <input type="radio" name="gender" value="man" checked="checked" value="<%= data.gender %>">
-            <label class="man" for="man">Man</label>    
+            <label class="man" for="man">Man</label>
 
             <input type="radio" name="gender" value="vrouw" value="<%= data.gender %>">
-            <label class="vrouw" for="vrouw">Vrouw</label>    
+            <label class="vrouw" for="vrouw">Vrouw</label>
 
             <input type="radio" name="gender" value="beide" value="<%= data.gender %>">
-            <label class="beide" for="beide">Beide</label>    
+            <label class="beide" for="beide">Beide</label>
 
-            
+
             <label for="geslachtZoekend">Geïnteresseerd in</label>
 
             <input type="radio" name="searchSex" value="man" checked="checked" value="<%= data.searchSex %>">
-            <label class="man" for="man">Man</label>    
+            <label class="man" for="man">Man</label>
 
             <input type="radio" name="searchSex" value="vrouw" value="<%= data.searchSex %>">
-            <label class="vrouw" for="vrouw">Vrouw</label>    
+            <label class="vrouw" for="vrouw">Vrouw</label>
 
             <input type="radio" name="searchSex" value="beide" value="<%= data.searchSex %>">
             <label class="beide" for="beide">Beide</label>
 
 
-          <div class="optionphoto">
-            <label class="fileContainer" for="">
+            <div class="optionphoto">
+                <label class="fileContainer" for="">
                 <input class="file" type="file" name="photo" accept="image/*;capture=camera" value="<%= data.photo %>">
                 <img src="../static/images/gallery.png" alt=""> <!-- Deze image is nog niet werkend. -->
                 <p>Klik om een foto toe te voegen</p>
             </label>
-          </div>  
+            </div>
             <img class="renderedphoto" src=" " alt="foto1">
 
             <label for="functie">Functie</label>
             <input class="firsttype" type="text" name="functie" placeholder="B.v. fotograaf" value="<%= data.functie %>">
-        
+
             <label for="bio">Bio</label>
             <input class="firsttype" type="text" name="bio" placeholder="Vertel iets over jezelf..." value="<%= data.bio %>">
 
-        <button class="matchen" type="submit" name="next">Opslaan</button>
+            <button class="matchen" type="submit" name="next">Opslaan</button>
 
-        <ul>
-            <li></li>
-            <li></li>
-        </ul>
+            <ul>
+                <li></li>
+                <li></li>
+            </ul>
 
-            </form>
+        </form>
 
-        </main>
+    </main>
     <footer>
         <%- include('partials/footer'); -%>
     </footer>
