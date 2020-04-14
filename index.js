@@ -230,6 +230,7 @@ async function inloggen(req, res) {
             req.session.loggedIN = true;
             req.session.user = user;
             console.log('Succesvol ingelogd');
+            req.flash('succes', 'Hoi ' + req.session.user.voornaam);
             res.render('readytostart');
         } else {
             req.flash('error', 'Wachtwoord is incorrect');
@@ -303,7 +304,7 @@ function uitloggen(req, res) {
 
 // Deze functie toont alle gefilterde gebruikers die nog geliked moeten worden
 function gebruiker1(req, res) {
-    if (req.session.loggedIN) {
+    if (req.session.loggedIN === true) {
         Gebruikers
             .find({
                 $and: [

@@ -12,24 +12,23 @@
     </header>
     <main>
         <ul>
-            <% if (locals.data ){ %>
+            <% if (locals.data && locals.data.length > 0  ){ %>
                 <% for (let i = 0; i < data.length; i++) { %>
                     <li>
                         <figure class="profiel">
                             <img class="profielfoto" src="images/profielfotos/<%= data[i].photo %>" alt="Profilepicture">
-                            </a>
+                            <div class="knoppen">
+                                <a id="dislikelink" href="<%= data[i].email%>"><img src="images/no.png" alt="DislikeButton"></a>
+                                <form action="<%= data[i].email %>" method="post">
+                                    <button class="likebut" type="submit"> <img src="images/matches.svg" alt="LikeButton"> </button>
+                                </form>
+                            </div>
                             <figcaption>
-                                <div>
-                                    <a id="dislikelink" href="<%= data[i].email%>"><img src="images/no.png" alt="DislikeButton"></a>
-                                    <form action="<%= data[i].email %>" method="post">
-                                        <button class="likebut" type="submit"> <img src="images/matches.svg" alt="LikeButton"> </button>
-                                    </form>
-                                </div>
                                 <div>
                                     <h2>
                                         <%= data[i].voornaam + ' ' + data[i].achternaam %>
                                     </h2>
-                                    <p>
+                                    <p class="bio">
                                         <%= data[i].bio %>
                                     </p>
                                 </div>
@@ -38,7 +37,7 @@
                     </li>
                     <% } %>
                         <% } else { %>
-                            <p>U heeft nog geen matches</p>
+                            <p>Er zijn geen gebruikers meer over. U heeft iedereen gehad</p>
                             <% } %>
         </ul>
 
