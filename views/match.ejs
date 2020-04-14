@@ -1,21 +1,47 @@
 <!DOCTYPE html>
-<link rel="STYLESHEET" href="/css/styleProfiel.css" type="text/css">
-<h1>Matches:</h1>
-<!-- Maakt een div aan met flashmessages met class error of succes -->
-<%- messages() %>
-    <!-- <% if (data.length > 0){ %> -->
-    <% for (var i = 0; i < data.length; i++){ %>
-        <ul class="matches">
-            <h2>
-                <%= data[i].voornaam %>
-            </h2>
-            <p>
-                <%= data[i].achternaam %>
-            </p>
-            <img src="images/profielfotos/<%= data[i].photo %>" alt="Profilepicture">
-        </ul>
+<html lang="en">
 
-        <% } %>
+<head>
+    <%- include('partials/head'); -%>
+</head>
+
+<body>
+    <header>
+        <img class="logo" src="images/logo.svg" alt="Logo">
+        <%- include('partials/nav'); -%>
+    </header>
+    <main>
+        <%- messages() %>
+            <h1>Matches</h1>
+
+            <ul class="matches">
+                <!-- <% if (data.length > 0){ %> -->
+                <% for (var i = 0; i < data.length; i++){ %>
+                    <li>
+                        <figure class="profiel" id="matches">
+                            <img class="profielfoto" src="images/profielfotos/<%= data[i].photo %>" alt="Profilepicture">
+                            </a>
+                            <figcaption>
+                                <div>
+                                    <h3>
+                                        <%= data[i].voornaam + ' ' + data[i].achternaam %>
+                                    </h3>
+                                    <p class="bio">
+                                        <b>BIO:</b>
+                                        <%= data[i].bio %>
+                                    </p>
+                                </div>
+                            </figcaption>
+                        </figure>
+                    </li>
+                    <% } %>
+            </ul>
             <% }else { %>
                 <p>U heeft nog geen matches</p>
                 <% } %>
+
+    </main>
+    <script src="./js/swipen.js"></script>
+</body>
+
+</html>
