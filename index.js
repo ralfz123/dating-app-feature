@@ -91,8 +91,9 @@ app
     .post('/:email', like)
     .get('/profile', profiel)
     .get('/readytostart', readyToStart)
-    .get('/*', error404)
-    .get('/:email', disLike);
+    .get('/:email', disLike)
+    .get('/*', error404);
+
 
 
 function readyToStart(req, res) {
@@ -384,11 +385,11 @@ function disLike(req, res) {
         let id = req.params.email;
         console.log(id);
         Gebruikers.updateOne({ _id: mongo.ObjectId(req.session.user._id) }, {
-            $push: { 'hasNotLiked ': id }
+            $push: { 'hasNotLiked': id }
         });
         req.session.user.hasNotLiked.push(id);
-        console.log('disliked ' + id);
-        res.render('detail');
+        console.log('disliked' + id);
+        res.redirect('/findlove');
     } else {
         req.flash('error', 'U moet eerst inloggen');
         res.render('index');
