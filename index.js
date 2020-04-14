@@ -88,8 +88,8 @@ app
     .get('/matches', overzichtMatches)
     .post('/matches', editProfile)
     .get('/findlove', gebruiker1)
-    .post('/email', like)
-    .post('/:_id', disLike)
+    .post('/:email', like)
+    .get('/:email', disLike)
     .get('/profile', profiel)
     .get('/readytostart', readyToStart)
     .get('/*', error404);
@@ -290,8 +290,8 @@ function gebruiker1(req, res) {
             .find({
                 $and: [
                     { _id: { $ne: mongo.ObjectId(req.session.user._id) } },
-                    // { email: { $nin: req.session.user.hasLiked } },
-                    // { email: { $nin: req.session.user.hasNotLiked } },
+                    { email: { $nin: req.session.user.hasLiked } },
+                    { _id: { $nin: req.session.user.hasNotLiked } },
                     { gender: req.session.user.searchSex },
                     { searchSex: req.session.user.gender }
                 ]
@@ -357,16 +357,15 @@ function like(req, res) {
 }
 
 function disLike(req, res) {
-    let id = req.params._id;
+    let id = req.params.email;
     console.log(id);
     Gebruikers.updateOne(
     {_id: mongo.ObjectId(req.session.user._id)},
     {$push: {"hasNotLiked": id}
-});
-req.session.user.hasNotLiked.push(id);
-//    Gebruikers.deleteOne({id: id});
-   console.log('disliked' + voornaam)
-    res.redirect("/findlove");
+    });
+    req.session.user.hasNotLiked.push(id);
+   console.log('disliked' + id)
+    res.render("detail");
 }
 
 // Bij een 404
