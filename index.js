@@ -48,7 +48,7 @@ app
     .use(bodyParser.urlencoded({ extended: true }))
     .use(session({
         secret: process.env.SESSION_SECRET,
-        cookie: { maxAge: 60000 },
+        cookie: { maxAge: 90000 },
         resave: false,
         saveUninitialized: true,
         secure: true,
@@ -91,61 +91,79 @@ app
     .post('/:email', like)
     .get('/profile', profiel)
     .get('/readytostart', readyToStart)
+    .get('/:email', disLike)
     .get('/*', error404);
 
 
+
 function readyToStart(req, res) {
-    Gebruikers
-        .findOne({ email: req.session.user.email })
-        .then(data => {
-            res.render('readytostart.ejs');
-        })
-        .catch(err => { console.log(err); });
+    if (req.session.loggedIN === true) {
+        Gebruikers
+            .findOne({ email: req.session.user.email })
+            .then(data => {
+                res.render('readytostart');
+            })
+            .catch(err => { console.log(err); });
+    } else {
+        req.flash('error', 'U moet eerst inloggen');
+        res.render('index');
+    }
 }
 
 // Update profile page
-function editProfile(req, res) {
-    const query = { _id: mongo.ObjectId(req.session.user._id) }; // the current user
-    console.log(req.session.user._id);
-    const updatedValues = { // the new data values
-        $set: {
-            'voornaam': req.body.voornaam,
-            'achternaam': req.body.achternaam,
-            'geboortedatum': req.body.geboortedatum,
-            'wachtwoord': req.body.wachtwoord,
-            'gender': req.body.gender,
-            'searchSex': req.body.searchSex,
-            'photo': req.body.photo,
-            'functie': req.body.functie,
-            'bio': req.body.bio
-        }
-    };
-    console.log(updatedValues);
-
-    db.collection('users')
-        .findOneAndUpdate(query, updatedValues)
-
-    .then(data => {
-            console.log('heeft data gevonden');
-            console.log(query);
-            console.log(data);
-            if (data) {
-                res.render('readytostart');
+async function editProfile(req, res, file) {
+    if (req.session.loggedIN === true) {
+        const hashedPassword = await bcrypt.hash(req.body.wachtwoord, saltRounds);
+        const query = { _id: mongo.ObjectId(req.session.user._id) }; // the current user
+        console.log(req.session.user._id);
+        const updatedValues = { // the new data values
+            $set: {
+                'voornaam': req.body.voornaam,
+                'achternaam': req.body.achternaam,
+                'geboortedatum': req.body.geboortedatum,
+                'wachtwoord': hashedPassword,
+                'gender': req.body.gender,
+                'searchSex': req.body.searchSex,
+                'photo': req.file.originalname,
+                'functie': req.body.functie,
+                'bio': req.body.bio
             }
-        })
-        .catch(err => {
-            console.log(err);
-        });
+        };
+        console.log(updatedValues);
+
+        db.collection('users')
+            .findOneAndUpdate(query, updatedValues)
+
+        .then(data => {
+                console.log('heeft data gevonden');
+                console.log(query);
+                console.log(data);
+                if (data) {
+                    res.render('readytostart');
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    } else {
+        req.flash('error', 'U moet eerst inloggen');
+        res.render('index');
+    }
 }
 
 // Profiel
 function profiel(req, res) {
-    Gebruikers
-        .findOne({ email: req.session.user.email })
-        .then(data => {
-            res.render('profile.ejs', { data: data });
-        })
-        .catch(err => { console.log(err); });
+    if (req.session.loggedIN === true) {
+        Gebruikers
+            .findOne({ email: req.session.user.email })
+            .then(data => {
+                res.render('profile.ejs', { data: data });
+            })
+            .catch(err => { console.log(err); });
+    } else {
+        req.flash('error', 'U moet eerst inloggen');
+        res.render('index');
+    }
 }
 
 
@@ -165,14 +183,12 @@ function goHome(req, res) {
         res.render('readytostart');
     } else {
         res.render('index');
-
     }
 }
+
 // Maakt de gebruiker aan op post
-
 async function gebruikerMaken(req, res, file) {
-    const hashedPassword = await bcrypt.hash(req.body.wachtwoord, saltRounds)
-
+    const hashedPassword = await bcrypt.hash(req.body.wachtwoord, saltRounds);
     // Pusht de data + input naar database (gebruikers = collection('users'))
     Gebruikers
         .insertOne({
@@ -183,7 +199,7 @@ async function gebruikerMaken(req, res, file) {
             wachtwoord: hashedPassword,
             gender: req.body.gender,
             searchSex: req.body.searchSex,
-            photo: req.body.originalname,
+            photo: req.file.originalname,
             functie: req.body.functie,
             bio: req.body.bio,
             hasLiked: [],
@@ -204,7 +220,6 @@ async function gebruikerMaken(req, res, file) {
 
 // checkt of gebruiker bestaat en logt in door sessie aan te maken met de email als ID (omdat email uniek is)
 // req.Flash('class voor de div', 'het bericht') geeft dat  error/succes bericht door naar de template en daar staat weer code die het omzet naar html
-
 async function inloggen(req, res) {
     const user = await Gebruikers.findOne({ email: req.body.email });
     if (user == null) {
@@ -216,6 +231,7 @@ async function inloggen(req, res) {
             req.session.loggedIN = true;
             req.session.user = user;
             console.log('Succesvol ingelogd');
+            req.flash('succes', 'Hoi ' + req.session.user.voornaam);
             res.render('readytostart');
         } else {
             req.flash('error', 'Wachtwoord is incorrect');
@@ -265,15 +281,20 @@ function wachtwoordVeranderen(req, res) {
 
 // Deze functie verwijderd het account door eerst te controleren of gebruiker ingelogd is en daarna account te vinden met die email en verwijderd het account en zet de session.loggedIn naar false  + flasht status naar user
 function accountVerwijderen(req, res) {
-    Gebruikers
-        .findOneAndDelete({ email: req.session.user.email })
-        .then(result => {
-            console.log(`Heeft ${result.deletedCount} account verwijderd.`);
-            req.flash('succes', 'Uw account is met succes verwijderd');
-            req.session.loggedIN = false;
-            res.render('index');
-        })
-        .catch(err => console.error(`Error: ${err}`));
+    if (req.session.loggedIN === true) {
+        Gebruikers
+            .findOneAndDelete({ email: req.session.user.email })
+            .then(result => {
+                console.log(`Heeft ${result.deletedCount} account verwijderd.`);
+                req.flash('succes', 'Uw account is met succes verwijderd');
+                req.session.loggedIN = false;
+                res.render('index');
+            })
+            .catch(err => console.error(`Error: ${err}`));
+    } else {
+        req.flash('error', 'U moet eerst inloggen');
+        res.render('index');
+    }
 }
 // Zet de session.loggedIN naar false = niemand ingelogd. Session destroyen is niet mogelijk, omdat flash sessions nodig heeft
 function uitloggen(req, res) {
@@ -282,15 +303,15 @@ function uitloggen(req, res) {
     res.render('index');
 }
 
-// function pagina gebruiker 1
+// Deze functie toont alle gefilterde gebruikers die nog geliked moeten worden
 function gebruiker1(req, res) {
-    if (req.session.loggedIN) {
+    if (req.session.loggedIN === true) {
         Gebruikers
             .find({
                 $and: [
                     { _id: { $ne: mongo.ObjectId(req.session.user._id) } },
-                    // { email: { $nin: req.session.user.hasLiked } },
-                    // { email: { $nin: req.session.user.hasNotLiked } },
+                    { email: { $nin: req.session.user.hasLiked } },
+                    { email: { $nin: req.session.user.hasNotLiked } },
                     { gender: req.session.user.searchSex },
                     { searchSex: req.session.user.gender }
                 ]
@@ -301,15 +322,16 @@ function gebruiker1(req, res) {
             })
             .catch(err => {
                 console.log(err);
-                req.flash('errror', 'Excuses! er ging iets fout. Probeer het opnieuw');
+                req.flash('error', 'Excuses! er ging iets fout. Probeer het opnieuw');
                 res.render('readytostart');
             });
     } else {
-        req.flash('errror', 'U moet eerst inloggen');
+        req.flash('error', 'U moet eerst inloggen');
         res.render('index');
     }
 }
-// function pagina gebruiker 1
+
+// functie die kijkt of er matches zijn en deze pusht naar matches om te laten zien op de matchpagina
 function overzichtMatches(req, res) {
     let matches = [];
     if (req.session.loggedIN === true) {
@@ -343,15 +365,37 @@ function overzichtMatches(req, res) {
 }
 
 function like(req, res) {
-    let id = req.params.email;
-    console.log(id);
-    Gebruikers
-        .updateOne({ _id: mongo.ObjectId(req.session.user._id) }, {
+    if (req.session.loggedIN === true) {
+        let id = req.params.email;
+        console.log(id);
+        Gebruikers.updateOne({ _id: mongo.ObjectId(req.session.user._id) }, {
             $push: { 'hasLiked': id }
         });
-    req.session.user.hasLiked.push(id);
-    console.log('liked');
-    res.redirect('/findlove');
+        req.session.user.hasLiked.push(id);
+        console.log('liked');
+        res.redirect('/findlove');
+    } else {
+        req.flash('error', 'U moet eerst inloggen');
+        res.render('index');
+    }
+
+}
+
+function disLike(req, res) {
+    if (req.session.loggedIN === true) {
+        let id = req.params.email;
+        console.log(id);
+        Gebruikers.updateOne({ _id: mongo.ObjectId(req.session.user._id) }, {
+            $push: { 'hasNotLiked': id }
+        });
+        req.session.user.hasNotLiked.push(id);
+        console.log('disliked' + id);
+        res.redirect('/findlove');
+    } else {
+        req.flash('error', 'U moet eerst inloggen');
+        res.render('index');
+    }
+
 }
 
 // Bij een 404

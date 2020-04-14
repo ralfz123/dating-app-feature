@@ -13,8 +13,7 @@
 /* body */
 
 body {
-    background-color: #7B002A;
-    font-family: 'maven pro';
+    font-family: 'montserrat';
 }
 
 main,
@@ -34,18 +33,23 @@ h1,
 h2,
 h3 {
     font-weight: 400;
-    color: white;
+    color: #f6b360;
     text-align: center;
+}
+
+h1,
+h2 {
+    text-shadow: 3px 3px #e26d4b;
 }
 
 h2 a {
     font-weight: 400;
-    color: white;
+    color: #f6b360;
     text-align: center;
 }
 
 p {
-    color: #FEEBEB;
+    color: #f7a79a;
     text-align: center;
     margin: 15px 5px;
 }
@@ -74,7 +78,7 @@ header nav .navicon {
     max-width: 50px;
 }
 
-header nav .logo {
+.logo {
     max-width: 100px;
 }
 
@@ -85,11 +89,165 @@ main {
     width: 80%;
     margin: auto;
     padding: 30px 5px;
+    max-width: 1300px;
+}
+
+main.succes {
+    text-align: center;
+}
+
+ul.matches {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 10px;
+    margin: 30px 15px;
+}
+
+ul.matches .profielfoto {
+    width: 200px;
+}
+
+.people li {
+    position: absolute;
+    margin: auto;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+}
+
+.people {
+    display: flex;
+    justify-content: center;
+    ;
+}
+
+.accountlinks {
+    text-align: center;
+    color: white;
+    font-size: 18px;
+    list-style: none;
+    margin: 30px 10px;
+}
+
+.accountlinks li {
+    margin: 15px 5px;
+}
+
+ul.error {
+    margin: auto;
+    padding: 10px 25px;
+    background-color: #e26d4a;
+    width: max-content;
+    border-radius: 5px;
+    color: white;
+    font-size: 1.2rem;
+}
+
+ul.succes {
+    margin: auto;
+    padding: 10px 25px;
+    background-color: #67b105;
+    width: max-content;
+    border-radius: 5px;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.accountlinks a {
+    padding: 10px 25px;
+    background-color: #9cb2b7b0;
+    border-radius: 20px;
+    display: inline-block;
+    color: white;
+    border: 3px solid #7cc1ca;
+    text-decoration: none;
+    text-transform: uppercase;
+    -webkit-box-shadow: 0px 8px 15px -6px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 8px 15px -6px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 8px 15px -6px rgba(0, 0, 0, 0.75);
+    cursor: pointer;
+}
+
+img {
+    width: 100%;
+}
+
+img.succesicon {
+    width: 100%;
+    max-width: 150px;
+}
+
+#registratiestart {
+    margin: 20px 0px;
+    text-align: center;
+}
+
+#registratiebutton {
+    padding: 15px 40px;
+    background-color: #9cb2b7b0;
+    border-radius: 20px;
+    margin: 20px 10px;
+    display: inline-block;
+    color: white;
+    border: 3px solid #7cc1ca;
+    text-decoration: none;
+    text-transform: uppercase;
+    -webkit-box-shadow: 0px 8px 15px -6px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 8px 15px -6px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 8px 15px -6px rgba(0, 0, 0, 0.75);
+    cursor: pointer;
 }
 
 
+/* Like pagina */
+
+.profiel .profielfoto {
+    display: block;
+    width: 100%;
+    margin: auto;
+    object-fit: cover;
+    object-position: top;
+}
+
+.profiel button {
+    background: none;
+    border: 0px;
+}
+
+.profiel h2 {
+    text-shadow: none !important;
+}
+
+.profiel {
+    max-width: 600px;
+    margin: auto;
+    background: #D0EAED;
+    margin-bottom: 30px;
+    border-radius: 40px;
+}
+
+.profiel .knoppen {
+    display: flex;
+    justify-content: space-around;
+    margin-top: -70px;
+}
+
+.profiel figcaption {
+    display: flex;
+    justify-content: center;
+    padding: 10px 10px;
+}
+
+.profiel div img {
+    max-width: 70px;
+}
+
+
+/* forms */
+
+
 /********************
-    MULTI STEP FORM
+MULTI STEP FORM
 ********************/
 
 .registratepage #accountgegevens {
@@ -103,12 +261,6 @@ main {
     cursor: pointer;
 }
 
-.registratepage input[type="file"]:valid {
-    border: 0 !important;
-    opacity: 1;
-    background-color: #ffffff00;
-}
-
 .registratepage fieldset .man,
 .registratepage fieldset .vrouw,
 .registratepage fieldset .beide {
@@ -120,9 +272,13 @@ main {
     font-size: 1.4rem;
 }
 
+ul {
+    list-style: none;
+}
+
 .registratepage ul li {
     display: inline-flex;
-    margin: 15px;
+    margin: 5px 10px;
 }
 
 .registratepage ul {
@@ -131,8 +287,7 @@ main {
 
 .registratepage label {
     display: block;
-    font-size: 1rem;
-    font-family: 'maven pro';
+    font-size: 1.2rem;
     width: auto;
 }
 
@@ -148,130 +303,120 @@ main {
 }
 
 .registratepage button {
-    margin: 20px;
-    padding: 12px 0px;
-    width: 100px;
-    cursor: pointer;
-    box-shadow: 3px 3px 4px grey;
-    border-radius: 21px;
-    border: 1px solid black;
-    font-family: 'maven pro';
-    font-weight: 600;
+    padding: 15px 40px;
+    background-color: #f5a79b;
+    border-radius: 20px;
+    margin: 20px 10px;
+    display: inline-block;
+    color: white;
+    border: 3px solid #e26d4a;
+    text-decoration: none;
     text-transform: uppercase;
-    text-align: center;
+    -webkit-box-shadow: 0px 8px 15px -6px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 8px 15px -6px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 8px 15px -6px rgba(0, 0, 0, 0.75);
+    cursor: pointer;
 }
 
 body#registration main {
     padding: 10px 5px 30px 5px;
 }
 
-main.succes {
-    text-align: center;
+.registratepage {
+    width: 70%;
+    margin: auto;
 }
-
-.accountlinks {
-    text-align: center;
-    color: white;
-    font-size: 18px;
-    list-style: none;
-    margin: 30px 10px;
-}
-
-.accountlinks li {
-    margin: 15px 5px;
-}
-
-.accountlinks a {
-    color: white!important;
-}
-
-img {
-    width: 100%;
-    max-width: 300px;
-}
-
-img.succesicon {
-    width: 100%;
-    max-width: 150px;
-}
-
-#registratiestart {
-    margin: 20px 0px;
-    text-align: center;
-}
-
-#registratiebutton {
-    padding: 15px 40px;
-    background-color: #FEEBEB;
-    border-radius: 20px;
-    margin: 20px 10px;
-    display: inline-block;
-    color: #F8626E;
-    border: 3px solid #FF626E;
-    text-decoration: none;
-    text-transform: uppercase;
-}
-
-
-/* forms */
 
 input[type=text],
 input[type=email],
 input[type=password],
 input[type=date] {
-    border: 3px solid #F8626E;
+    border: 3px solid #7cc1ca;
     padding: 4px 15px;
-    font-size: 16px;
-    color: #7B002A!important;
+    font-size: 1.1rem;
+    color: #f7a79a!important;
     font-weight: bold;
-    opacity: 0.8;
+    background-color: #f3f3f3;
 }
 
 fieldset {
     border: 0;
-    color: white;
+    color: #9cb2b7;
 }
 
 legend {
     text-align: center;
     padding: 10px;
-    font-size: 2rem;
+    font-size: 1.7rem;
+    color: #f6b360;
+    font-weight: 500;
 }
 
 input:valid {
     border: 3px solid #88FF9F;
-    opacity: 1;
     background-color: white;
 }
 
 input:focus {
-    /* padding: 30px 15px; */
-    opacity: 1;
+    padding: 25px 15px;
+    background-color: white;
+}
+
+input[type=file] {
+    height: auto;
+    width: max-content;
+    font-size: 1.1rem;
+}
+
+input[type=file]:focus {
+    padding: 5px 0px;
 }
 
 input[type=submit] {
-    background-color: #FF626E;
+    background-color: #9cb2b7b0;
     font-size: 20px;
     color: white;
     border: 0;
     text-transform: uppercase;
+    width: auto;
+    margin: auto;
+    padding: 5px 25px;
+    border: 3px solid #7cc1ca;
+    -webkit-box-shadow: 0px 8px 15px -6px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 8px 15px -6px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 8px 15px -6px rgba(0, 0, 0, 0.75);
 }
 
  ::placeholder {
-    color: #7B002A;
-    font-size: 16px;
+    color: #9cb2b7;
+    font-size: 1.2rem;
     opacity: 0.55;
     font-weight: lighter;
 }
 
+.inlogbutton {
+    background: none;
+    border: 0px;
+    margin: auto;
+    display: block;
+}
+
+.inlogbutton img {
+    cursor: pointer;
+    max-width: 100px;
+}
+
+.inlogbutton:hover {
+    zoom: 1.1;
+}
+
 form input {
-    height: 3.2rem;
+    height: 3rem;
     display: block;
     margin: 20px 0px;
     width: 100%;
     border-radius: 20px;
     box-sizing: border-box;
-    font-family: 'maven pro';
 }
 
 
