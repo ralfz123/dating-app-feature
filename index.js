@@ -186,7 +186,7 @@ async function gebruikerMaken(req, res, file) {
             photo: req.body.originalname,
             functie: req.body.functie,
             bio: req.body.bio,
-            HasLiked: [],
+            hasLiked: [],
             hasNotLiked: []
         }, done);
 
@@ -206,15 +206,15 @@ async function gebruikerMaken(req, res, file) {
 // req.Flash('class voor de div', 'het bericht') geeft dat  error/succes bericht door naar de template en daar staat weer code die het omzet naar html
 
 async function inloggen(req, res) {
-    const user = await db.collection('users').findOne({ email: req.body.email });
+    const user = await Gebruikers.findOne({ email: req.body.email });
     if (user == null) {
         req.flash('error', 'Account is niet gevonden');
         res.render('index');
     }
     try {
         if (await bcrypt.compare(req.body.wachtwoord, user.wachtwoord)) {
-            req.session.user = user;
             req.session.loggedIN = true;
+            req.session.user = user;
             console.log('Succesvol ingelogd');
             res.render('readytostart');
         } else {
@@ -224,7 +224,8 @@ async function inloggen(req, res) {
         }
     } catch (err) {
         console.log(err);
-        // res.render('404');
+        req.flash('error', 'Er ging iets mis. Probeer opnieuw');
+        res.render('index');
     }
 }
 
@@ -283,7 +284,7 @@ function uitloggen(req, res) {
 
 // function pagina gebruiker 1
 function gebruiker1(req, res) {
-    if (req.session.loggedIN === true) {
+    if (req.session.loggedIN) {
         Gebruikers
             .find({
                 $and: [
@@ -346,9 +347,9 @@ function like(req, res) {
     console.log(id);
     Gebruikers
         .updateOne({ _id: mongo.ObjectId(req.session.user._id) }, {
-            $push: { 'HasLiked': id }
+            $push: { 'hasLiked': id }
         });
-    req.session.user.HasLiked.push(id);
+    req.session.user.hasLiked.push(id);
     console.log('liked');
     res.redirect('/findlove');
 }
