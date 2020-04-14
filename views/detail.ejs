@@ -18,15 +18,14 @@
                             <img src="images/profielfotos/<%= data[i].photo %>" alt="Profilepicture">
                             </a>
                             <figcaption>
-                                <h2>
-                                    <%= data[i].voornaam + ' ' + data[i].achternaam %>
-                                </h2>
-                                <h3>
-                                    <%= data[i].age %>
-                                </h3>
-                                <p>
-                                    <%= data[i].bio %>
-                                </p>
+                                <div>
+                                    <h2>
+                                        <%= data[i].voornaam + ' ' + data[i].achternaam %>
+                                    </h2>
+                                    <p>
+                                        <%= data[i].bio %>
+                                    </p>
+                                </div>
                                 <form action="<%= data[i].email %>" method="post">
                                     <button class="disLikebut" type="submit"> <img src="images/no.png" alt="DislikeButton"> </button>
                                     <button class="likebut" type="submit"> <img src="images/matches.svg" alt="LikeButton"> </button>
