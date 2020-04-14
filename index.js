@@ -98,7 +98,7 @@ function readyToStart(req, res) {
     Gebruikers
         .findOne({ email: req.session.user.email })
         .then(data => {
-            res.render('readytostart.ejs');
+            res.render('readytostart');
         })
         .catch(err => { console.log(err); });
 }
@@ -171,7 +171,7 @@ function goHome(req, res) {
 // Maakt de gebruiker aan op post
 
 async function gebruikerMaken(req, res, file) {
-    const hashedPassword = await bcrypt.hash(req.body.wachtwoord, saltRounds)
+    const hashedPassword = await bcrypt.hash(req.body.wachtwoord, saltRounds);
 
     // Pusht de data + input naar database (gebruikers = collection('users'))
     Gebruikers
@@ -183,7 +183,7 @@ async function gebruikerMaken(req, res, file) {
             wachtwoord: hashedPassword,
             gender: req.body.gender,
             searchSex: req.body.searchSex,
-            photo: req.body.originalname,
+            photo: req.file.originalname,
             functie: req.body.functie,
             bio: req.body.bio,
             hasLiked: [],
@@ -289,8 +289,8 @@ function gebruiker1(req, res) {
             .find({
                 $and: [
                     { _id: { $ne: mongo.ObjectId(req.session.user._id) } },
-                    // { email: { $nin: req.session.user.hasLiked } },
-                    // { email: { $nin: req.session.user.hasNotLiked } },
+                    { email: { $nin: req.session.user.hasLiked } },
+                    { email: { $nin: req.session.user.hasNotLiked } },
                     { gender: req.session.user.searchSex },
                     { searchSex: req.session.user.gender }
                 ]
