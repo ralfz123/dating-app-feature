@@ -7,12 +7,36 @@ const
     bodyParser = require('body-parser'),
     session = require('express-session'),
     flash = require('connect-flash'),
-    multer = require('multer');
-    bcrypt = require('bcrypt');
+    multer = require('multer'),
+    bcrypt = require('bcrypt'),
     saltRounds = 10;
 let
     db,
-    Gebruikers;
+    Gebruikers,
+    geliked;
+
+
+// Multer setup
+const opslag = multer.diskStorage({
+    destination: './static/images/profielfotos',
+    filename: function(req, file, cb) {
+        cb(null, file.originalname);
+    }
+});
+let fileFilter = (req, file, cb) => {
+    if (
+        file.mimetype === 'image/png' ||
+        file.mimetype === 'image/jpg' ||
+        file.mimetype === 'image/jpeg'
+    ) {
+        cb(null, true);
+    } else {
+        cb(new Error('Bestands formaat moet : PNG,JPG,JPEG zijn'), false);
+    }
+};
+let upload = multer({ storage: opslag, fileFilter: fileFilter });
+
+
 
 // .env bestand gebruiken
 require('dotenv').config();
@@ -26,7 +50,7 @@ app
         secret: process.env.SESSION_SECRET,
         cookie: { maxAge: 60000 },
         resave: false,
-        saveUninitialized: false,
+        saveUninitialized: true,
         secure: true,
     }))
     .use(function(req, res, next) {
@@ -56,25 +80,32 @@ app
     .post('/log-in', inloggen)
     .get('/', goHome)
     .get('/registration', registreren)
-    .post('/registrating', gebruikerMaken)
+    .post('/registrating', upload.single('photo'), gebruikerMaken)
     .get('/logout', uitloggen)
     .get('/edit-pass', wachtwoordform)
     .post('/edit', wachtwoordVeranderen)
     .get('/delete', accountVerwijderen)
-    .get('/matches', overzichtMatches)// Hebben we deze nog nodig?
-    .post('/matches', editProfile) 
+    .get('/matches', overzichtMatches)
+    .post('/matches', editProfile)
     .get('/findlove', gebruiker1)
-      // .post('/:id', like)
+    .post('/:email', like)
     .get('/profile', profiel)
-    .post('/<%= data[i]._id %>', like)
-    // .get('/*', error404);
+    .get('/readytostart' , readyToStart)
+// .get('/*', error404);
 
 
+function readyToStart(req, res) {
+    Gebruikers
+        .findOne({ email: req.session.user.email })
+        .then(data => {
+            res.render('readytostart.ejs');
+        })
+        .catch(err => { console.log(err); });
+}
 
-    
 // Update profile page
-function editProfile (req, res) {
-    const query = {  _id : mongo.ObjectId(req.session.user._id)}; // the current user
+function editProfile(req, res) {
+    const query = { _id: mongo.ObjectId(req.session.user._id) }; // the current user
     console.log(req.session.user._id);
     const updatedValues = { // the new data values
         $set: {
@@ -110,7 +141,7 @@ function editProfile (req, res) {
 // Profiel
 function profiel(req, res) {
     Gebruikers
-        .findOne(_id= mongo.ObjectId(req.session.user._id))
+        .findOne({ email: req.session.user.email })
         .then(data => {
             res.render('profile.ejs', { data: data });
         })
@@ -131,8 +162,7 @@ function registreren(req, res) {
 function goHome(req, res) {
     if (req.session.loggedIN === true) {
         req.flash('succes', 'Hoi ' + req.session.user.voornaam);
-        // res.redirect('findlove');
-        res.render('readytostart', { data: data });
+        res.render('readytostart');
     } else {
         res.render('index');
 
@@ -140,7 +170,7 @@ function goHome(req, res) {
 }
 // Maakt de gebruiker aan op post
 
-async function gebruikerMaken(req, res, next) {
+async function gebruikerMaken(req, res, file) {
     const hashedPassword = await bcrypt.hash(req.body.wachtwoord, saltRounds)
 
  // Pusht de data + input naar database (gebruikers = collection('users'))
@@ -153,30 +183,28 @@ async function gebruikerMaken(req, res, next) {
             wachtwoord: hashedPassword,
             gender: req.body.gender,
             searchSex: req.body.searchSex,
-            photo: req.body.photo,
+            photo: req.body.originalname,
             functie: req.body.functie,
-            bio: req.body.bio
+            bio: req.body.bio,
+            HasLiked: [],
+            hasNotLiked: []
         }, done)
 
         function done(err, data) {
             if(err) {
-                next(err)
+                console.log(err);
+                req.flash('error', 'Oeps er ging iets fout');
+                res.render('registration')
             } else if(data) {
-                // req.session.user = data;
-                // req.session.loggedIN = true;
-                // req.flash('succes', 'Hoi ' + req.session.user.voornaam + ', jouw account is met succes aangemaakt');
-                // res.render('readytostart', { data: data });
-                // console.log('Gebruiker toegevoegd');
-                // res.redirect('/')
-                req.flash('error', 'Account aangemaakt! Log in');
+                req.flash('succes', 'Account aangemaakt! Log in');
                 res.render('index');
             }
         }
 }
+
 // checkt of gebruiker bestaat en logt in door sessie aan te maken met de email als ID (omdat email uniek is)
 // req.Flash('class voor de div', 'het bericht') geeft dat  error/succes bericht door naar de template en daar staat weer code die het omzet naar html
 
-// async
 async function inloggen(req, res) {
         const user = await db.collection('users').findOne({email: req.body.email})
         if (user == null) {
@@ -256,14 +284,16 @@ function uitloggen(req, res) {
 
 // function pagina gebruiker 1
 function gebruiker1(req, res) {
-    if (req.session.user) {
+    if (req.session.loggedIN) {
         Gebruikers
             .find({
-                _id: { $ne: mongo.ObjectId(req.session.user._id) },
-                email: { $nin: req.session.user.hasLiked },
-                // { email: { $nin: req.session.user.hasDisliked } },
-                gender: req.session.user.searchSex,
-                searchSex: req.session.user.searchSex
+                $and: [
+                    { _id: { $ne: mongo.ObjectId(req.session.user._id) } },
+                    // { email: { $nin: req.session.user.hasLiked } },
+                    // { email: { $nin: req.session.user.hasNotLiked } },
+                    { gender: req.session.user.searchSex },
+                    { searchSex: req.session.user.gender }
+                ]
             }).toArray()
             .then(data => {
                 res.render('detail', { data: data });
@@ -281,34 +311,53 @@ function gebruiker1(req, res) {
 }
 // function pagina gebruiker 1
 function overzichtMatches(req, res) {
-    Gebruikers
-        .find({ _id: { $ne: mongo.ObjectId(req.session.user._id) } }).toArray()
-        .then(data => {
-            res.render('match', { data: data });
-        })
-        .catch(err => { console.log(err); });
+    let matches = [];
+    if (req.session.loggedIN === true) {
+        let gelikedeusers = req.session.user.hasLiked;
+        let huidigemail = req.session.user.email;
+        if (gelikedeusers) {
+            Gebruikers
+                .find({ email: { $in: gelikedeusers } }).toArray()
+                .then(data => {
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].hasLiked.includes(huidigemail)) {
+                            matches.push(data[i]);
+                        }
+                    }
+                    res.render('match', { data: matches });
+                })
+                .catch(err => {
+                    console.log(err);
+                    req.flash('error', 'Excuses! er ging iets fout. Probeer het opnieuw');
+                    res.render('readytostart');
+                });
+        } else {
+            req.flash('error', 'U heeft nog geen matches');
+            res.render('match');
+        }
+    } else {
+        req.flash('error', 'U moet eerst inloggen');
+        res.render('index');
+    }
+
 }
 
-
-// Functie liken 
 function like(req, res) {
-    let id = req.params.id;
-    console.log(req.params.id)
-    Gebruikers.updateOne({id: mongo.ObjectId(req.session.user._id)}, {$push: {"hasLiked": id}});
+    let id = req.params.email;
+    console.log(id);
+    Gebruikers
+        .updateOne({ _id: mongo.ObjectId(req.session.user._id) }, {
+            $push: { 'hasLiked': id }
+        });
     req.session.user.hasLiked.push(id);
-    console.log('hoi')
-    res.redirect("/findlove");
-
-  
-
+    console.log('liked');
+    res.redirect('/findlove');
 }
-
-
-  
 
 // // Bij een 404
 // function error404(res) {
 //     res.render('404');
 // }
+
 // Welke poort het live staat
 app.listen(5000, () => console.log('App is listening on port', port));

@@ -1,92 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 
 <head>
     <%- include('partials/head'); -%>
 </head>
 
-<body id="registration">
+<body id='registration'>
     <header>
         <%- include('partials/header-registration'); -%>
     </header>
-
-
     <main>
-        <!-- <%- include('partials/registration-form'); -%> -->
-        
-        <form class="registratepage" action="registrating" method="POST">
-            <fieldset>
-                <label for="voornaam">Voornaam</label>
-                <input class="firsttype" type="text" name="voornaam" placeholder="Voornaam" required>
-    
-                <label for="achternaam">Achternaam</label>
-                <input class="firsttype" type="text" name="achternaam" placeholder="Achternaam" required>
+        <Section>
+            <article>
+                <form class="registratepage" id='registratepage' action='registrating' enctype='multipart/form-data' method='POST'>
+                    <fieldset id='persoonsgegevens'>
+                        <label for='voornaam'>Voornaam</label>
+                        <input class='firsttype' type='text' name='voornaam' placeholder='Voornaam' required>
 
-                <label for="geboortedatum">Geboortedatum</label>
-                <input type="date" name="geboortedatum" placeholder="dd - mm - jjjj" required>
+                        <label for='achternaam'>Achternaam</label>
+                        <input class='firsttype' type='text' name='achternaam' placeholder='Achternaam' required>
 
-                <label for="email">Email</label>
-                <input type="email" required name="email" minlength="6 " maxlength="60 " placeholder="B.v blabla@outlook.com ">
-                
-                <label for="password">Wachtwoord</label>
-                <input type="password" required name="wachtwoord" minlength="6 " placeholder="Minimaal 6 tekens ">
+                        <label for='geboortedatum'>Geboortedatum</label>
+                        <input type='date' name='geboortedatum' placeholder='dd - mm - jjjj' required>
 
+                        <label for='email'>Email</label>
+                        <input type='email' required name='email' minlength='6 ' maxlength='60 ' placeholder='B.v blabla@outlook.com '>
 
+                        <label for='password'>Wachtwoord</label>
+                        <input type='password' required name='wachtwoord' minlength='6 ' placeholder='Minimaal 6 tekens '>
 
-                <label for="geslacht">Geslacht</label>
-    
-                <input type="radio" name="gender" value="man" checked="checked" required>
-                <label class="man" for="man">Man</label>    
-    
-                <input type="radio" name="gender" value="vrouw" required>
-                <label class="vrouw" for="vrouw">Vrouw</label>    
-    
-                <input type="radio" name="gender" value="beide" required>
-                <label class="beide" for="beide">Beide</label>    
-    
-                
-                <label for="geslachtZoekend">Geïnteresseerd in</label>
-    
-                <input type="radio" name="searchSex" value="man" checked="checked" required>
-                <label class="man" for="man">Man</label>    
-    
-                <input type="radio" name="searchSex" value="vrouw" required>
-                <label class="vrouw" for="vrouw">Vrouw</label>    
-    
-                <input type="radio" name="searchSex" value="beide" required>
-                <label class="beide" for="beide">Beide</label>
-            </fieldset>
-    
-    
-            <fieldset>
-              <div class="optionphoto">
-                <label class="fileContainer" for="">
-                    <input class="file" type="file" name="photo" accept="image/*;capture=camera">
-                    <img src="../static/images/gallery.png" alt=""> <!-- Deze image is nog niet werkend. -->
-                    <p>Klik om een foto toe te voegen</p>
-                </label>
-              </div>  
-                <img class="renderedphoto" src=" " alt="foto1">
-    
-                <label for="functie">Functie</label>
-                <input class="firsttype" type="text" name="functie" placeholder="B.v. fotograaf">    
-            
-                <label for="bio">Bio</label>
-                <input class="firsttype" type="text" name="bio" placeholder="Vertel iets over jezelf...">
-            </fieldset>
-    
-            <button class="back" name="back">Terug</button>
-            <button class="next" name="next">Registreren</button>
-    
-            <ul>
-                <li></li>
-                <li></li>
-            </ul>
-        </form>
+                        <label for='gender'>Geslacht</label>
+                        <ul>
+                            <li><input type='radio' name='gender' value='man' checked='checked' required>
+                                <label class='man' for='man'>Man</label></li>
+                            <li><input type='radio' name='gender' value='vrouw' required>
+                                <label class='vrouw' for='vrouw'>Vrouw</label></li>
+                            <li><input type='radio' name='gender' value='beide' required>
+                                <label class='beide' for='beide'>Beide</label></li>
+                        </ul>
+                        <label for='geslachtZoekend'>Geïnteresseerd in</label>
+                        <ul>
+                            <li> <input type='radio' name='searchSex' value='man' checked='checked' required>
+                                <label class='man' for='man'>Man</label></li>
+                            <li><input type='radio' name='searchSex' value='vrouw' required>
+                                <label class='vrouw' for='vrouw'>Vrouw</label></li>
+                            <li><input type='radio' name='searchSex' value='beide' required>
+                                <label class='beide' for='beide'>Beide</label></li>
+                        </ul>
+                        <button id='next' type='button' name='next'>Volgende stap</button>
+                    </fieldset>
+                    <fieldset id='accountgegevens'>
+                        <label class='fileContainer' for='photo'>Upload je profielfoto</label>
+                        <input class='file' type='file' name='photo' required accept='image/*'>
+                        <label for='functie'>Functie</label>
+                        <input class='firsttype' type='text' name='functie' required placeholder='B.v. fotograaf'>
+
+                        <label for='bio'>Bio</label>
+                        <input class='firsttype' required type='text' name='bio' placeholder='Vertel iets over jezelf...'>
+                        <button id='back' type='button' name='back'>Terug</button>
+                        <input type='submit' value='registreren'>
+                    </fieldset>
+
+                </form>
+            </article>
+        </Section>
+
     </main>
 
 
-            
+
     <footer>
         <%- include('partials/footer'); -%>
     </footer>
