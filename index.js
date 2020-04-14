@@ -201,30 +201,48 @@ async function gebruikerMaken(req, res, next) {
 // req.Flash('class voor de div', 'het bericht') geeft dat  error/succes bericht door naar de template en daar staat weer code die het omzet naar html
 
 // async
-function inloggen(req, res) {
-    Gebruikers
-        .findOne({ email: req.body.email })
-        // bcrypt.compare(req.body.wachtwoord, hash).then(function(result) {
+async function inloggen(req, res) {
+    // Gebruikers
+    //     .findOne({ email: req.body.email })
+        const user = await db.collection('users').findOne({email: req.body.email})
+        if (user == null) {
+            return res.status(400).send('Cannot find user')
+          }
+          try {
+                if (await bcrypt.compare(req.body.wachtwoord, user.wachtwoord)) {
+                  const data = req.session.user;
+                  console.log('gelukt!!!!')
+                //   res.render('readytostart' , {data: data})
+                  res.render('readytostart')
+                   req.session.loggedIN = true;
+                } else {
+                  res.send('Login failed')
+                }
+              } catch (err) {
+                console.log(err)
+              }
+
+        // bcrypt.compare(req.body.wachtwoord, user.wachtwoord).then(function(result) {
         // })
-        .then(data => {
-            if (data.wachtwoord === req.body.wachtwoord) {
-                req.session.user = data;
-                console.log('ingelogd als ' + req.session.user.email);
-                req.flash('succes', 'Hoi ' + req.session.user.voornaam);
-                // res.redirect('findlove');
-                res.render('readytostart');
-                req.session.loggedIN = true;
-            } else {
-                req.flash('error', 'Wachtwoord is incorrect');
-                res.render('index');
-                console.log('Wachtwoord is incorrect');
-            }
-        })
-        .catch(err => {
-            console.log(err);
-            req.flash('error', 'Account is niet gevonden');
-            res.render('index');
-        });
+        // .then(data => {
+        //     if (data.wachtwoord === req.body.wachtwoord) {
+        //         req.session.user = data;
+        //         console.log('ingelogd als ' + req.session.user.email);
+        //         req.flash('succes', 'Hoi ' + req.session.user.voornaam);
+        //         // res.redirect('findlove');
+        //         res.render('readytostart');
+        //         req.session.loggedIN = true;
+        //     } else {
+        //         req.flash('error', 'Wachtwoord is incorrect');
+        //         res.render('index');
+        //         console.log('Wachtwoord is incorrect');
+        //     }
+        // })
+        // .catch(err => {
+        //     console.log(err);
+        //     req.flash('error', 'Account is niet gevonden');
+        //     res.render('index');
+        // });
     
 //     const user = await db.collection('users').findOne({email: req.body.email})
 
