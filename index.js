@@ -90,8 +90,8 @@ app
     .get('/findlove', gebruiker1)
     .post('/:email', like)
     .get('/profile', profiel)
-    .get('/readytostart' , readyToStart)
-// .get('/*', error404);
+    .get('/readytostart', readyToStart)
+    // .get('/*', error404);
 
 
 function readyToStart(req, res) {
