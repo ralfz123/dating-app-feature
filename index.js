@@ -48,7 +48,7 @@ app
     .use(bodyParser.urlencoded({ extended: true }))
     .use(session({
         secret: process.env.SESSION_SECRET,
-        cookie: { maxAge: 60000 },
+        cookie: { maxAge: 90000 },
         resave: false,
         saveUninitialized: true,
         secure: true,
@@ -89,6 +89,7 @@ app
     .post('/matches', editProfile)
     .get('/findlove', gebruiker1)
     .post('/:email', like)
+    .get('/:email', disLike)
     .get('/profile', profiel)
     .get('/readytostart', readyToStart)
     .get('/*', error404);
@@ -115,7 +116,7 @@ function editProfile(req, res) {
             'wachtwoord': req.body.wachtwoord,
             'gender': req.body.gender,
             'searchSex': req.body.searchSex,
-            'photo': req.body.photo,
+            'photo': req.file.photo,
             'functie': req.body.functie,
             'bio': req.body.bio
         }
@@ -342,17 +343,26 @@ function overzichtMatches(req, res) {
 
 }
 
-// Functie om een gebruiker te liken door de email van die persoon toe te voegen aan de hasLiked array van huidige user
 function like(req, res) {
     let id = req.params.email;
     console.log(id);
-    Gebruikers
-        .updateOne({ _id: mongo.ObjectId(req.session.user._id) }, {
-            $push: { 'hasLiked': id }
-        });
+    Gebruikers.updateOne({ _id: mongo.ObjectId(req.session.user._id) }, {
+        $push: { 'hasLiked': id }
+    });
     req.session.user.hasLiked.push(id);
     console.log('liked');
     res.redirect('/findlove');
+}
+
+function disLike(req, res) {
+    let id = req.params.email;
+    console.log(id);
+    Gebruikers.updateOne({ _id: mongo.ObjectId(req.session.user._id) }, {
+        $push: { 'hasNotLiked ': id }
+    });
+    req.session.user.hasNotLiked.push(id);
+    console.log('disliked ' + id);
+    res.render('detail');
 }
 
 // Bij een 404

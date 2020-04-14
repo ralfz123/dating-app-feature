@@ -7,36 +7,35 @@
 
 <body>
     <header>
-        <%- include('partials/nav'); -%>
+        <img class="lobbie" src="images/logo.png" alt="Logo">
     </header>
     <main>
         <ul>
-            <% if (data.length > 0 ){ %>
-                <% for (let i = 0; i < data.length; i++) { %>
-                    <li>
-                        <figure>
-                            <img src="images/profielfotos/<%= data[i].photo %>" alt="Profilepicture">
-                            </a>
-                            <figcaption>
-                                <div>
-                                    <h2>
-                                        <%= data[i].voornaam + ' ' + data[i].achternaam %>
-                                    </h2>
-                                    <p>
-                                        <%= data[i].bio %>
-                                    </p>
-                                </div>
-                                <form action="<%= data[i].email %>" method="post">
-                                    <button class="disLikebut" type="submit"> <img src="images/no.png" alt="DislikeButton"> </button>
-                                    <button class="likebut" type="submit"> <img src="images/matches.svg" alt="LikeButton"> </button>
-                                </form>
-                            </figcaption>
-                        </figure>
-                    </li>
-                    <% } %>
-                        <% }else{ %>
-                            <p>Geen mensen meer om weer te geven.. </p>
-                            <% } %>
+            <% for (let i = 0; i < data.length; i++) { %>
+                <li>
+                    <figure>
+
+                        <img src="images/profielfotos/<%= data[i].photo %>" alt="Profilepicture">
+                        </a>
+                        <figcaption>
+                            <h2>
+                                <%= data[i].voornaam + ' ' + data[i].achternaam %>
+                            </h2>
+                            <h3>
+                                <%= data[i].age %>
+                            </h3>
+                            <p>
+                                <%= data[i].bio %>
+                            </p>
+                            <a href="<%= data[i].email%>"><img src="images/no.png" alt="DislikeButton"></a>
+                            <form action="<%= data[i].email %>" method="post">
+                                <button class="likebut" type="submit"> <img src="images/like.png" alt="LikeButton"> </button>
+                            </form>
+                        </figcaption>
+                    </figure>
+                </li>
+                <% } %>
+
         </ul>
 
     </main>
