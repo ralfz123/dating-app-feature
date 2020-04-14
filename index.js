@@ -91,8 +91,8 @@ app
     .post('/email', like)
     .post('/:_id', disLike)
     .get('/profile', profiel)
-    .get('/readytostart' , readyToStart)
-// .get('/*', error404);
+    .get('/readytostart', readyToStart)
+    .get('/*', error404);
 
 
 function readyToStart(req, res) {
@@ -126,17 +126,17 @@ function editProfile(req, res) {
     db.collection('users')
         .findOneAndUpdate(query, updatedValues)
 
-        .then(data => {
-           console.log('heeft data gevonden');
-           console.log(query);
-           console.log(data);
-             if (data){
-                 res.render('readytostart');
+    .then(data => {
+            console.log('heeft data gevonden');
+            console.log(query);
+            console.log(data);
+            if (data) {
+                res.render('readytostart');
             }
         })
-        .catch(err =>{
+        .catch(err => {
             console.log(err);
-    });
+        });
 }
 
 // Profiel
@@ -174,7 +174,7 @@ function goHome(req, res) {
 async function gebruikerMaken(req, res, file) {
     const hashedPassword = await bcrypt.hash(req.body.wachtwoord, saltRounds)
 
- // Pusht de data + input naar database (gebruikers = collection('users'))
+    // Pusht de data + input naar database (gebruikers = collection('users'))
     Gebruikers
         .insertOne({
             voornaam: req.body.voornaam,
@@ -187,47 +187,47 @@ async function gebruikerMaken(req, res, file) {
             photo: req.body.originalname,
             functie: req.body.functie,
             bio: req.body.bio,
-            HasLiked: [],
+            hasLiked: [],
             hasNotLiked: []
-        }, done)
+        }, done);
 
-        function done(err, data) {
-            if(err) {
-                console.log(err);
-                req.flash('error', 'Oeps er ging iets fout');
-                res.render('registration')
-            } else if(data) {
-                req.flash('succes', 'Account aangemaakt! Log in');
-                res.render('index');
-            }
+    function done(err, data) {
+        if (err) {
+            console.log(err);
+            req.flash('error', 'Oeps er ging iets fout');
+            res.render('registration');
+        } else if (data) {
+            req.flash('succes', 'Account aangemaakt! Log in');
+            res.render('index');
         }
+    }
 }
 
 // checkt of gebruiker bestaat en logt in door sessie aan te maken met de email als ID (omdat email uniek is)
 // req.Flash('class voor de div', 'het bericht') geeft dat  error/succes bericht door naar de template en daar staat weer code die het omzet naar html
 
 async function inloggen(req, res) {
-        const user = await db.collection('users').findOne({email: req.body.email})
-        if (user == null) {
-            req.flash('error', 'Account is niet gevonden');
+    const user = await Gebruikers.findOne({ email: req.body.email });
+    if (user == null) {
+        req.flash('error', 'Account is niet gevonden');
+        res.render('index');
+    }
+    try {
+        if (await bcrypt.compare(req.body.wachtwoord, user.wachtwoord)) {
+            req.session.loggedIN = true;
+            req.session.user = user;
+            console.log('Succesvol ingelogd');
+            res.render('readytostart');
+        } else {
+            req.flash('error', 'Wachtwoord is incorrect');
             res.render('index');
-          }
-          try {
-                if (await bcrypt.compare(req.body.wachtwoord, user.wachtwoord)) {
-                  const data = req.session.user;
-                  req.session.user = user;
-                  console.log('Succesvol ingelogd');
-                  res.render('readytostart');
-                  req.session.loggedIN = true;
-                } else {
-                    req.flash('error', 'Wachtwoord is incorrect');
-                    res.render('index');
-                    console.log('Wachtwoord is incorrect');
-                }
-              } catch (err) {
-                console.log(err);
-                // res.render('404');
-              }
+            console.log('Wachtwoord is incorrect');
+        }
+    } catch (err) {
+        console.log(err);
+        req.flash('error', 'Er ging iets mis. Probeer opnieuw');
+        res.render('index');
+    }
 }
 
 function wachtwoordform(req, res) {
@@ -369,10 +369,10 @@ req.session.user.hasNotLiked.push(id);
     res.redirect("/findlove");
 }
 
-// // Bij een 404
-// function error404(res) {
-//     res.render('404');
-// }
+// Bij een 404
+function error404(req, res) {
+    res.render('404');
+}
 
 // Welke poort het live staat
 app.listen(5000, () => console.log('App is listening on port', port));
