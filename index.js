@@ -99,7 +99,7 @@ function editProfile (req, res) {
            console.log(query);
            console.log(data);
              if (data){
-                 res.redirect('/profile'); // profile with updated data
+                 res.render('readytostart');
             }
         })
         .catch(err =>{
@@ -211,6 +211,7 @@ async function inloggen(req, res) {
           try {
                 if (await bcrypt.compare(req.body.wachtwoord, user.wachtwoord)) {
                   const data = req.session.user;
+                  req.session.user = user;
                   console.log('gelukt!!!!')
                 //   res.render('readytostart' , {data: data})
                   res.render('readytostart')
