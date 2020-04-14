@@ -206,21 +206,24 @@ async function inloggen(req, res) {
     //     .findOne({ email: req.body.email })
         const user = await db.collection('users').findOne({email: req.body.email})
         if (user == null) {
-            return res.status(400).send('Cannot find user')
+            req.flash('error', 'Account is niet gevonden');
+            res.render('index');
           }
           try {
                 if (await bcrypt.compare(req.body.wachtwoord, user.wachtwoord)) {
                   const data = req.session.user;
                   req.session.user = user;
-                  console.log('gelukt!!!!')
-                //   res.render('readytostart' , {data: data})
-                  res.render('readytostart')
-                   req.session.loggedIN = true;
+                  console.log('Succesvol ingelogd');
+                  res.render('readytostart');
+                  req.session.loggedIN = true;
                 } else {
-                  res.send('Login failed')
+                    req.flash('error', 'Wachtwoord is incorrect');
+                    res.render('index');
+                    console.log('Wachtwoord is incorrect');
                 }
               } catch (err) {
-                console.log(err)
+                console.log(err);
+                // res.render('404');
               }
 
         // bcrypt.compare(req.body.wachtwoord, user.wachtwoord).then(function(result) {
