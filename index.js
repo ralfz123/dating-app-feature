@@ -104,7 +104,8 @@ function readyToStart(req, res) {
 }
 
 // Update profile page
-function editProfile(req, res) {
+async function editProfile(req, res) {
+    const hashedPassword = await bcrypt.hash(req.body.wachtwoord, saltRounds);
     const query = { _id: mongo.ObjectId(req.session.user._id) }; // the current user
     console.log(req.session.user._id);
     const updatedValues = { // the new data values
@@ -112,7 +113,7 @@ function editProfile(req, res) {
             'voornaam': req.body.voornaam,
             'achternaam': req.body.achternaam,
             'geboortedatum': req.body.geboortedatum,
-            'wachtwoord': req.body.wachtwoord,
+            'wachtwoord': hashedPassword,
             'gender': req.body.gender,
             'searchSex': req.body.searchSex,
             'photo': req.body.photo,
