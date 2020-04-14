@@ -111,43 +111,43 @@ function readyToStart(req, res) {
 }
 
 // Update profile page
-function editProfile(req, res) {
-    if (req.session.loggedIN === true) {
-        const query = { _id: mongo.ObjectId(req.session.user._id) }; // the current user
-        console.log(req.session.user._id);
-        const updatedValues = { // the new data values
-            $set: {
-                'voornaam': req.body.voornaam,
-                'achternaam': req.body.achternaam,
-                'geboortedatum': req.body.geboortedatum,
-                'wachtwoord': req.body.wachtwoord,
-                'gender': req.body.gender,
-                'searchSex': req.body.searchSex,
-                'photo': req.file.photo,
-                'functie': req.body.functie,
-                'bio': req.body.bio
+async function editProfile(req, res) {
+    const hashedPassword = await bcrypt.hash(req.body.wachtwoord, saltRounds);
+    const query = { _id: mongo.ObjectId(req.session.user._id) }; // the current user
+    console.log(req.session.user._id);
+    const updatedValues = { // the new data values
+        $set: {
+            'voornaam': req.body.voornaam,
+            'achternaam': req.body.achternaam,
+            'geboortedatum': req.body.geboortedatum,
+            'wachtwoord': hashedPassword,
+            'gender': req.body.gender,
+            'searchSex': req.body.searchSex,
+            'photo': req.body.photo,
+            'functie': req.body.functie,
+            'bio': req.body.bio
+        }
+    };
+    console.log(updatedValues);
+
+    db.collection('users')
+        .findOneAndUpdate(query, updatedValues)
+
+    .then(data => {
+            console.log('heeft data gevonden');
+            console.log(query);
+            console.log(data);
+            if (data) {
+                res.render('readytostart');
             }
-        };
-        console.log(updatedValues);
-
-        db.collection('users')
-            .findOneAndUpdate(query, updatedValues)
-
-        .then(data => {
-                console.log('heeft data gevonden');
-                console.log(query);
-                console.log(data);
-                if (data) {
-                    res.render('readytostart');
-                }
-            })
-            .catch(err => {
-                console.log(err);
-            });
-    } else {
-        req.flash('error', 'U moet eerst inloggen');
-        res.render('index');
-    }
+        })
+        .catch(err => {
+            console.log(err);
+        });
+} else {
+    req.flash('error', 'U moet eerst inloggen');
+    res.render('index');
+}
 }
 
 // Profiel
