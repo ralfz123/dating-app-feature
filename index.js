@@ -180,7 +180,6 @@ function goHome(req, res) {
         req.flash('succes', 'Hoi ' + req.session.user.voornaam);
         res.render('readytostart');
     } else {
-        req.flash('error', 'U moet eerst inloggen');
         res.render('index');
     }
 }

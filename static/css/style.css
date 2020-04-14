@@ -96,6 +96,17 @@ main.succes {
     text-align: center;
 }
 
+ul.matches {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 10px;
+    margin: 30px 15px;
+}
+
+ul.matches .profielfoto {
+    max-height: 200px;
+}
+
 .accountlinks {
     text-align: center;
     color: white;
@@ -278,18 +289,19 @@ ul {
 }
 
 .registratepage button {
-    margin: 20px;
-    padding: 12px 0px;
-    width: max-content;
-    cursor: pointer;
-    box-shadow: 3px 3px 4px grey;
-    border-radius: 21px;
-    border: 1px solid black;
-    font-family: 'maven pro';
-    font-weight: 600;
+    padding: 15px 40px;
+    background-color: #f5a79b;
+    border-radius: 20px;
+    margin: 20px 10px;
+    display: inline-block;
+    color: white;
+    border: 3px solid #e26d4a;
+    text-decoration: none;
     text-transform: uppercase;
-    text-align: center;
-    background-color: #f7a7
+    -webkit-box-shadow: 0px 8px 15px -6px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 8px 15px -6px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 8px 15px -6px rgba(0, 0, 0, 0.75);
+    cursor: pointer;
 }
 
 body#registration main {

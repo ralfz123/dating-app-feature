@@ -13,12 +13,12 @@
     <main>
         <%- messages() %>
             <h1>Matches</h1>
+
             <ul class="matches">
-                <hr>
                 <!-- <% if (data.length > 0){ %> -->
                 <% for (var i = 0; i < data.length; i++){ %>
                     <li>
-                        <figure class="profiel">
+                        <figure class="profiel" id="matches">
                             <img class="profielfoto" src="images/profielfotos/<%= data[i].photo %>" alt="Profilepicture">
                             </a>
                             <figcaption>
