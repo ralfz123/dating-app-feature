@@ -89,7 +89,7 @@ app
     .post('/matches', editProfile)
     .get('/findlove', gebruiker1)
     .post('/:email', like)
-    // .post('/:_id', disLike)
+    .post('/:_id', disLike)
     .get('/profile', profiel)
 
 // .get('/*', error404);
@@ -360,11 +360,12 @@ function disLike(req, res) {
     console.log(id);
     Gebruikers.updateOne(
     {_id: mongo.ObjectId(req.session.user._id)},
-    {$push: {"hasNotliked": id}
+    {$push: {"hasNotLiked": id}
 });
-   Gebruikers.deleteOne({id: id});
+req.session.user.hasNotLiked.push(id);
+//    Gebruikers.deleteOne({id: id});
    console.log('disliked' + voornaam)
-    res.redirect("/");
+    res.redirect("/findlove");
 }
 
 
