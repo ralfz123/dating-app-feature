@@ -1,12 +1,47 @@
 <!DOCTYPE html>
-<link rel="STYLESHEET" href="" type="text/css"> 
-<h1>Matches:</h1>
+<html lang="en">
 
-<% for (var index = 0; index < data.length; index++){ %>
-<ul class="matches"> 
-  <h2><%= data[index].voornaam %> </h2>
-  <p><%= data[index].achternaam %> </p>
- <figure>  <%= data[index].photo %> </figure>
-</ul>
+<head>
+    <%- include('partials/head'); -%>
+</head>
 
-<% } %>
+<body>
+    <header>
+        <img class="logo" src="images/logo.svg" alt="Logo">
+        <%- include('partials/nav'); -%>
+    </header>
+    <main>
+        <%- messages() %>
+            <h1>Matches</h1>
+
+            <ul class="matches">
+                <!-- <% if (data.length > 0){ %> -->
+                <% for (var i = 0; i < data.length; i++){ %>
+                    <li>
+                        <figure class="profiel" id="matches">
+                            <img class="profielfoto" src="images/profielfotos/<%= data[i].photo %>" alt="Profilepicture">
+                            </a>
+                            <figcaption>
+                                <div>
+                                    <h3>
+                                        <%= data[i].voornaam + ' ' + data[i].achternaam %>
+                                    </h3>
+                                    <p class="bio">
+                                        <b>BIO:</b>
+                                        <%= data[i].bio %>
+                                    </p>
+                                </div>
+                            </figcaption>
+                        </figure>
+                    </li>
+                    <% } %>
+            </ul>
+            <% }else { %>
+                <p>U heeft nog geen matches</p>
+                <% } %>
+
+    </main>
+    <script src="./js/swipen.js"></script>
+</body>
+
+</html>
