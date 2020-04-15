@@ -2,50 +2,48 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="STYLESHEET" href="/css/styleProfiel.css" type="text/css">
-    <title>Find love</title>
+    <%- include('partials/head'); -%>
 </head>
 
 <body>
     <header>
-        <img class="lobbie" src="images/logo.png" alt="Logo">
+        <img class="logo" src="images/logo.svg" alt="Logo">
+        <%- include('partials/nav'); -%>
     </header>
     <main>
-        <ul>
-            <% for (let i = 0; i < data.length; i++) { %>
-                <li>
-                    <figure>
-                        <!-- <a href="/profile/<%= data[i].id %>"> -->
-            <img src="images/profielfotos/<%= data[i].photo %>" alt="Profilepicture">
-</a>
-                        <figcaption>
-                            <h2>
-                                <%= data[i].voornaam + ' ' + data[i].achternaam %>
-                            </h2>
-                            <h3>
-                                <%= data[i].age %>
-                            </h3>
-                            <p>
-                                <%= data[i].bio %>
-                            </p>
-                            <form action="<%= data[i].email %>" method="post">
-                                <button class="disLikebut" type="submit"> <img src="images/no.png" alt="DislikeButton"> </button>
-                                <button class="likebut" type="submit"> <img src="images/like.png" alt="LikeButton"> </button>
-                            </form>
-                        </figcaption>
-                    </figure>
-                </li>
-                <% } %>
-
+        <ul class="people">
+            <% if (locals.data && locals.data.length > 0  ){ %>
+                <% for (let i = 0; i < data.length; i++) { %>
+                    <li>
+                        <figure class="profiel">
+                            <img class="profielfoto" src="images/profielfotos/<%= data[i].photo %>" alt="Profilepicture">
+                            <div class="knoppen">
+                                <a id="dislikelink" href="<%= data[i].email%>"><img src="images/no.png" alt="DislikeButton"></a>
+                                <form action="<%= data[i].email %>" method="post">
+                                    <button class="likebut" type="submit"> <img src="images/matches.svg" alt="LikeButton"> </button>
+                                </form>
+                            </div>
+                            <figcaption>
+                                <div>
+                                    <h2>
+                                        <%= data[i].voornaam + ' ' + data[i].achternaam %>
+                                    </h2>
+                                    <p class="bio">
+                                        <%= data[i].bio %>
+                                    </p>
+                                </div>
+                            </figcaption>
+                        </figure>
+                    </li>
+                    <% } %>
+                        <% } else { %>
+                            <p>Er zijn geen gebruikers meer over. U heeft iedereen gehad</p>
+                            <% } %>
         </ul>
-        <p>Geen mensen meer om weer te geven.. </p>
+
     </main>
 
-    <script src="js/swipen.js"></script>
-
+    <script src="./js/swipen.js"></script>
 </body>
 
 </html>
