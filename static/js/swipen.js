@@ -7,7 +7,7 @@ const dislikeButtons = document.querySelectorAll('.disLikebut');
 let i = 0;
 
 // functie liken en disliken
-function ratePerson() {
+function klikken() {
         if (i < (people.length)) { 
             this.closest('li').style.display = 'none';
             i++;
@@ -22,19 +22,19 @@ function ratePerson() {
                 res.onload = onload;
                 res.send();
 
-                function onload() {
-                    if (res.status !== 200) {
-                        throw new Error('Probeer het opnieuw!');
-                    }
+            //     function onload() {
+            //         if (res.status !== 200) {
+            //             throw new Error('Probeer het opnieuw!');
+            //         }
 
-                window.location = '/';
-            }
+            //     window.location = '/';
+            // }
         }
     } 
 }
 
 // eventlisteners klikken
 for (let i = 0; i < likeButtons.length; i++){
-    likeButtons[i].addEventListener('click', ratePerson);
-    dislikeButtons[i].addEventListener('click', ratePerson);
+    likeButtons[i].addEventListener('click', klikken);
+    dislikeButtons[i].addEventListener('click', klikken);
 }
