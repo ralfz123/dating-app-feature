@@ -7,7 +7,9 @@
 
 <body>
     <header>
-        <%- include('partials/header-delete'); -%>
+        <%- include('partials/nav'); -%>
+            <%- messages() %>
+                <%- include('partials/header-delete'); -%>
     </header>
     <main>
         <%- include('partials/delete-acc-form'); -%>

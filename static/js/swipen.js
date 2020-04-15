@@ -1,14 +1,15 @@
 // get ellements van html
 const main = document.getElementsByTagName('main')[0];
-const people = main.getElementsByTagName('li');
-const likeButtons = document.querySelectorAll('.likebut');
+const gebruikers = main.getElementsByTagName('li');
 const dislikeButtons = document.querySelectorAll('.disLikebut');
+const likeButtons = document.querySelectorAll('.likebut');
+
 
 let i = 0;
 
 // functie liken en disliken
-function ratePerson() {
-        if (i < (people.length)) { 
+function klikken() {
+        if (i < (gebruikers.length)) { 
             this.closest('li').style.display = 'none';
             i++;
 
@@ -22,19 +23,19 @@ function ratePerson() {
                 res.onload = onload;
                 res.send();
 
-                function onload() {
-                    if (res.status !== 200) {
-                        throw new Error('Probeer het opnieuw!');
-                    }
+            //     function onload() {
+            //         if (res.status !== 200) {
+            //             throw new Error('Probeer het opnieuw!');
+            //         }
 
-                window.location = '/';
-            }
+            //     window.location = '/';
+            // }
         }
     } 
 }
 
 // eventlisteners klikken
 for (let i = 0; i < likeButtons.length; i++){
-    likeButtons[i].addEventListener('click', ratePerson);
-    dislikeButtons[i].addEventListener('click', ratePerson);
+    likeButtons[i].addEventListener('click', klikken);
+    dislikeButtons[i].addEventListener('click', klikken);
 }
