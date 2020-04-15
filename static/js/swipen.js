@@ -1,14 +1,15 @@
 // get ellements van html
 const main = document.getElementsByTagName('main')[0];
-const people = main.getElementsByTagName('li');
-const likeButtons = document.querySelectorAll('.likebut');
+const gebruikers = main.getElementsByTagName('li');
 const dislikeButtons = document.querySelectorAll('.disLikebut');
+const likeButtons = document.querySelectorAll('.likebut');
+
 
 let i = 0;
 
 // functie liken en disliken
 function klikken() {
-        if (i < (people.length)) { 
+        if (i < (gebruikers.length)) { 
             this.closest('li').style.display = 'none';
             i++;
 
