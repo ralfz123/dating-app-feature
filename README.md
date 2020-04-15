@@ -22,7 +22,7 @@ _I want to be able to like other users,
 _so that (maybe) eventually a match will come.___
 
 # :computer: Live version
-[Here](https://www.heroku.com/) you can see a live version of the app.
+[Here](https://ralfz123-dating-app-feature-1.glitch.me/) you can see a live version of the app.
 
 # :nerd_face: Technical summary
 **DateIT** is built, using:
