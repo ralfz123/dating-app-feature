@@ -36,10 +36,10 @@
                 <fieldset>
                     <legend>Inloggegevens</legend>
                     <label for='email'>Email</label>
-                    <input type='email' required name='email' minlength='6 ' maxlength='60 ' placeholder='B.v blabla@outlook.com '>
+                    <input type='email' required name='email' minlength='6 ' maxlength='60 ' placeholder='B.v blabla@outlook.com ' value="<%= data.email %>" disabled>
 
                     <label for='password'>Wachtwoord</label>
-                    <input type='password' required name='wachtwoord' minlength='6 ' placeholder='Minimaal 6 tekens '>
+                    <input type='password' required name='wachtwoord' minlength='6 ' placeholder='Minimaal 6 tekens ' value="<%= data.wachtwoord %>">
                 </fieldset>
 
                 <button id='next' type='button' name='next'>Volgende stap</button>
